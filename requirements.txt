@@ -7,3 +7,5 @@ scikit-learn
 geopandas
 shapely
 plotly
+seaborn
+linearmodels
