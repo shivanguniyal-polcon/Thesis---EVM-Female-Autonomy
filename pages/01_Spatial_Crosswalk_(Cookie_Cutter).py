@@ -34,6 +34,8 @@ with tab_results:
     # Check if data exists
     data_dir = Path("data")
     crosswalk_file = data_dir / "PC2004_to_Dist1991_Weightage_Crosswalk (1).csv"
+    pc_geojson = data_dir / "PC_2004_Data_from_ARCGIS.geojson"
+    district_geojson = data_dir / "India-State-Districts-1991.geojsonl"
     
     if crosswalk_file.exists():
         st.success("✅ **Spatial Crosswalk Found**: Loading pre-computed weights...")
@@ -44,7 +46,7 @@ with tab_results:
         # Display sample
         st.subheader("Sample of Spatial Crosswalk Weights")
         display_cols = [col for col in ['pc_name', 'district_clean', 'pc_weight', 'pc91_district_id'] if col in crosswalk.columns]
-        st.dataframe(crosswalk[display_cols].head(10), use_container_width=True)
+        st.dataframe(crosswalk[display_cols].head(10), width='stretch')
         
         # Validation check
         if 'pc_name' in crosswalk.columns and 'pc_weight' in crosswalk.columns:
@@ -66,13 +68,50 @@ with tab_results:
                               title='Distribution of PC Weight Sums (Should cluster around 1.0)',
                               labels={'Sum of Weights': 'Sum of Weights per PC'})
             fig.add_vline(x=1.0, line_dash="dash", line_color="red", annotation_text="Ideal = 1.0")
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width='stretch')
         
-        st.info("""
-        ✅ **Result**: All subsequent analyses use these spatially-weighted PC assignments, 
-        ensuring that election data is allocated to districts proportionally based on geographic overlap.
-        This solves the MAUP problem and prevents measurement error from biasing our DiD estimates.
-        """)
+        # Try to load and display map if geojson files exist
+        if pc_geojson.exists():
+            try:
+                import geopandas as gpd
+                import plotly.express as px
+                
+                st.subheader("Map: 2004 Polling Center Boundaries")
+                pc_gdf = gpd.read_file(pc_geojson)
+                
+                # Convert to web mercator for plotting
+                pc_gdf_web = pc_gdf.to_crs(epsg=3857)
+                
+                # Create interactive map
+                fig_map = px.choropleth_mapbox(
+                    pc_gdf_web,
+                    geojson=pc_gdf_web.geometry.__geo_interface__,
+                    locations=pc_gdf_web.index,
+                    color='pc_name',
+                    hover_name='pc_name',
+                    center={"lat": 20.5937, "lon": 78.9629},
+                    zoom=4,
+                    opacity=0.7,
+                    mapbox_style="carto-positron",
+                    title="Polling Center Boundaries (2004)"
+                )
+                fig_map.update_layout(margin={"r":0,"t":40,"l":0,"b":0})
+                st.plotly_chart(fig_map, width='stretch')
+                
+                st.info("""
+                ✅ **Result**: All subsequent analyses use these spatially-weighted PC assignments, 
+                ensuring that election data is allocated to districts proportionally based on geographic overlap.
+                This solves the MAUP problem and prevents measurement error from biasing our DiD estimates.
+                """)
+                
+            except Exception as e:
+                st.warning(f"⚠️ Could not load map: {str(e)}")
+        else:
+            st.info("""
+            ✅ **Result**: All subsequent analyses use these spatially-weighted PC assignments, 
+            ensuring that election data is allocated to districts proportionally based on geographic overlap.
+            This solves the MAUP problem and prevents measurement error from biasing our DiD estimates.
+            """)
         
     else:
         st.warning("⚠️ Spatial crosswalk file not found. Please ensure the data files are uploaded.")
@@ -98,8 +137,15 @@ with tab_code:
     4. Calculates normalized weights for each PC-District pair
     """)
     
-    # Read this file's own source code
-    with open(__file__, "r") as f:
-        source_code = f.read()
-        
-    st.code(source_code, language="python")
+    # Read the ORIGINAL script from /script folder
+    original_script_path = Path("/workspace/script/Using cookie cutter method to calculate the weight of a PC that is in a district.py")
+    
+    if original_script_path.exists():
+        with open(original_script_path, "r") as f:
+            source_code = f.read()
+        st.code(source_code, language="python")
+    else:
+        st.warning("Original script not found. Showing Streamlit page code instead.")
+        with open(__file__, "r") as f:
+            source_code = f.read()
+        st.code(source_code, language="python")
