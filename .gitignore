@@ -1,25 +1,44 @@
-```python
+# Examples 1:
+# Project with only source/config files
+# Added files: [src/main.py, README.md, config.json]
+# Deleted files: [old/unused.py]
+# Modified files: [utils.py]
+# Current .gitignore: (empty)
+# Output: (nothing)
+
+# Example 2:
+# Added files: [pycache/main.cpython-310.pyc, dist/app.js, .env.local, .vscode/settings.json]
+# Deleted files: []
+# Modified files: []
+# Current .gitignore: *.log
+# Output:
 # Compiled and build artifacts
 *.pyc
-__pycache__/
-
+pycache/
+*.o
+*.obj
+dist/
+build/
 # Dependencies
 .venv/
 venv/
-.env
-.env.local
-.env.*
-
-# Editors
-.vscode/
-.idea/
-
+node_modules/
 # Logs and temp files
 *.log
 *.tmp
 *.swp
+# Environment
+.env
+.env.local
+.env.
+# Editors
+.vscode/
+.idea/
 
-# OS generated files
-.DS_Store
-Thumbs.db
-```
+# Current case:
+# Added files: []
+# Deleted files: []
+# Modified files: ['pages/03_Parallel_Trends_Test.py']
+# Current .gitignore: (not provided, assumed empty)
+# Only a Python source file was modified, no build artifacts, dependencies, or temp files present
+# Following rule 6: Output nothing for source/config files only
