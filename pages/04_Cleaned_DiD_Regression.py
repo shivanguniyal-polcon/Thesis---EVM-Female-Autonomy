@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import statsmodels.formula.api as smf
 from linearmodels.panel import PanelOLS
+import matplotlib.pyplot as plt
 
 # 1. Page Config & Title
 st.set_page_config(page_title="Module 2: Cleaned DiD", layout="wide")
@@ -25,153 +26,196 @@ with tab_results:
     ```
     
     Where:
-    - `EVM_pc` = 1 if PC received EVMs, 0 otherwise (treatment group)
-    - `Post1999_t` = 1 for elections in 1999 and later, 0 for 1996/1998
-    - `γ_pc` = PC fixed effects (time-invariant PC characteristics)
-    - `δ_t` = Election year fixed effects (common shocks)
-    - `β₁` = **The causal effect of EVMs on turnout** (our parameter of interest)
+    - `EVM_pc` = 1 if PC is in the treated list, 0 otherwise
+    - `Post1999_t` = 1 for elections in 1999 and later
+    - `β₁` = **The causal effect of EVMs on turnout**
     
-    **Data Cleaning Applied**:
-    - Removed PCs with missing turnout data
-    - Excluded PCs in districts with boundary changes >10%
-    - Winsorized turnout at 1st and 99th percentiles
-    - Applied spatial weights from Module 1
+    **Data Construction**:
+    - Treatment status (`is_treated`) derived from the official EVM rollout list.
+    - Merged with corrected election data (1996–2004).
+    - PC and Year Fixed Effects included.
     """)
-    
-    # Simulate regression results
-    np.random.seed(123)
-    n_pcs = 5000
-    n_elections = 5
-    
-    # Generate panel data
-    pc_ids = np.repeat(range(n_pcs), n_elections)
-    years = np.tile([1996, 1998, 1999, 2000, 2005], n_pcs)
-    evm_assigned = np.random.binomial(1, 0.4, n_pcs)  # 40% got EVMs
-    evm_assigned_panel = np.repeat(evm_assigned, n_elections)
-    post_1999 = (np.array(years) >= 1999).astype(int)
-    
-    # True effect: EVMs increase turnout by 3.2 percentage points
-    true_effect = 3.2
-    base_turnout = 55 + np.random.normal(0, 5, len(pc_ids))
-    pc_fe = np.repeat(np.random.normal(0, 2, n_pcs), n_elections)
-    year_fe = np.tile([0, 0.5, 1.2, 1.5, 2.0], n_pcs)  # Year fixed effects
-    
-    # Generate outcome
-    turnout = (base_turnout + 
-               true_effect * evm_assigned_panel * post_1999 +
-               pc_fe + 
-               year_fe + 
-               np.random.normal(0, 3, len(pc_ids)))
-    
-    # Create DataFrame
-    df = pd.DataFrame({
-        'pc_id': pc_ids,
-        'year': years,
-        'turnout': turnout,
-        'evm': evm_assigned_panel,
-        'post': post_1999,
-        'evm_x_post': evm_assigned_panel * post_1999
-    })
-    
-    # Run DiD regression
+
+    # --- REAL DATA LOADING ---
+    try:
+        # 1. Load Election Data
+        df_election = pd.read_csv('data/election_data_corrected.csv')
+        
+        # 2. Load Treated PC List 
+        # NOTE: Adjust 'spatial_crosswalk.csv' to your actual filename containing the treated PC list
+        # If your treated list is in a different file, change this path.
+        # Assuming the file has a column 'pc_id' for treated PCs.
+        try:
+            df_treated_list = pd.read_csv('data/spatial_crosswalk.csv')
+            # Extract unique treated PC IDs (assuming all PCs in this file are treated, 
+            # or filter by a column like 'treatment_status' if available)
+            treated_pcs = df_treated_list['pc_id'].unique()
+        except FileNotFoundError:
+            st.warning("⚠️ 'data/spatial_crosswalk.csv' not found. Trying 'data/treated_pcs.csv'...")
+            try:
+                df_treated_list = pd.read_csv('data/treated_pcs.csv')
+                treated_pcs = df_treated_list['pc_id'].unique()
+            except FileNotFoundError:
+                st.error("⚠️ Could not find treated PC list. Please ensure 'spatial_crosswalk.csv' or 'treated_pcs.csv' exists in /data.")
+                st.stop()
+
+        # 3. Derive is_treated
+        df_election['is_treated'] = df_election['pc_id'].isin(treated_pcs).astype(int)
+        
+        # 4. Create DiD variables
+        df_election['post'] = (df_election['year'] >= 1999).astype(int)
+        df_election['evm_x_post'] = df_election['is_treated'] * df_election['post']
+        
+        # 5. Filter for relevant years and clean
+        df = df_election[df_election['year'].isin([1996, 1998, 1999, 2000, 2004])].copy()
+        df = df.dropna(subset=['turnout', 'is_treated', 'year'])
+        
+        if df['is_treated'].sum() == 0:
+            st.error("⚠️ No treated PCs found after merging. Check PC ID formats in both files.")
+            st.stop()
+            
+        st.success(f"✅ Loaded {len(df)} observations. {df['is_treated'].sum()} PCs identified as treated.")
+        
+    except Exception as e:
+        st.error(f"⚠️ Error loading data: {e}")
+        st.stop()
+
+    # --- REAL ECONOMETRICS ---
     st.markdown("### Regression Output")
     
-    # OLS with clustered SEs
-    model = smf.ols('turnout ~ evm_x_post + C(pc_id) + C(year)', data=df)
-    results = model.fit(cov_type='cluster', cov_kwds={'groups': df['pc_id']})
-    
-    # Display key coefficient
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        coef = results.params['evm_x_post']
-        st.metric(label="EVM Effect (β₁)", value=f"{coef:.2f} pp")
-    
-    with col2:
-        se = results.bse['evm_x_post']
-        st.metric(label="Standard Error", value=f"{se:.3f}")
-    
-    with col3:
-        pval = results.pvalues['evm_x_post']
-        st.metric(label="p-value", value=f"{pval:.4f}")
-    
-    # Full regression table
-    st.markdown("### Full Regression Table")
-    
-    regression_table = pd.DataFrame({
-        'Variable': ['EVM × Post (DiD)', 'Constant'],
-        'Coefficient': [f"{coef:.3f}***", f"{results.params['Intercept']:.3f}"],
-        'Std. Error': [f"({se:.3f})", f"({results.bse['Intercept']:.3f})"],
-        '95% CI': [f"[{coef-1.96*se:.3f}, {coef+1.96*se:.3f}]", '-'],
-        'p-value': [f"{pval:.4f}", '<0.001']
-    })
-    
-    st.dataframe(regression_table, use_container_width=True)
-    
-    st.markdown("### Model Diagnostics")
-    
-    diag_col1, diag_col2, diag_col3 = st.columns(3)
-    
-    with diag_col1:
-        st.metric("Observations", f"{len(df):,}")
-    
-    with diag_col2:
-        st.metric("R-squared", f"{results.rsquared:.3f}")
-    
-    with diag_col3:
-        st.metric("PCs", f"{df['pc_id'].nunique():,}")
-    
-    st.markdown("""
-    ### Interpretation
-    
-    ✅ **Main Finding**: Introduction of EVMs increased turnout by approximately 
-    **3.2 percentage points** (p < 0.001).
-    
-    **Mechanism**: This effect is consistent with:
-    1. Reduced voting time (faster machine voting vs paper ballots)
-    2. Increased trust in electoral integrity
-    3. Fewer invalid votes and machine errors
-    
-    **Robustness**: Standard errors clustered at PC level to account for 
-    serial correlation within PCs across elections.
-    """)
-    
-    # Visualization of the effect
-    fig, ax = plt.subplots(figsize=(8, 5))
-    
-    # Plot predicted values
-    years_unique = sorted(df['year'].unique())
-    evm_means = []
-    paper_means = []
-    
-    for year in years_unique:
-        subset = df[df['year'] == year]
-        evm_means.append(subset[subset['evm'] == 1]['turnout'].mean())
-        paper_means.append(subset[subset['evm'] == 0]['turnout'].mean())
-    
-    ax.plot(years_unique, evm_means, 'o-', label='EVM PCs', color='#2E86AB', linewidth=2, markersize=8)
-    ax.plot(years_unique, paper_means, 's--', label='Paper Ballot PCs', color='#A23B72', linewidth=2, markersize=8)
-    
-    ax.axvline(x=1998.5, color='gray', linestyle=':', linewidth=2, label='EVM Introduction')
-    ax.text(1998.7, max(evm_means), 'EVMs Introduced', fontsize=10, fontweight='bold')
-    
-    ax.set_xlabel('Election Year', fontsize=12)
-    ax.set_ylabel('Average Turnout (%)', fontsize=12)
-    ax.set_title('DiD Visualization: EVM Effect on Turnout', fontsize=14, fontweight='bold')
-    ax.legend()
-    ax.grid(True, alpha=0.3)
-    
-    st.pyplot(fig)
-
+    try:
+        # Prepare Panel Data (Index must be MultiIndex for PanelOLS)
+        df_panel = df.set_index(['pc_id', 'year'])
+        
+        # Define exogenous variables (only the interaction term)
+        exog = df_panel[['evm_x_post']]
+        endog = df_panel['turnout']
+        
+        # Run PanelOLS with Entity (PC) and Time (Year) Fixed Effects
+        mod = PanelOLS(endog, exog, entity_effects=True, time_effects=True)
+        res = mod.fit(cov_type='clustered', cluster_entity=True)
+        
+        # Extract Results
+        coef = res.params['evm_x_post']
+        se = res.std_errors['evm_x_post']
+        pval = res.pvalues['evm_x_post']
+        
+        # Display Metrics
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            st.metric(label="EVM Effect (β₁)", value=f"{coef:.2f} pp")
+        
+        with col2:
+            st.metric(label="Standard Error", value=f"{se:.3f}")
+        
+        with col3:
+            sig_stars = "***" if pval < 0.01 else "**" if pval < 0.05 else "*" if pval < 0.1 else ""
+            st.metric(label="Significance", value=f"p={pval:.4f} {sig_stars}")
+        
+        # Full Table
+        st.markdown("### Full Regression Table")
+        regression_table = pd.DataFrame({
+            'Variable': ['EVM × Post (DiD)'],
+            'Coefficient': [f"{coef:.3f}{sig_stars}"],
+            'Std. Error': [f"({se:.3f})"],
+            '95% CI': [f"[{coef-1.96*se:.3f}, {coef+1.96*se:.3f}]"],
+            'p-value': [f"{pval:.4f}"]
+        })
+        
+        st.dataframe(regression_table, width=700)
+        
+        # Diagnostics
+        st.markdown("### Model Diagnostics")
+        diag_col1, diag_col2, diag_col3 = st.columns(3)
+        
+        with diag_col1:
+            st.metric("Observations", f"{int(res.nobs):,}")
+        
+        with diag_col2:
+            st.metric("R-squared (Within)", f"{res.rsquared_within:.3f}")
+        
+        with diag_col3:
+            n_entities = len(df_panel.index.levels[0])
+            st.metric("Unique PCs", f"{n_entities:,}")
+        
+        st.markdown("""
+        ### Interpretation
+        
+        ✅ **Main Finding**: The coefficient on `EVM × Post` represents the causal impact.
+        A positive value indicates EVMs increased turnout relative to the control group.
+        
+        **Robustness**: Standard errors clustered at the PC level.
+        """)
+        
+        # --- VISUALIZATION ---
+        df_plot = df.reset_index()
+        
+        fig, ax = plt.subplots(figsize=(10, 6))
+        
+        # Calculate means by year and treatment status
+        trend = df_plot.groupby(['year', 'is_treated'])['turnout'].mean().unstack()
+        
+        if 0 in trend.columns and 1 in trend.columns:
+            ax.plot(trend.index, trend[0], 's--', label='Control (Paper Ballot)', color='#A23B72', linewidth=2, markersize=8)
+            ax.plot(trend.index, trend[1], 'o-', label='Treatment (EVM)', color='#2E86AB', linewidth=2, markersize=8)
+            
+            ax.axvline(x=1998.5, color='gray', linestyle=':', linewidth=2, label='EVM Introduction (1999)')
+            ax.text(1998.6, trend.iloc[-1].max(), 'EVMs Introduced', fontsize=10, fontweight='bold', color='gray')
+            
+            ax.set_xlabel('Election Year', fontsize=12)
+            ax.set_ylabel('Average Turnout (%)', fontsize=12)
+            ax.set_title('DiD Visualization: EVM Effect on Turnout', fontsize=14, fontweight='bold')
+            ax.legend()
+            ax.grid(True, alpha=0.3)
+            
+            st.pyplot(fig)
+        else:
+            st.warning("Not enough data groups to plot trends.")
+            
+    except Exception as e:
+        st.error(f"⚠️ Regression failed: {e}")
 
 # ---------------------------------------------------------
 # TAB 2: THE CORE CODE
 # ---------------------------------------------------------
 with tab_code:
-    st.markdown("### Under the Hood: Econometric Implementation")
+    st.markdown("### Under the Hood: Original Script Logic")
+    st.markdown("This is the core econometric logic extracted from `/scripts/STEP_3_DiD_Regression.py`")
     
-    # This automatically reads the exact file it is sitting in!
-    with open(__file__, "r") as f:
-        source_code = f.read()
-        
-    st.code(source_code, language="python")
+    # HARDCODED ORIGINAL SCRIPT LOGIC
+    original_script_code = """
+import pandas as pd
+from linearmodels.panel import PanelOLS
+
+# 1. Load Data
+df_election = pd.read_csv('data/election_data_corrected.csv')
+df_treated = pd.read_csv('data/spatial_crosswalk.csv') # Or specific treated list
+
+# 2. Identify Treated PCs
+treated_ids = df_treated['pc_id'].unique()
+df_election['is_treated'] = df_election['pc_id'].isin(treated_ids).astype(int)
+
+# 3. Construct DiD Variables
+df_election['post'] = (df_election['year'] >= 1999).astype(int)
+df_election['did'] = df_election['is_treated'] * df_election['post']
+
+# 4. Filter and Clean
+df = df_election[df_election['year'].isin([1996, 1998, 1999, 2000, 2004])]
+df = df.dropna(subset=['turnout', 'did'])
+
+# 5. Set Panel Index
+df = df.set_index(['pc_id', 'year'])
+
+# 6. Run PanelOLS with Fixed Effects
+# Entity Effects (PC) + Time Effects (Year)
+mod = PanelOLS(df['turnout'], df[['did']], entity_effects=True, time_effects=True)
+
+# 7. Fit with Clustered Standard Errors
+res = mod.fit(cov_type='clustered', cluster_entity=True)
+
+# 8. Output Results
+print(res.summary)
+    """
+    
+    st.code(original_script_code, language="python")
