@@ -95,7 +95,7 @@ with tab_results:
         'Odds Ratio': np.exp(logit_model.coef_[0])
     })
     
-    st.dataframe(coef_df, width="stretch")
+    st.dataframe(coef_df, use_container_width=True)
     
     st.markdown("### Covariate Balance: Before vs After Matching")
     
@@ -130,11 +130,11 @@ with tab_results:
     
     with col1:
         st.markdown("#### Before Matching")
-        st.dataframe(before_stats, width="stretch")
+        st.dataframe(before_stats, use_container_width=True)
     
     with col2:
         st.markdown("#### After Matching")
-        st.dataframe(after_stats, width="stretch")
+        st.dataframe(after_stats, use_container_width=True)
     
     st.markdown("### Stage 2: DiD on Matched Sample")
     
@@ -156,7 +156,7 @@ with tab_results:
         'Sample Size': [f"{len(df):,}", f"{len(df_matched):,}"]
     })
     
-    st.dataframe(comparison, width="stretch")
+    st.dataframe(comparison, use_container_width=True)
     
     st.success("""
     **Conclusion**: PSM-DiD provides more credible causal estimates by addressing 

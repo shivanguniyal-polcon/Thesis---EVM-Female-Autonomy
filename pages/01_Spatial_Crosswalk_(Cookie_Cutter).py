@@ -46,7 +46,7 @@ with tab_results:
         # Display sample
         st.subheader("Sample of Spatial Crosswalk Weights")
         display_cols = [col for col in ['pc_name', 'district_clean', 'pc_weight', 'pc91_district_id'] if col in crosswalk.columns]
-        st.dataframe(crosswalk[display_cols].head(10), width='stretch')
+        st.dataframe(crosswalk[display_cols].head(10), use_container_width=True)
         
         # Validation check
         if 'pc_name' in crosswalk.columns and 'pc_weight' in crosswalk.columns:
@@ -68,7 +68,7 @@ with tab_results:
                               title='Distribution of PC Weight Sums (Should cluster around 1.0)',
                               labels={'Sum of Weights': 'Sum of Weights per PC'})
             fig.add_vline(x=1.0, line_dash="dash", line_color="red", annotation_text="Ideal = 1.0")
-            st.plotly_chart(fig, width='stretch')
+            st.plotly_chart(fig, use_container_width=True)
         
         # Try to load and display map if geojson files exist
         if pc_geojson.exists():
@@ -96,7 +96,7 @@ with tab_results:
                     title="Polling Center Boundaries (2004)"
                 )
                 fig_map.update_layout(margin={"r":0,"t":40,"l":0,"b":0})
-                st.plotly_chart(fig_map, width='stretch')
+                st.plotly_chart(fig_map, use_container_width=True)
                 
                 st.info("""
                 ✅ **Result**: All subsequent analyses use these spatially-weighted PC assignments, 

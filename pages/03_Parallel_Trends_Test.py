@@ -113,7 +113,7 @@ with tab_results:
                 'P-value': [parallel_model.pvalues['EVM_1996'], parallel_model.pvalues['Intercept']]
             })
             
-            st.dataframe(results_df, width="stretch")
+            st.dataframe(results_df, use_container_width=True)
             
             # Interpretation
             if parallel_model.pvalues['EVM_1996'] > 0.05:
@@ -190,11 +190,11 @@ with tab_results:
                 yaxis_title='Average Female Voter Turnout (%)',
                 legend_title='Technology in 1999',
                 height=500,
-                width="stretch",
+                use_container_width=True,
                 hovermode='x unified'
             )
             
-            st.plotly_chart(fig, width="stretch")
+            st.plotly_chart(fig, use_container_width=True)
             
             st.markdown("""
             ### Interpretation

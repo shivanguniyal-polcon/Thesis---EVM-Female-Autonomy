@@ -128,7 +128,7 @@ with tab_results:
         'R-squared': [f"{results1.rsquared:.3f}", f"{results2.rsquared:.3f}"]
     })
     
-    st.dataframe(comparison_table, width="stretch")
+    st.dataframe(comparison_table, use_container_width=True)
     
     st.markdown("### Visualizing the Dosage Effect")
     
