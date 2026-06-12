@@ -190,7 +190,6 @@ with tab_results:
                 yaxis_title='Average Female Voter Turnout (%)',
                 legend_title='Technology in 1999',
                 height=500,
-                use_container_width=True,
                 hovermode='x unified'
             )
             
