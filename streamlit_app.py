@@ -3,7 +3,7 @@ import streamlit as st
 st.set_page_config(page_title="Spatial Engineering & Causal Inference", layout="wide")
 
 st.title("🗳️ EVMs and Electoral Outcomes in Bihar (1996-2009)")
-st.subtitle("A Spatial Difference-in-Differences Analysis of Voting Technology Impact")
+st.markdown("### A Spatial Difference-in-Differences Analysis of Voting Technology Impact")
 
 st.markdown("""
 ### 📖 Abstract

@@ -66,8 +66,7 @@ with tab_results:
     })
     st.dataframe(sample_weights, use_container_width=True)
     
-    st.info("✅ **Result**: All subsequent analyses use these spatially-weighted PC assignments, 
-    ensuring comparability across time periods despite boundary changes.")
+    st.info("✅ **Result**: All subsequent analyses use these spatially-weighted PC assignments, ensuring comparability across time periods despite boundary changes.")
 
 
 # ---------------------------------------------------------
