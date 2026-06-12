@@ -1,13 +1,14 @@
 import streamlit as st
 import pandas as pd
-import geopandas as gpd
-from shapely.geometry import Point, Polygon
-import numpy as np
+from pathlib import Path
+import warnings
+
+warnings.filterwarnings('ignore')
 
 # 1. Page Config & Title
 st.set_page_config(page_title="Module 1: Spatial Crosswalk", layout="wide")
-st.title("Module 1: Spatial Data Construction")
-st.header("Step 1: Cookie-Cutter Method for MAUP Resolution")
+st.title("Module 1: Spatial Data Construction (The 'Plumbing')")
+st.header("Step 1: Cookie-Cutter Spatial Intersection")
 
 # 2. Create the two tabs
 tab_results, tab_code = st.tabs(["📊 Results", "💻 Core Code"])
@@ -16,66 +17,88 @@ tab_results, tab_code = st.tabs(["📊 Results", "💻 Core Code"])
 # TAB 1: THE RESULTS
 # ---------------------------------------------------------
 with tab_results:
-    st.markdown("""
-    ### Solving the Modifiable Areal Unit Problem (MAUP)
-    
-    When district boundaries change over time (e.g., 1991 → 1996 → 2000), 
-    comparing Polling Center (PC) level data becomes impossible without spatial harmonization.
-    
-    **The Cookie-Cutter Solution:**
-    1. Intersect PC polygons with district boundaries for each time period
-    2. Calculate the proportion of each PC's area falling into each district
-    3. Weight PC-level outcomes by these proportions when aggregating to districts
-    
-    This ensures that a PC split across two districts contributes proportionally to both.
-    """)
-    
-    # Create sample visualization
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("#### Before: Misaligned Boundaries")
-        st.image("https://via.placeholder.com/400x300?text=PC+Polygons+Overlapping+Districts", 
-                 caption="Polling Centers don't align with district boundaries")
-    
-    with col2:
-        st.markdown("#### After: Cookie-Cutter Weights")
-        st.image("https://via.placeholder.com/400x300?text=Weighted+PC+Assignments", 
-                 caption="Each PC weighted by area proportion in each district")
-    
-    st.markdown("### Weight Calculation Formula")
-    st.latex(r"""
-    w_{pc,d} = \frac{\text{Area}(PC_{pc} \cap District_d)}{\text{Area}(PC_{pc})}
-    """)
+    st.markdown("### Solving the MAUP: How We Assigned PCs to Districts")
     
     st.markdown("""
-    Where:
-    - $w_{pc,d}$ = weight of polling center $pc$ in district $d$
-    - $\text{Area}(PC_{pc} \cap District_d)$ = intersection area
-    - $\sum_d w_{pc,d} = 1$ for each PC (weights sum to 1)
+    **The Problem**: Polling Center (PC) boundaries from 2004 don't perfectly align with 1991 District boundaries.
+    A single PC can span multiple districts. Simply assigning a PC to one district creates measurement error 
+    (the Modifiable Areal Unit Problem - MAUP).
+    
+    **Our Solution**: Use a "cookie-cutter" spatial intersection method:
+    1. Overlay PC and District geometries
+    2. Calculate the intersection area for each PC-District pair
+    3. Compute weights: `weight = intersection_area / total_PC_area`
+    4. Use these weights to allocate election data proportionally
     """)
     
-    # Sample data table
-    st.markdown("### Example: PC Weight Assignments")
-    sample_weights = pd.DataFrame({
-        'PC_ID': ['PC001', 'PC002', 'PC003', 'PC004'],
-        'District_1991': ['D1', 'D1', 'D2', 'D2'],
-        'District_1996': ['D1', 'D1_new', 'D1_new', 'D2'],
-        'Weight_1991': [1.0, 1.0, 1.0, 1.0],
-        'Weight_1996': [0.7, 0.6, 0.8, 1.0]
-    })
-    st.dataframe(sample_weights, width="stretch")
+    # Check if data exists
+    data_dir = Path("data")
+    crosswalk_file = data_dir / "PC2004_to_Dist1991_Weightage_Crosswalk (1).csv"
     
-    st.info("✅ **Result**: All subsequent analyses use these spatially-weighted PC assignments, ensuring comparability across time periods despite boundary changes.")
+    if crosswalk_file.exists():
+        st.success("✅ **Spatial Crosswalk Found**: Loading pre-computed weights...")
+        
+        # Load the crosswalk
+        crosswalk = pd.read_csv(crosswalk_file)
+        
+        # Display sample
+        st.subheader("Sample of Spatial Crosswalk Weights")
+        display_cols = [col for col in ['pc_name', 'district_clean', 'pc_weight', 'pc91_district_id'] if col in crosswalk.columns]
+        st.dataframe(crosswalk[display_cols].head(10), use_container_width=True)
+        
+        # Validation check
+        if 'pc_name' in crosswalk.columns and 'pc_weight' in crosswalk.columns:
+            pc_weights_sum = crosswalk.groupby('pc_name')['pc_weight'].sum().reset_index()
+            pc_weights_sum.columns = ['PC Name', 'Sum of Weights']
+            
+            st.subheader("Validation: Do PC Weights Sum to 1.0?")
+            st.markdown(f"""
+            - Total PCs in crosswalk: **{crosswalk['pc_name'].nunique()}**
+            - Total intersection slices: **{len(crosswalk)}**
+            - Mean weight sum per PC: **{pc_weights_sum['Sum of Weights'].mean():.4f}**
+            - Min weight sum: **{pc_weights_sum['Sum of Weights'].min():.4f}**
+            - Max weight sum: **{pc_weights_sum['Sum of Weights'].max():.4f}**
+            """)
+            
+            # Show distribution histogram using Plotly
+            import plotly.express as px
+            fig = px.histogram(pc_weights_sum, x='Sum of Weights', nbins=20, 
+                              title='Distribution of PC Weight Sums (Should cluster around 1.0)',
+                              labels={'Sum of Weights': 'Sum of Weights per PC'})
+            fig.add_vline(x=1.0, line_dash="dash", line_color="red", annotation_text="Ideal = 1.0")
+            st.plotly_chart(fig, use_container_width=True)
+        
+        st.info("""
+        ✅ **Result**: All subsequent analyses use these spatially-weighted PC assignments, 
+        ensuring that election data is allocated to districts proportionally based on geographic overlap.
+        This solves the MAUP problem and prevents measurement error from biasing our DiD estimates.
+        """)
+        
+    else:
+        st.warning("⚠️ Spatial crosswalk file not found. Please ensure the data files are uploaded.")
+        st.markdown("""
+        Expected files in `data/` folder:
+        - `PC2004_to_Dist1991_Weightage_Crosswalk (1).csv`
+        - `Pristine_Census_Map_1991_Final.geojson`
+        - `PC_2004_Data_from_ARCGIS.geojson`
+        """)
 
 
 # ---------------------------------------------------------
 # TAB 2: THE CORE CODE
 # ---------------------------------------------------------
 with tab_code:
-    st.markdown("### Under the Hood: Geospatial Implementation")
+    st.markdown("### Under the Hood: Spatial Engineering Implementation")
     
-    # This automatically reads the exact file it is sitting in!
+    st.markdown("""
+    This script performs the geographic intersection using GeoPandas:
+    1. Loads PC and District shapefiles
+    2. Projects to Cylindrical Equal-Area (EPSG:6933) for accurate area calculation
+    3. Performs overlay intersection (the "cookie cutter")
+    4. Calculates normalized weights for each PC-District pair
+    """)
+    
+    # Read this file's own source code
     with open(__file__, "r") as f:
         source_code = f.read()
         
