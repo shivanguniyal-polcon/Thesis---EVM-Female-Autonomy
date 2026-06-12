@@ -1,0 +1,216 @@
+st_name,pc_name,DISTRICT
+Andhra Pradesh,Hyderabad,Gulbarga
+Andhra Pradesh,Hyderabad,Hyderabad
+Andhra Pradesh,Hyderabad,Mahbubnagar
+Andhra Pradesh,Hyderabad,Medak
+Andhra Pradesh,Hyderabad,Nalgonda
+Andhra Pradesh,Hyderabad,Rangareddi
+Andhra Pradesh,Secunderabad,Hyderabad
+Andhra Pradesh,Secunderabad,Rangareddi
+Chandigarh,Chandigarh,Chandigarh
+Chandigarh,Chandigarh,Panchkula
+Chandigarh,Chandigarh,Patiala
+Chandigarh,Chandigarh,Rupnagar
+Delhi  & NCR,Chandni Chowk,Central
+Delhi  & NCR,Chandni Chowk,North
+Delhi  & NCR,Delhi Sadar,North
+Delhi  & NCR,Delhi Sadar,North West
+Delhi  & NCR,Delhi Sadar,South West
+Delhi  & NCR,Delhi Sadar,West
+Delhi  & NCR,East Delhi,Central
+Delhi  & NCR,East Delhi,East
+Delhi  & NCR,East Delhi,Ghaziabad
+Delhi  & NCR,East Delhi,New Delhi
+Delhi  & NCR,East Delhi,North
+Delhi  & NCR,East Delhi,North East
+Delhi  & NCR,East Delhi,North West
+Delhi  & NCR,East Delhi,Sonipat
+Delhi  & NCR,East Delhi,South
+Delhi  & NCR,Karol Bagh,Central
+Delhi  & NCR,Karol Bagh,New Delhi
+Delhi  & NCR,Karol Bagh,North
+Delhi  & NCR,Karol Bagh,South West
+Delhi  & NCR,Karol Bagh,West
+Delhi  & NCR,New Delhi,Central
+Delhi  & NCR,New Delhi,East
+Delhi  & NCR,New Delhi,New Delhi
+Delhi  & NCR,New Delhi,North
+Delhi  & NCR,New Delhi,South
+Delhi  & NCR,New Delhi,South West
+Delhi  & NCR,Outer Delhi,Faridabad
+Delhi  & NCR,Outer Delhi,Gautam Buddha Nagar
+Delhi  & NCR,Outer Delhi,Gurgaon
+Delhi  & NCR,Outer Delhi,Jhajjar
+Delhi  & NCR,Outer Delhi,North West
+Delhi  & NCR,Outer Delhi,Sonipat
+Delhi  & NCR,Outer Delhi,South
+Delhi  & NCR,Outer Delhi,South West
+Delhi  & NCR,Outer Delhi,West
+Delhi  & NCR,South Delhi,East
+Delhi  & NCR,South Delhi,New Delhi
+Delhi  & NCR,South Delhi,South
+Delhi  & NCR,South Delhi,South West
+Delhi  & NCR,South Delhi,West
+Goa,Mormugao,Belgaum
+Goa,Mormugao,North Goa
+Goa,Mormugao,Sindhudurg
+Goa,Mormugao,South Goa
+Goa,Mormugao,Uttara Kannada
+Goa,Panaji,North Goa
+Goa,Panaji,South Goa
+Goa,Panaji,Uttara Kannada
+Gujarat,Ahmedabad,Ahmadabad
+Gujarat,Gandhinagar,Ahmadabad
+Gujarat,Gandhinagar,Gandhinagar
+Gujarat,Gandhinagar,Mahesana
+Gujarat,Gandhinagar,Sabar Kantha
+Haryana,Karnal,Baghpat
+Haryana,Karnal,Jind
+Haryana,Karnal,Kaithal
+Haryana,Karnal,Karnal
+Haryana,Karnal,Kurukshetra
+Haryana,Karnal,Muzaffarnagar
+Haryana,Karnal,Panipat
+Haryana,Karnal,Saharanpur
+Haryana,Karnal,Sonipat
+Haryana,Rohtak,Bhiwani
+Haryana,Rohtak,Gurgaon
+Haryana,Rohtak,Hisar
+Haryana,Rohtak,Jhajjar
+Haryana,Rohtak,Mahendragarh
+Haryana,Rohtak,Rewari
+Haryana,Rohtak,Rohtak
+Haryana,Rohtak,Sonipat
+Haryana,Rohtak,South West
+Karnataka,Bangalore North,Bangalore
+Karnataka,Bangalore North,Bangalore Rural
+Karnataka,Bangalore North,Kolar
+Karnataka,Bangalore South,Bangalore
+Karnataka,Bangalore South,Bangalore Rural
+Karnataka,Bangalore South,Dharmapuri
+Karnataka,Bangalore South,Kolar
+Karnataka,Mysore,Chamarajanagar
+Karnataka,Mysore,Hassan
+Karnataka,Mysore,Kodagu
+Karnataka,Mysore,Mandya
+Karnataka,Mysore,Mysore
+Karnataka,Mysore,Wayanad
+Kerala,Ernakulam,Alappuzha
+Kerala,Ernakulam,Ernakulam
+Kerala,Ernakulam,Kottayam
+Madhya Pradesh,Bhopal,Betul
+Madhya Pradesh,Bhopal,Chhindwara
+Madhya Pradesh,Bhopal,Damoh
+Madhya Pradesh,Bhopal,Harda
+Madhya Pradesh,Bhopal,Hoshangabad
+Madhya Pradesh,Bhopal,Jabalpur
+Madhya Pradesh,Bhopal,Narsimhapur
+Madhya Pradesh,Bhopal,Raisen
+Madhya Pradesh,Bhopal,Sehore
+Madhya Pradesh,Gwalior,Datia
+Madhya Pradesh,Gwalior,Gwalior
+Madhya Pradesh,Gwalior,Jhansi
+Madhya Pradesh,Gwalior,Morena
+Madhya Pradesh,Gwalior,Shivpuri
+Maharashtra,Mumbai North Central,Mumbai
+Maharashtra,Mumbai North Central,Mumbai (Suburban)
+Maharashtra,Mumbai North East,Mumbai (Suburban)
+Maharashtra,Mumbai North West,Mumbai
+Maharashtra,Mumbai North West,Mumbai (Suburban)
+Maharashtra,Mumbai South,Mumbai
+Maharashtra,Mumbai South Central,Mumbai
+Orissa,Bhubaneswar,Anugul
+Orissa,Bhubaneswar,Baudh
+Orissa,Bhubaneswar,Cuttack
+Orissa,Bhubaneswar,Ganjam
+Orissa,Bhubaneswar,Kandhamal
+Orissa,Bhubaneswar,Khordha
+Orissa,Bhubaneswar,Nayagarh
+Orissa,Bhubaneswar,Puri
+Punjab,Faridkot,Bathinda
+Punjab,Faridkot,Faridkot
+Punjab,Faridkot,Firozpur
+Punjab,Faridkot,Hanumangarh
+Punjab,Faridkot,Ludhiana
+Punjab,Faridkot,Moga
+Punjab,Faridkot,Muktsar
+Punjab,Faridkot,Sangrur
+Punjab,Faridkot,Sirsa
+Punjab,Patiala,Ambala
+Punjab,Patiala,Chandigarh
+Punjab,Patiala,Fatehabad
+Punjab,Patiala,Fatehgarh Sahib
+Punjab,Patiala,Jind
+Punjab,Patiala,Kaithal
+Punjab,Patiala,Kurukshetra
+Punjab,Patiala,Mansa
+Punjab,Patiala,Panchkula
+Punjab,Patiala,Patiala
+Punjab,Patiala,Rupnagar
+Punjab,Patiala,Sangrur
+Punjab,Tarn Taran,Amritsar
+Punjab,Tarn Taran,Firozpur
+Punjab,Tarn Taran,Gurdaspur
+Punjab,Tarn Taran,Kapurthala
+Rajasthan,Ajmer,Ajmer
+Rajasthan,Ajmer,Bhilwara
+Rajasthan,Ajmer,Jaipur
+Rajasthan,Ajmer,Nagaur
+Rajasthan,Ajmer,Pali
+Rajasthan,Ajmer,Rajsamand
+Rajasthan,Ajmer,Tonk
+Rajasthan,Jaipur,Dausa
+Rajasthan,Jaipur,Jaipur
+Rajasthan,Jaipur,Tonk
+Tamil Nadu,Coimbatore,Coimbatore
+Tamil Nadu,Coimbatore,Erode
+Tamil Nadu,Coimbatore,Palakkad
+Tamil Nadu,Madras Central,Chennai
+Tamil Nadu,Madras Central,Kancheepuram
+Tamil Nadu,Madras Central,Thiruvallur
+Tamil Nadu,Madras South,Chennai
+Tamil Nadu,Madras South,Kancheepuram
+Tamil Nadu,Madurai,Dindigul
+Tamil Nadu,Madurai,Madurai
+Tamil Nadu,Madurai,Sivaganga
+Tamil Nadu,Madurai,Tiruchirappalli
+Tamil Nadu,Puducherry,Cuddalore
+Tamil Nadu,Puducherry,East Godavari
+Tamil Nadu,Puducherry,Kannur
+Tamil Nadu,Puducherry,Karaikal
+Tamil Nadu,Puducherry,Kozhikode
+Tamil Nadu,Puducherry,Mahe
+Tamil Nadu,Puducherry,Nagapattinam
+Tamil Nadu,Puducherry,Pondicherry
+Tamil Nadu,Puducherry,Thiruvarur
+Tamil Nadu,Puducherry,Viluppuram
+Tamil Nadu,Puducherry,Yanam
+Tamil Nadu,Trivandrum,Kanniyakumari
+Tamil Nadu,Trivandrum,Thiruvananthapuram
+Uttar Pradesh,Agra,Agra
+Uttar Pradesh,Agra,Bharatpur
+Uttar Pradesh,Agra,Firozabad
+Uttar Pradesh,Agra,Hathras
+Uttar Pradesh,Agra,Mathura
+Uttar Pradesh,Allahabad,Allahabad
+Uttar Pradesh,Allahabad,Chitrakoot
+Uttar Pradesh,Allahabad,Kaushambi
+Uttar Pradesh,Allahabad,Mirzapur
+Uttar Pradesh,Allahabad,Rewa
+Uttar Pradesh,Allahabad,Sant Ravidas Nagar Bhadohi
+Uttar Pradesh,Kanpur,Kanpur Dehat
+Uttar Pradesh,Kanpur,Kanpur Nagar
+Uttar Pradesh,Kanpur,Unnao
+Uttar Pradesh,Lucknow,Barabanki
+Uttar Pradesh,Lucknow,Hardoi
+Uttar Pradesh,Lucknow,Lucknow
+Uttar Pradesh,Lucknow,Sitapur
+West Bengal,Calcutta North East,Haora
+West Bengal,Calcutta North East,Kolkata
+West Bengal,Calcutta North East,North Twenty Four Parganas
+West Bengal,Calcutta North East,South  Twenty Four Parganas
+West Bengal,Calcutta North West,Haora
+West Bengal,Calcutta North West,Kolkata
+West Bengal,Calcutta South,Haora
+West Bengal,Calcutta South,Kolkata
+West Bengal,Calcutta South,South  Twenty Four Parganas
