@@ -157,7 +157,7 @@ with tab_results:
         ]
     })
     
-    st.dataframe(coef_df, use_container_width=True)
+    st.dataframe(coef_df, width="stretch")
     
     st.markdown("### Marginal Effects by Urbanization Level")
     

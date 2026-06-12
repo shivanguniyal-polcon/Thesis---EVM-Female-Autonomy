@@ -64,7 +64,7 @@ with tab_results:
         'Weight_1991': [1.0, 1.0, 1.0, 1.0],
         'Weight_1996': [0.7, 0.6, 0.8, 1.0]
     })
-    st.dataframe(sample_weights, use_container_width=True)
+    st.dataframe(sample_weights, width="stretch")
     
     st.info("✅ **Result**: All subsequent analyses use these spatially-weighted PC assignments, ensuring comparability across time periods despite boundary changes.")
 

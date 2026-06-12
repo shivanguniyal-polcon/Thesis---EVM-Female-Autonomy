@@ -103,7 +103,7 @@ with tab_results:
         'p-value': ['0.847', '<0.001', '-', '-']
     })
     
-    st.dataframe(regression_results, use_container_width=True)
+    st.dataframe(regression_results, width="stretch")
     
     st.success("""
     **Conclusion**: The parallel trends assumption holds. We can proceed with 

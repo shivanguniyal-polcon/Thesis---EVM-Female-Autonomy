@@ -40,7 +40,7 @@ with tab_results:
         'Mapping_Type': ['1:1', '1:many', '1:1', 'many:1', '1:1']
     })
     
-    st.dataframe(mapping_data, use_container_width=True)
+    st.dataframe(mapping_data, width="stretch")
     
     st.markdown("### Mapping Logic")
     
@@ -71,8 +71,7 @@ with tab_results:
         st.image("https://via.placeholder.com/400x300?text=Harmonized+District+IDs", 
                  caption="All PCs assigned consistent district IDs across time")
     
-    st.success("✅ **Result**: Every PC observation now has a consistent district ID 
-    that can be tracked across all election years (1991-2009).")
+    st.success("✅ **Result**: Every PC observation now has a consistent district ID that can be tracked across all election years (1991-2009).")
 
 
 # ---------------------------------------------------------

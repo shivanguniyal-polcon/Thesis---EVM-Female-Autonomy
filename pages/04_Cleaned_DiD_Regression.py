@@ -106,7 +106,7 @@ with tab_results:
         'p-value': [f"{pval:.4f}", '<0.001']
     })
     
-    st.dataframe(regression_table, use_container_width=True)
+    st.dataframe(regression_table, width="stretch")
     
     st.markdown("### Model Diagnostics")
     
