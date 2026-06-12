@@ -46,7 +46,7 @@ with tab_results:
         # 1. Load the three specific election files
         file_96 = os.path.join(data_path, "1996_election_data_corrected.csv")
         file_98 = os.path.join(data_path, "1998_election_data_corrected.csv")
-        file_99 = os.path.join(data_path, "1999_election_data_corrected.csvv")
+        file_99 = os.path.join(data_path, "1999_election_data_corrected.csv")
         
         if not all(os.path.exists(f) for f in [file_96, file_98, file_99]):
             st.error("⚠️ Missing one or more election files (1996, 1998, 1999). Please check the `data/` folder.")
