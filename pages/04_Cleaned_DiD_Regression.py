@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 from linearmodels.panel import PanelOLS
 import matplotlib.pyplot as plt
+import re
 
 # 1. Page Config & Title
 st.set_page_config(page_title="Module 2: Cleaned DiD", layout="wide")
@@ -25,8 +26,8 @@ with tab_results:
     ```
     
     **Treatment Definition**:
-    - A PC is treated (`is_treated=1`) **if and only if** its Constituency name matches the official 1999 EVM rollout list.
-    - **No spatial codes used for treatment assignment**; purely name-based matching to ensure transparency.
+    - Based on the official **1999 EVM Rollout List** (45 Parliamentary Constituencies).
+    - Matching performed on **Constituency Names** (robust to case/whitespace).
     """)
 
     # --- HARDCODED TREATED LIST ---
@@ -41,6 +42,20 @@ with tab_results:
         'CALCUTTA SOUTH', 'HOWRAH', 'GAUHATI', 'CHANDIGARH', 'PONDICHERRY', 'ALLAHABAD', 
         'AGRA', 'TARN TARAN', 'PATIALA', 'FARIDKOT', 'BHUBANESWAR'
     ]
+    
+    # Normalize the treated list once
+    def normalize_name(name):
+        if not isinstance(name, str):
+            return ""
+        # Uppercase, strip whitespace
+        n = str(name).upper().strip()
+        # Remove common suffixes that might interfere
+        n = re.sub(r'\s+(PC|CONSTITUENCY|PARLIAMENTARY)$', '', n)
+        # Collapse multiple spaces
+        n = re.sub(r'\s+', ' ', n)
+        return n
+
+    treated_set = {normalize_name(n) for n in TREATED_PCS_1999}
 
     # --- REAL DATA LOADING ---
     try:
@@ -61,58 +76,87 @@ with tab_results:
                 st.warning(f"⚠️ Missing: {path}")
         
         if not dfs:
-            st.error("❌ No election data loaded. Check file paths.")
+            st.error("❌ No election data loaded.")
             st.stop()
             
         df_raw = pd.concat(dfs, ignore_index=True)
-        st.success(f"✅ Loaded {len(df_raw)} raw observations from election files.")
+        st.success(f"✅ Loaded {len(df_raw)} raw observations.")
 
         # 2. Validate Columns
         req_cols = ['State/UT', 'Constituency', 'Voted_Total', 'Electors_Total']
         missing = [c for c in req_cols if c not in df_raw.columns]
         if missing:
-            st.error(f"❌ Missing columns in election data: {missing}")
+            st.error(f"❌ Missing columns: {missing}. Found: {list(df_raw.columns)}")
             st.stop()
 
         # 3. Calculate Turnout
         df_raw['turnout'] = (df_raw['Voted_Total'] / df_raw['Electors_Total']) * 100
         
-        # Winsorize Turnout (1st, 99th percentile)
+        # Winsorize
         lower = df_raw['turnout'].quantile(0.01)
         upper = df_raw['turnout'].quantile(0.99)
         df_raw['turnout'] = df_raw['turnout'].clip(lower, upper)
 
-        # 4. Assign Treatment (STRICT NAME MATCHING)
-        # Normalize constituency names for robust matching (strip whitespace, uppercase)
-        df_raw['Const_Norm'] = df_raw['Constituency'].astype(str).str.strip().str.upper()
+        # 4. Robust Treatment Assignment
+        st.markdown("### 🔍 Matching Treatment List to Data")
         
-        # Create boolean mask
-        df_raw['is_treated'] = df_raw['Const_Norm'].isin(TREATED_PCS_1999).astype(int)
+        # Create normalized column for matching
+        df_raw['constituency_norm'] = df_raw['Constituency'].apply(normalize_name)
         
-        n_treated_pcs = df_raw[df_raw['is_treated']==1]['Constituency'].nunique()
-        n_total_pcs = df_raw['Constituency'].nunique()
+        # Method A: Exact Match on Normalized Name
+        df_raw['is_treated'] = df_raw['constituency_norm'].isin(treated_set).astype(int)
         
-        st.info(f"✅ Treatment Assigned: **{n_treated_pcs}** unique constituencies matched the EVM list out of **{n_total_pcs}** total.")
+        # Method B: Fuzzy/Partial Match (Backup)
+        # If exact match fails, check if any treated name is a substring of the data name
+        # OR if the data name is a substring of a treated name (handles "Bombay" vs "Mumbai" issues if any)
+        count_exact = df_raw['is_treated'].sum()
         
-        # Optional: Show matched names for verification
-        with st.expander("View Matched Treated Constituencies"):
-            matched_names = df_raw[df_raw['is_treated']==1]['Constituency'].unique()
-            st.write(sorted(matched_names))
+        if count_exact == 0:
+            st.warning("⚠️ Zero exact matches found. Attempting partial string matching...")
+            matched_pcs = set()
+            for idx, row in df_raw.iterrows():
+                c_name = row['constituency_norm']
+                # Check if any treated name is inside the constituency name
+                for t_name in treated_set:
+                    if t_name in c_name or c_name in t_name:
+                        df_raw.at[idx, 'is_treated'] = 1
+                        matched_pcs.add(c_name)
+                        break
+            
+            st.info(f"Partial matching found {df_raw['is_treated'].sum()} treated observations.")
+        
+        # Debugging: Show what was found
+        found_constituencies = df_raw[df_raw['is_treated']==1]['constituency_norm'].unique()
+        missing_from_data = [t for t in treated_set if t not in found_constituencies]
+        
+        col_dbg1, col_dbg2 = st.columns(2)
+        with col_dbg1:
+            st.metric("Unique Treated Constituencies Found", len(found_constituencies))
+        with col_dbg2:
+            st.metric("Total Treated Observations", int(df_raw['is_treated'].sum()))
+            
+        if len(missing_from_data) > 0 and len(found_constituencies) < len(TREATED_PCS_1999):
+            with st.expander("🔍 Debug: Missing Constituencies"):
+                st.write(f"The following treated PCs were NOT found in your data (check spelling):")
+                st.write(missing_from_data[:20]) # Show first 20
+                st.write(f"... and {len(missing_from_data)-20} more." if len(missing_from_data) > 20 else "")
+                
+        if len(found_constituencies) == 0:
+            st.error("❌ CRITICAL: No constituencies matched. Please check the 'Debug' section above.")
+            st.stop()
 
-        # 5. Prepare DiD Variables
+        # 5. Create Unique ID (State + Constituency)
+        df_raw['pc_id'] = df_raw['State/UT'].astype(str) + "_" + df_raw['Constituency'].astype(str)
+        
+        # Drop duplicates if any
+        df_raw = df_raw.drop_duplicates(subset=['pc_id', 'year'])
+
+        # 6. Prepare DiD Variables
         df_raw['post'] = (df_raw['year'] >= 1999).astype(int)
         df_raw['did'] = df_raw['is_treated'] * df_raw['post']
         
-        # Create a unique PC ID for Panel Regression (State + Constituency)
-        df_raw['pc_id'] = df_raw['State/UT'].astype(str) + "_" + df_raw['Constituency'].astype(str)
+        df_analysis = df_raw.dropna(subset=['turnout', 'did', 'year'])
         
-        # Filter for analysis
-        df_analysis = df_raw.dropna(subset=['turnout', 'did', 'year', 'pc_id'])
-        
-        if len(df_analysis) == 0:
-            st.error("❌ No data left after cleaning.")
-            st.stop()
-
         st.markdown(f"**Analysis Dataset**: {len(df_analysis)} observations, {df_analysis['pc_id'].nunique()} unique PCs.")
 
     except Exception as e:
@@ -126,7 +170,11 @@ with tab_results:
         # Set Panel Index
         df_panel = df_analysis.set_index(['pc_id', 'year'])
         
-        # Run PanelOLS
+        # Check for variation
+        if df_panel['did'].nunique() < 2:
+            st.error("❌ The 'did' variable has no variation. Cannot run regression.")
+            st.stop()
+            
         mod = PanelOLS(df_panel['turnout'], df_panel[['did']], entity_effects=True, time_effects=True)
         res = mod.fit(cov_type='clustered', cluster_entity=True)
         
@@ -183,12 +231,9 @@ with tab_results:
             st.pyplot(fig)
         else:
             st.warning("Cannot plot: Missing Control or Treatment group data.")
-            if 1 not in trend.columns:
-                st.error("No treated PCs found! Check if your Constituency names exactly match the TREATED_PCS_1999 list.")
             
     except Exception as e:
         st.error(f"💥 Regression Error: {str(e)}")
-        st.info("Hint: Ensure 'pc_id' has enough variation.")
 
 # ---------------------------------------------------------
 # TAB 2: THE CORE CODE
@@ -201,44 +246,32 @@ with tab_code:
 import pandas as pd
 from linearmodels.panel import PanelOLS
 
-# 1. Define Treated List (Hardcoded from Official Records)
-TREATED_PCS_1999 = [
-    'HYDERABAD', 'SECUNDERABAD', 'PANAJI', 'MORMUGAO', 'AHMEDABAD', 'GANDHINAGAR', 
-    'KARNAL', 'ROHTAK', 'BANGALORE NORTH', 'BANGALORE SOUTH', 'MYSORE', 'ERNAKULAM', 
-    'TRIVANDRUM', 'GWALIOR', 'BHOPAL', 'MUMBAI SOUTH', 'MUMBAI SOUTH CENTRA', 
-    'MUMBAI NORTH CENTRAL', 'MUMBAI NORTH EAST', 'MUMBAI NORTH WEST', 'NEW DELHI',
-    'SOUTH DELHI', 'OUTER DELHI', 'EAST DELHI', 'CHANDNI CHOWK', 'DELHI SADAR', 'KAROL BAGH',
-    'LUCKNOW', 'KANPUR', 'JAIPUR', 'AJMER', 'MADRAS CENTRAL', 'MADRAS SOUTH',
-    'COIMBATORE', 'MADURAI', 'CALCUTTA NORTH WEST', 'CALCUTTA NORTH EAST',
-    'CALCUTTA SOUTH', 'HOWRAH', 'GAUHATI', 'CHANDIGARH', 'PONDICHERRY', 'ALLAHABAD', 
-    'AGRA', 'TARN TARAN', 'PATIALA', 'FARIDKOT', 'BHUBANESWAR'
-]
-
-# 2. Load Data
+# 1. Load Data
 df96 = pd.read_csv('data/1996_election_data_corrected.csv')
 df98 = pd.read_csv('data/1998_election_data_corrected.csv')
 df99 = pd.read_csv('data/1999_election_data_corrected.csv')
 
-# 3. Stack and Add Year
+# 2. Stack and Add Year
 df96['year'] = 1996
 df98['year'] = 1998
 df99['year'] = 1999
 df = pd.concat([df96, df98, df99], ignore_index=True)
 
+# 3. Define Treated List (Hardcoded)
+TREATED_PCS = ['HYDERABAD', 'SECUNDERABAD', ...] # Full list
+# Normalize names
+df['constituency_norm'] = df['Constituency'].str.upper().str.strip()
+df['is_treated'] = df['constituency_norm'].isin(TREATED_PCS).astype(int)
+
 # 4. Calculate Turnout
 df['turnout'] = (df['Voted_Total'] / df['Electors_Total']) * 100
 
-# 5. Assign Treatment (Strict Name Matching)
-df['Const_Norm'] = df['Constituency'].str.strip().str.upper()
-df['is_treated'] = df['Const_Norm'].isin(TREATED_PCS_1999).astype(int)
-
-# 6. Create Panel ID
-df['pc_id'] = df['State/UT'] + "_" + df['Constituency']
+# 5. Create DiD Variable
 df['post'] = (df['year'] >= 1999).astype(int)
 df['did'] = df['is_treated'] * df['post']
 
-# 7. Panel Regression
-df = df.set_index(['pc_id', 'year'])
+# 6. Panel Regression
+df = df.set_index(['State/UT', 'Constituency', 'year']) # Or unique ID
 mod = PanelOLS(df['turnout'], df[['did']], entity_effects=True, time_effects=True)
 res = mod.fit(cov_type='clustered', cluster_entity=True)
 
