@@ -12,13 +12,13 @@ Expanding to 426 districts, electoral and 1991 Census data are spatially joined.
 - **Data**: 
   - Urbanization: Treated Mean=65.2%, Control Mean=31.4% (Diff=+33.8%, p<0.001).
   - Literacy: Treated Mean=72.1%, Control Mean=53.5% (Diff=+18.6%, p<0.001).
-- **Inference**: Treatment assignment was non-random. EVMs were deployed in significantly more developed districts.
+- **Inference**: Treatment assignment was non-random. EVMs were deployed in significantly more developed districts. Proof for the ECI document.
 
 **Step 2: Multivariate OLS (`Step2_Multivariate_OLS.csv`)**
 - **Data**: 
   - Model 1 (Bivariate): β=-7.10 (p<0.001).
   - Model 2 (+Demographics + State FE): β=-3.20 (SE=1.51, p=0.034).
-  - R² Jump: 0.042 → 0.684.
+  - R² Jump: 0.042 to 0.684.
 - **Inference**: Once we account for urbanization, literacy, and state-specific factors, the "EVM penalty" shrinks drastically. The remaining effect is marginally significant (p<0.05).
 
 **Visualizations**
