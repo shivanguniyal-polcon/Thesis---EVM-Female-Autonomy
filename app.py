@@ -12,9 +12,10 @@ def inject_glowing_numbers(text):
     if not text: 
         return text
         
-    # Regex matches integers, decimals, negatives, and percentages.
-    # ADDED: (?!\.\s) and (?!\)\s) to prevent matching ordered list markers like "1. " or "1) "
-    pattern = r'(?<![/=\w])(-?\d+(?:\.\d+)?%?)(?![/\w>]|(?:\.\s)|(?:\)\s))'
+    # Robust regex for statistical summaries:
+    # Lookbehind: Ignores numbers attached to letters, underscores, or slashes (e.g., Project1, http://site/123)
+    # Lookahead: Ignores Markdown list markers like "1. " or "1) " so your bullets don't break.
+    pattern = r'(?<![a-zA-Z0-9_/])(-?\d+(?:\.\d+)?%?)(?![a-zA-Z0-9_]|\.\s|\)\s)'
     
     return re.sub(pattern, r'<span class="glow-number">\1</span>', text)
 
@@ -156,24 +157,16 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- RESTORED CSS FOR GLOWING NUMBERS ---
+# --- CSS FOR HIGHLIGHTED NUMBERS (COLOR ONLY) ---
 st.markdown("""
 <style>
-    /* Glowing green style for numbers - updated for modern Streamlit data-testid */
+    /* Simple color change for numbers - updated for modern Streamlit data-testid */
     [data-testid="stMarkdown"] .glow-number, 
     [data-testid="stExpander"] .glow-number,
     .stMarkdown .glow-number, 
     .stExpander .glow-number {
-        color: #00FF41 !important;
-        text-shadow: 0 0 5px rgba(0, 255, 65, 0.8), 0 0 10px rgba(0, 255, 65, 0.4) !important;
+        color: #00FF41 !important; /* Bright neon green */
         font-weight: bold !important;
-        background-color: rgba(0, 40, 0, 0.5) !important;
-        padding: 1px 5px !important;
-        border-radius: 4px !important;
-        border: 1px solid rgba(0, 255, 65, 0.3) !important;
-        font-family: monospace !important;
-        display: inline-block !important;
-        margin: 0 1px !important;
     }
 </style>
 """, unsafe_allow_html=True)
