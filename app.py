@@ -9,7 +9,7 @@ def extract_core_code(file_path):
     """
     Extracts code between '# [CORE START]' and '# [CORE END]' markers.
     If markers are not found, it falls back to returning the entire file.
-    Filters out streamlit commands and plt.show() to prevent layout breaking.
+    Also filters out streamlit commands and plt.show() to prevent layout breaking.
     """
     START_MARKER = "# [CORE START]"
     END_MARKER = "# [CORE END]"
@@ -74,41 +74,55 @@ def natural_sort_key(s):
 def parse_description(content):
     """
     Parses the description.md content into three parts:
-    1. process_summary: The first paragraph (before the first double newline or '##').
-    2. outcome_data: The section between '## Summary Outcome (Data)' and '## Detailed Sequential Analysis'.
-    3. detailed_analysis: The section after '## Detailed Sequential Analysis'.
+    1. Process Summary (First paragraph before '##' or first blank line if no header)
+    2. Outcome Summary (The block containing 'Numbers', 'Proves', 'Needs Proving')
+    3. Detailed Analysis (The rest, usually starting from '## Detailed Sequential Analysis')
     """
     lines = content.split('\n')
     
     process_summary = []
-    outcome_data = []
+    outcome_summary = []
     detailed_analysis = []
     
-    current_section = 'process'
+    state = 'process' # 'process', 'outcome', 'detailed'
     
-    for line in lines:
+    # Heuristic parsing based on expected structure
+    # We look for specific headers or content markers
+    
+    i = 0
+    while i < len(lines):
+        line = lines[i]
         stripped = line.strip()
         
-        # Detect section headers
-        if stripped.startswith("## Summary Outcome (Data)"):
-            current_section = 'outcome'
-            continue
-        elif stripped.startswith("## Detailed Sequential Analysis"):
-            current_section = 'detailed'
+        # Detect start of Outcome Summary (look for "Summary of Outcome" or "Numbers:")
+        if "Summary of Outcome" in stripped or (stripped.startswith("**Numbers:**") and state == 'process'):
+            state = 'outcome'
+            # Don't append the header itself to outcome if we want just content, 
+            # but usually we want the whole block. Let's include it.
+            outcome_summary.append(line)
+            i += 1
             continue
             
-        # Assign lines to sections
-        if current_section == 'process':
-            # Stop collecting process summary if we hit a new major header or empty line after some text
-            if stripped.startswith("# ") and not stripped.startswith("##"):
-                continue # Skip main title if present
+        # Detect start of Detailed Analysis (look for "Detailed Sequential Analysis")
+        if "Detailed Sequential Analysis" in stripped:
+            state = 'detailed'
+            detailed_analysis.append(line)
+            i += 1
+            continue
+            
+        # Append to current state
+        if state == 'process':
+            # Stop process summary if we hit a major header that isn't outcome/detailed (unlikely given structure)
+            # Or just collect until we hit the outcome marker
             process_summary.append(line)
-        elif current_section == 'outcome':
-            outcome_data.append(line)
-        elif current_section == 'detailed':
+        elif state == 'outcome':
+            outcome_summary.append(line)
+        elif state == 'detailed':
             detailed_analysis.append(line)
             
-    return "\n".join(process_summary), "\n".join(outcome_data), "\n".join(detailed_analysis)
+        i += 1
+        
+    return "\n".join(process_summary), "\n".join(outcome_summary), "\n".join(detailed_analysis)
 
 # --- 1. Page Configuration ---
 st.set_page_config(
@@ -146,25 +160,25 @@ st.header(f"📁 {selected_project.replace('_', ' ').title()}")
 description_file = os.path.join(project_path, "description.md")
 if os.path.exists(description_file):
     with open(description_file, "r", encoding="utf-8") as f:
-        raw_content = f.read()
+        full_content = f.read()
     
-    process_summary, outcome_data, detailed_analysis = parse_description(raw_content)
+    process_sum, outcome_sum, detailed_sum = parse_description(full_content)
     
-    # 1. Always Visible: Summary of the Process
-    if process_summary.strip():
-        st.markdown(process_summary)
+    # 1. Always Visible: Process Summary
+    if process_sum.strip():
+        st.markdown(process_sum)
         st.markdown("---") # Separator
     
-    # 2. Always Visible: Summary of Outcome (Data)
-    if outcome_data.strip():
-        st.subheader("📊 Summary Outcome (Data)")
-        st.markdown(outcome_data)
+    # 2. Always Visible: Outcome Summary (Data)
+    if outcome_sum.strip():
+        st.subheader("💡 Summary of Outcome (Data)")
+        st.markdown(outcome_sum)
         st.markdown("---") # Separator
 
     # 3. Collapsible: Detailed Sequential Analysis
-    if detailed_analysis.strip():
-        with st.expander("🔍 Detailed Sequential Analysis (Click to Expand)", expanded=False):
-            st.markdown(detailed_analysis)
+    if detailed_sum.strip():
+        with st.expander("🔍 Detailed Sequential Analysis", expanded=False):
+            st.markdown(detailed_sum)
 else:
     st.info("No `description.md` found for this project.")
 
@@ -172,7 +186,7 @@ else:
 tab_data, tab_plots, tab_code = st.tabs(["📊 Datasets (CSV)", "🖼️ Visualizations (PNG)", "💻 Source Code"])
 
 # --- TAB 1: DATA ---
-with tab_data:
+with tab_
     csv_files = glob.glob(os.path.join(project_path, "*.csv"))
     csv_files.sort(key=lambda x: natural_sort_key(os.path.basename(x)))
     
@@ -235,7 +249,7 @@ with tab_code:
                 
             with st.expander(label, expanded=False):
                 if not is_core_only:
-                    st.caption("ℹ️ No core markers found. Displaying full script (UI commands filtered).")
+                    st.caption("ℹ️ No core markers found. Displaying full script.")
                 
                 st.code(display_code, language='python')
                 
