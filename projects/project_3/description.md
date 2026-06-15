@@ -1,13 +1,10 @@
 ### Process Summary
-Investigating heterogeneity, this step merges district-level economic agency proxies (female enterprise density) with the main dataset. The workflow centers on constructing an interaction term between the EVM treatment indicator and the continuous agency variable. We estimate an interaction model (
-Turnout∼EVM+Agency+EVM*Agency) and calculate marginal effects at specific percentiles (10th, 50th, 90th) of the agency distribution. The visual output is an interaction plot displaying the conditional effect of EVMs across the range of female economic agency, with confidence intervals.
+To explore heterogeneity, district-level female economic agency is interacted with the EVM treatment. The model calculates marginal effects at key percentiles, visualized via an interaction plot showing EVM's conditional impact across agency levels.
 
 ### Summary Outcome (Data)
 1. **Numbers**: N=426 districts. Interaction Term (EVM × Agency): β=-6.875 (SE=3.48, p=0.048). Marginal Effect at 90th Percentile Agency: -8.47 pp (p=0.0041). Marginal Effect at 10th Percentile: -0.92 pp (p=0.72).
 2. **What it Proves**: Heterogeneity. The negative effect is not uniform; it is concentrated almost entirely in high-agency districts. In low-agency districts, EVMs had no detectable impact.
 3. **What Still Needs Proving**: Temporal precedence. We need to ensure this interaction wasn't present before EVMs were introduced (Placebo test).
-
----
 
 ### Detailed Sequential Analysis
 
@@ -26,5 +23,5 @@ Turnout∼EVM+Agency+EVM*Agency) and calculate marginal effects at specific perc
 - **Inference**: A clear gradient. The effect scales with economic agency.
 
 **Visualizations**
-- `interaction_effect_plot.png`: Scatter plot with regression lines. The slope for EVM districts is steeply negative relative to agency, while non-EVM districts are flat. The lines diverge significantly at high agency values.
-- `marginal_effects_plot.png": Line plot showing the marginal effect of EVMs across the range of agency scores. The line dips below zero significantly only after the 40th percentile.
+- `Step3_Marginal_Effects_Plot.jpg`: This line graph depicts a downward-sloping marginal effect curve, demonstrating that the negative impact of EVM introduction on female voter turnout becomes progressively more severe as a district's baseline female enterprise density increases.
+- `Step3_Subsample_Heterogeneity.png:`: This coefficient plot reveals that EVM exposure significantly decreased female turnout in districts with high economic agency, whereas the effect in low agency districts was slightly positive but statistically indistinguishable from zero.
