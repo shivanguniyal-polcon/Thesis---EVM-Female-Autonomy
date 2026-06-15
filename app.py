@@ -210,7 +210,7 @@ if os.path.exists(description_file):
 
     # 3. Collapsible: Detailed Sequential Analysis
     if detailed_analysis:
-        with st.expander("🔍 Detailed Sequential Analysis (Click to Expand)", expanded=False):
+        with st.expander("Detailed Sequential Analysis (Click to Expand)", expanded=False):
             render_detailed_analysis(detailed_analysis)
 else:
     st.info("No `description.md` found for this project.")
@@ -263,7 +263,7 @@ with tab_plots:
                     st.image(png, caption=os.path.basename(png), use_container_width=True)
                     with open(png, "rb") as f:
                         st.download_button(
-                            label="📥 Download Image",
+                            label="Download Image",
                             data=f,
                             file_name=os.path.basename(png),
                             mime="image/png",
@@ -282,7 +282,7 @@ with tab_maps:
     all_geo.sort(key=lambda x: natural_sort_key(os.path.basename(x)))
     
     if all_geo:
-        st.info("ℹ️ Select a GeoJSON file to inspect its structure or download it for use in mapping tools.")
+        st.info("Select a GeoJSON file to inspect its structure or download it for use in mapping tools.")
         selected_geo = st.selectbox("Select a map file:", all_geo, key="geo_select")
         
         try:
@@ -309,7 +309,7 @@ with tab_maps:
             # Download Button
             with open(selected_geo, "rb") as f:
                 st.download_button(
-                    label="📥 Download GeoJSON",
+                    label="Download GeoJSON",
                     data=f,
                     file_name=os.path.basename(selected_geo),
                     mime="application/geo+json"
@@ -344,7 +344,7 @@ with tab_code:
                 
                 with open(py, "rb") as f:
                     st.download_button(
-                        label="📥 Download Full Script",
+                        label="Download Full Script",
                         data=f,
                         file_name=os.path.basename(py),
                         mime='text/plain',
