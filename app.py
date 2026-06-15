@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import glob
 import re
+import datetime
 
 # --- Helper Function for Extracting Core Code ---
 def extract_core_code(file_path):
@@ -72,10 +73,7 @@ def natural_sort_key(s):
 
 def parse_description_content(content):
     """
-    Parses the description.md content into three parts:
-    1. Process Summary (First paragraph before 'Outcome' or 'Numbers')
-    2. Outcome Summary (The structured Numbers/Proves/Needs Proving section)
-    3. Detailed Analysis (The rest, intended for the collapsible section)
+    Parses the description.md content into three parts.
     """
     lines = content.split('\n')
     
@@ -83,44 +81,25 @@ def parse_description_content(content):
     outcome_summary_lines = []
     detailed_analysis_lines = []
     
-    state = 'process' # 'process', 'outcome', 'detailed'
-    
-    # Heuristics to detect sections
-    # We assume the file structure is:
-    # [Process Summary Paragraphs]
-    # [Outcome Summary Header & Content]
-    # [Detailed Sequential Analysis Header & Content]
+    state = 'process' 
     
     i = 0
     while i < len(lines):
         line = lines[i].strip()
         
-        # Detect Outcome Section Start
         if "Summary of Outcome" in line or "Numbers:" in line or line.startswith("### Numbers"):
             state = 'outcome'
-            # Don't skip the line, add it to outcome
             outcome_summary_lines.append(lines[i])
             i += 1
             continue
             
-        # Detect Detailed Analysis Section Start
         if "Detailed Sequential Analysis" in line or line.startswith("## Detailed"):
             state = 'detailed'
-            # Skip the header itself if we want to render it inside the expander, 
-            # or keep it. Let's keep it for context inside the expander.
             detailed_analysis_lines.append(lines[i])
             i += 1
             continue
             
         if state == 'process':
-            # If we hit an empty line after some text, it might be the end of the summary
-            # But we rely on the explicit headers above mostly.
-            # If we encounter a header that isn't outcome/detailed, it's likely part of process or detailed
-            if line.startswith('#') and "Outcome" not in line and "Detailed" not in line:
-                 # If it's a subheader like "### Step 1", it usually belongs to detailed analysis 
-                 # UNLESS it's clearly part of the intro. 
-                 # Given the prompt, let's assume everything before "Outcome" is process summary.
-                 pass 
             process_summary_lines.append(lines[i])
         elif state == 'outcome':
             outcome_summary_lines.append(lines[i])
@@ -136,21 +115,9 @@ def parse_description_content(content):
     return process_md, outcome_md, detailed_md
 
 def render_detailed_analysis(md_content):
-    """
-    Renders the detailed analysis markdown, ensuring Steps become subheaders.
-    """
     if not md_content:
         st.info("No detailed analysis available.")
         return
-
-    lines = md_content.split('\n')
-    
-    # We will process lines to ensure headers are rendered correctly
-    # Streamlit's st.markdown handles #, ##, ### automatically.
-    # The issue might be that the whole block was passed as one code block previously.
-    # Passing directly to st.markdown should work if the syntax is correct.
-    
-    # Let's just render it directly. If the MD has '### Step X', st.markdown makes it a subheader.
     st.markdown(md_content, unsafe_allow_html=True)
 
 # --- 1. Page Configuration ---
@@ -160,6 +127,10 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+# Initialize Session State for Feedback
+if 'feedback_log' not in st.session_state:
+    st.session_state.feedback_log = []
 
 # --- 2. Header ---
 st.title("📊 Project Showcase Dashboard")
@@ -193,26 +164,28 @@ if os.path.exists(description_file):
     
     process_summary, outcome_summary, detailed_analysis = parse_description_content(content)
     
-    # 1. Always Visible: Process Summary
     if process_summary:
         st.markdown(process_summary)
-        st.markdown("---") # Separator
+        st.markdown("---")
     
-    # 2. Always Visible: Outcome Summary (Data)
     if outcome_summary:
         st.subheader("📊 Summary of Outcome (Data)")
         st.markdown(outcome_summary)
-        st.markdown("---") # Separator
+        st.markdown("---")
 
-    # 3. Collapsible: Detailed Sequential Analysis
     if detailed_analysis:
         with st.expander("🔍 Detailed Sequential Analysis (Click to Expand)", expanded=False):
             render_detailed_analysis(detailed_analysis)
 else:
     st.info("No `description.md` found for this project.")
 
-# --- 6. Main Content Tabs ---
-tab_data, tab_plots, tab_code = st.tabs(["📊 Datasets (CSV)", "🖼️ Visualizations (PNG)", "💻 Source Code"])
+# --- 6. Main Content Tabs (Including Feedback) ---
+tab_data, tab_plots, tab_code, tab_feedback = st.tabs([
+    "📊 Datasets (CSV)", 
+    "🖼️ Visualizations (PNG)", 
+    "💻 Source Code",
+    "💬 Guide Feedback & Notes"
+])
 
 # --- TAB 1: DATA ---
 with tab_data:
@@ -292,3 +265,66 @@ with tab_code:
                     )
     else:
         st.info("No Python source code (`.py`) found in this project.")
+
+# --- TAB 4: FEEDBACK & NOTES ---
+with tab_feedback:
+    st.subheader("📝 Guide's Query & Feedback Log")
+    st.markdown(f"**Current Project:** `{selected_project}`")
+    st.info("Use this section to record observations, queries, or required changes. Data is stored temporarily for this session. Download the CSV to save your notes permanently.")
+    
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        feedback_category = st.selectbox(
+            "Category",
+            ["Data Quality", "Methodology", "Visualization", "Code Logic", "General Query", "Next Steps"]
+        )
+        feedback_text = st.text_area(
+            "Enter your feedback or query here:",
+            height=150,
+            placeholder="e.g., The coefficient in Step 3 seems unstable. Check robustness..."
+        )
+    
+    with col2:
+        st.write("### Actions")
+        if st.button("➕ Add to Log", type="primary", use_container_width=True):
+            if feedback_text:
+                new_entry = {
+                    "Timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "Project": selected_project,
+                    "Category": feedback_category,
+                    "Feedback": feedback_text
+                }
+                st.session_state.feedback_log.append(new_entry)
+                st.success("Added to session log!")
+                st.rerun()
+            else:
+                st.warning("Please enter some text before adding.")
+        
+        if st.session_state.feedback_log:
+            if st.button("🗑️ Clear Log", use_container_width=True):
+                st.session_state.feedback_log = []
+                st.rerun()
+
+    # Display Current Session Log
+    if st.session_state.feedback_log:
+        st.markdown("---")
+        st.subheader("📋 Current Session Log")
+        
+        # Filter log to show current project first, but show all for context if needed
+        df_log = pd.DataFrame(st.session_state.feedback_log)
+        
+        # Display table
+        st.dataframe(df_log, use_container_width=True, hide_index=True)
+        
+        # Download Button for the log
+        csv_log = df_log.to_csv(index=False).encode('utf-8')
+        st.download_button(
+            label="📥 Download Feedback Log (CSV)",
+            data=csv_log,
+            file_name=f"feedback_log_{selected_project}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+            mime="text/csv",
+            key="download_feedback"
+        )
+    else:
+        st.info("No feedback entries added yet for this session.")
