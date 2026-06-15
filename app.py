@@ -5,6 +5,19 @@ import glob
 import re
 import json
 
+import re
+
+def inject_glowing_numbers(text):
+    """Wraps numbers in HTML spans before rendering to bypass JS restrictions."""
+    if not text: 
+        return text
+        
+    # Regex matches integers, decimals, negatives, and percentages.
+    # Lookarounds prevent matching numbers inside URLs, HTML tags, or Markdown links.
+    pattern = r'(?<![/=\w])(-?\d+(?:\.\d+)?%?)(?![/\w>])'
+    
+    return re.sub(pattern, r'<span class="glow-number">\1</span>', text)
+
 # --- Helper Function for Extracting Core Code ---
 def extract_core_code(file_path):
     """
@@ -143,81 +156,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- NUMBER GLOW EFFECT (Bulletproof for Streamlit's Reactive DOM) ---
-st.markdown("""
-<style>
-    /* Glowing green style for numbers - highly specific to override Streamlit */
-    .stMarkdown .glow-number, .stExpander .glow-number {
-        color: #00FF41 !important;
-        text-shadow: 0 0 5px rgba(0, 255, 65, 0.8), 0 0 10px rgba(0, 255, 65, 0.4) !important;
-        font-weight: bold !important;
-        background-color: rgba(0, 40, 0, 0.5) !important;
-        padding: 1px 5px !important;
-        border-radius: 4px !important;
-        border: 1px solid rgba(0, 255, 65, 0.3) !important;
-        font-family: monospace !important;
-        display: inline-block !important;
-        margin: 0 1px !important;
-    }
-</style>
-
-<script>
-    function highlightNumbers() {
-        // Target Streamlit's markdown containers
-        const containers = document.querySelectorAll('.stMarkdown, .stExpander');
-
-        containers.forEach(container => {
-            // Create a TreeWalker to safely find ONLY text nodes (ignores HTML tags)
-            const walker = document.createTreeWalker(
-                container,
-                NodeFilter.SHOW_TEXT,
-                {
-                    acceptNode: function(node) {
-                        // Skip if the parent is already our glow span (prevents infinite loops)
-                        if (node.parentNode.classList && node.parentNode.classList.contains('glow-number')) {
-                            return NodeFilter.FILTER_REJECT;
-                        }
-                        // Skip script and style tags
-                        if (['SCRIPT', 'STYLE'].includes(node.parentNode.tagName)) {
-                            return NodeFilter.FILTER_REJECT;
-                        }
-                        return NodeFilter.FILTER_ACCEPT;
-                    }
-                }
-            );
-
-            let node;
-            const nodesToReplace = [];
-
-            // Collect all text nodes that contain numbers
-            while (node = walker.nextNode()) {
-                // Matches integers, decimals, negatives, and percentages (e.g., 1999, -3.4, 85%)
-                if (/-?\d+(?:\.\d+)?%?/.test(node.nodeValue)) {
-                    nodesToReplace.push(node);
-                }
-            }
-
-            // Replace the text nodes with HTML containing the glow spans
-            nodesToReplace.forEach(textNode => {
-                const span = document.createElement('span');
-                span.innerHTML = textNode.nodeValue.replace(/(-?\d+(?:\.\d+)?%?)/g, '<span class="glow-number">$1</span>');
-                
-                // Only replace if we actually created a glow span
-                if (span.querySelector('.glow-number')) {
-                    textNode.parentNode.replaceChild(span, textNode);
-                }
-            });
-        });
-    }
-
-    // Run every 500ms to catch Streamlit's constant DOM re-renders
-    setInterval(highlightNumbers, 500);
-    
-    // Run once immediately on load
-    highlightNumbers();
-</script>
-""", unsafe_allow_html=True)
-
 # --- 2. Header ---
 st.title("Female Agency and Voting Technology​")
 st.markdown("A Case for Economic Agency moderating the effect of EVMs on Female Voter Turnout during 1999 Lok Sabha Elections in India​")
@@ -274,14 +212,15 @@ if os.path.exists(description_file):
     process_summary, outcome_summary, detailed_analysis = parse_description_content(content)
     
     # 1. Always Visible: Process Summary
+    # 1. Always Visible: Process Summary
     if process_summary:
-        st.markdown(process_summary)
+        st.markdown(inject_glowing_numbers(process_summary), unsafe_allow_html=True)
         st.markdown("---") # Separator
-    
-    # 2. Always Visible: Outcome Summary (Data)
+
+# 2. Always Visible: Outcome Summary (Data)
     if outcome_summary:
         st.subheader("Summary of Outcome (Data)")
-        st.markdown(outcome_summary)
+        st.markdown(inject_glowing_numbers(outcome_summary), unsafe_allow_html=True)
         st.markdown("---") # Separator
 
     # 3. Collapsible: Detailed Sequential Analysis
