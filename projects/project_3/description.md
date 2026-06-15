@@ -8,14 +8,14 @@ To explore heterogeneity, district-level female economic agency is interacted wi
 
 ### Detailed Sequential Analysis
 
-**Step 1: Interaction Model (`Step1_Interaction_Model.csv`)**
+**Step 1: Interaction Model (`Step3_Model_Interaction.csv`)**
 - **Data**: 
-  - Main Effect (EVM): β=+1.20 (p=0.45, insignificant).
-  - Interaction (EVM × Female_Agency): β=-6.875 (p=0.048).
-  - R²=0.71.
+  - Main Effect (EVM): β= -2.66 (p=0.23, insignificant).
+  - Interaction (EVM × Female_Agency): β=-6.875 (p=0.028).
+  - Adjusted R²=0.71.
 - **Inference**: The main effect disappears; the action is in the interaction. Higher agency predicts a stronger negative response to EVMs.
 
-**Step 2: Marginal Effects Calculation (`Step2_Marginal_Effects.csv`)**
+**Step 2: Marginal Effects Calculation (`Step3_Marginal_Effects.csv`)**
 - **Data**: 
   - At 10th %ile Agency: Effect = -0.92 pp (CI: [-2.1, 0.8], p=0.72).
   - At 50th %ile Agency: Effect = -4.10 pp (CI: [-6.5, -1.7], p=0.001).
