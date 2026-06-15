@@ -43,7 +43,7 @@ def export_ols_to_csv(model, model_name, save_path):
     res_df.to_csv(save_path, index=False)
     print(f"✅ Saved regression results to: {save_path}")
 
-#[CORE START]
+# [CORE START]
 
 TREATED_PCS_1999 = [
     'HYDERABAD', 'SECUNDERABAD', 'PANAJI', 'MORMUGAO', 'AHMEDABAD', 'GANDHINAGAR',
@@ -304,7 +304,7 @@ export_ols_to_csv(mod_pre, "Placebo_PreTrend", os.path.join(CSV_DIR, "Step4_Mode
 export_ols_to_csv(mod_did, "DiD_Treatment", os.path.join(CSV_DIR, "Step4_Model_DiD.csv"))
 export_ols_to_csv(mod_ancova, "ANCOVA_Robustness", os.path.join(CSV_DIR, "Step4_Model_ANCOVA.csv"))
 
-#[CORE END]
+# [CORE END]
 
 # 3. Comprehensive Diagnostics Table
 diag_rows = []
