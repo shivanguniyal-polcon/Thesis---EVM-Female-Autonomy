@@ -1,5 +1,5 @@
 ## Process Summary
-The final robustness phase executes a battery of diagnostic tests on the master model. The workflow includes: (1) A Leave-One-Out (LOO) sensitivity analysis to check for single-district influence; (2) A Frisch-Waugh-Lovell (FWL) residualization to verify the orthogonal variation; and (3) a "Horse Race" multivariate model introducing cultural patriarchy proxies alongside economic agency. We compare coefficient stability and significance levels across these specifications. Outputs include a coefficient stability forest plot, a residual scatter matrix, and a comparative bar chart of the "Dual Burden" mechanisms.
+The final robustness phase tests model stability using Leave-One-Out (LOO) analysis, Frisch-Waugh-Lovell (FWL) residualization, and a "Horse Race" model comparing cultural patriarchy with economic agency. Visual outputs—including forest plots and residual matrices—validate the "Dual Burden" mechanisms across these specifications.
 
 ### Summary Outcome (Data)
 1. **Numbers**: Final ANCOVA HC1: β = -7.26 (SE = 2.21, p = 0.0010). Influence Diagnostics: 18 extreme outlier districts were dropped via Cook's Distance thresholds to ensure stability. Horse Race: Agency β = -3.64 (p = 0.052), Patriarchy β = -2.92 (p = 0.011). Mechanism Verdict: "Inconclusive/Dual".
