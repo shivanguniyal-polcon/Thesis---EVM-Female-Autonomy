@@ -143,8 +143,8 @@ st.set_page_config(
 )
 
 # --- 2. Header ---
-st.title("📊 Project Showcase Dashboard")
-st.markdown("Browse through readymade analyses, datasets, visualizations, and core code logic.")
+st.title("Female Agency and Voting Technology​")
+st.markdown("A Case for Economic Agency moderating the effect of EVMs on Female Voter Turnout during 1999 Lok Sabha Elections in India​")
 
 # --- 3. Directory Setup ---
 BASE_DIR = "./projects"
@@ -181,8 +181,8 @@ if not project_folders:
     st.stop()
 
 # --- 4. Sidebar Navigation ---
-st.sidebar.header("📂 Navigation")
-selected_display = st.sidebar.selectbox("Choose a project to view:", display_options)
+st.sidebar.header("Navigation")
+selected_display = st.sidebar.selectbox("Choose a script to view:", display_options)
 selected_project = display_mapping[selected_display]  # Get actual folder name
 project_path = os.path.join(BASE_DIR, selected_project)
 
@@ -204,7 +204,7 @@ if os.path.exists(description_file):
     
     # 2. Always Visible: Outcome Summary (Data)
     if outcome_summary:
-        st.subheader("📊 Summary of Outcome (Data)")
+        st.subheader("Summary of Outcome (Data)")
         st.markdown(outcome_summary)
         st.markdown("---") # Separator
 
@@ -218,10 +218,10 @@ else:
 # --- 6. Main Content Tabs ---
 # Added '🗺️ Maps (GeoJSON)' tab
 tab_data, tab_plots, tab_maps, tab_code = st.tabs([
-    "📊 Data & Outputs", 
-    "🖼️ Charts & Visuals", 
-    "🗺️ Geographic Maps",
-    "💻 Core Code Logic"
+    "Data & Outputs", 
+    "Charts & Visuals", 
+    "Geographic Maps",
+    "Core Code Logic"
 ])
 
 # --- TAB 1: DATA ---
@@ -237,7 +237,7 @@ with tab_data:
             
             with open(selected_csv, "rb") as f:
                 st.download_button(
-                    label="📥 Download Dataset",
+                    label="Download Dataset",
                     data=f,
                     file_name=os.path.basename(selected_csv),
                     mime="text/csv"
