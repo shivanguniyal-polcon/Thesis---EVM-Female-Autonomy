@@ -74,9 +74,9 @@ def natural_sort_key(s):
 def parse_description(content):
     """
     Parses the description.md content into three parts:
-    1. Process Summary (First paragraph before '##' or first blank line if no header)
-    2. Outcome Summary (The block containing 'Numbers', 'Proves', 'Needs Proving')
-    3. Detailed Analysis (The rest, usually starting from '## Detailed Sequential Analysis')
+    1. Process Summary (First paragraph before '##' or '###')
+    2. Outcome Summary (The block starting with '**Numbers:**', '**What it Proves:**', etc.)
+    3. Detailed Analysis (The rest, usually starting with '## Detailed Sequential Analysis')
     """
     lines = content.split('\n')
     
@@ -84,45 +84,62 @@ def parse_description(content):
     outcome_summary = []
     detailed_analysis = []
     
-    state = 'process' # 'process', 'outcome', 'detailed'
+    current_section = 'process'
     
-    # Heuristic parsing based on expected structure
-    # We look for specific headers or content markers
+    # State flags
+    found_outcome_header = False
+    found_detailed_header = False
     
     i = 0
     while i < len(lines):
         line = lines[i]
         stripped = line.strip()
         
-        # Detect start of Outcome Summary (look for "Summary of Outcome" or "Numbers:")
-        if "Summary of Outcome" in stripped or (stripped.startswith("**Numbers:**") and state == 'process'):
-            state = 'outcome'
-            # Don't append the header itself to outcome if we want just content, 
-            # but usually we want the whole block. Let's include it.
-            outcome_summary.append(line)
+        # Detect Section Headers
+        if stripped.startswith("## Detailed Sequential Analysis"):
+            current_section = 'detailed'
+            found_detailed_header = True
             i += 1
             continue
             
-        # Detect start of Detailed Analysis (look for "Detailed Sequential Analysis")
-        if "Detailed Sequential Analysis" in stripped:
-            state = 'detailed'
-            detailed_analysis.append(line)
+        if stripped.startswith("### Summary of Outcome"):
+            current_section = 'outcome'
+            found_outcome_header = True
             i += 1
             continue
             
-        # Append to current state
-        if state == 'process':
-            # Stop process summary if we hit a major header that isn't outcome/detailed (unlikely given structure)
-            # Or just collect until we hit the outcome marker
-            process_summary.append(line)
-        elif state == 'outcome':
+        # Assign lines to sections
+        if current_section == 'process':
+            # Stop process summary if we hit a header or the outcome section implicitly
+            if stripped.startswith("#") or stripped.startswith("###"):
+                 # Skip headers in process summary, they belong to structure
+                 i += 1
+                 continue
+            if stripped: # Only add non-empty lines
+                process_summary.append(line)
+        
+        elif current_section == 'outcome':
             outcome_summary.append(line)
-        elif state == 'detailed':
+            
+        elif current_section == 'detailed':
             detailed_analysis.append(line)
             
         i += 1
-        
-    return "\n".join(process_summary), "\n".join(outcome_summary), "\n".join(detailed_analysis)
+
+    # Clean up empty lines at start/end of sections
+    def clean_section(section_list):
+        # Remove leading/trailing empty lines
+        while section_list and not section_list[0].strip():
+            section_list.pop(0)
+        while section_list and not section_list[-1].strip():
+            section_list.pop()
+        return "\n".join(section_list)
+
+    return (
+        clean_section(process_summary),
+        clean_section(outcome_summary),
+        clean_section(detailed_analysis)
+    )
 
 # --- 1. Page Configuration ---
 st.set_page_config(
@@ -160,24 +177,24 @@ st.header(f"📁 {selected_project.replace('_', ' ').title()}")
 description_file = os.path.join(project_path, "description.md")
 if os.path.exists(description_file):
     with open(description_file, "r", encoding="utf-8") as f:
-        full_content = f.read()
+        raw_content = f.read()
     
-    process_sum, outcome_sum, detailed_sum = parse_description(full_content)
+    process_sum, outcome_sum, detailed_sum = parse_description(raw_content)
     
     # 1. Always Visible: Process Summary
-    if process_sum.strip():
+    if process_sum:
         st.markdown(process_sum)
         st.markdown("---") # Separator
-    
+
     # 2. Always Visible: Outcome Summary (Data)
-    if outcome_sum.strip():
+    if outcome_sum:
         st.subheader("💡 Summary of Outcome (Data)")
         st.markdown(outcome_sum)
         st.markdown("---") # Separator
 
     # 3. Collapsible: Detailed Sequential Analysis
-    if detailed_sum.strip():
-        with st.expander("🔍 Detailed Sequential Analysis", expanded=False):
+    if detailed_sum:
+        with st.expander("🔍 Detailed Sequential Analysis (Click to Expand)", expanded=False):
             st.markdown(detailed_sum)
 else:
     st.info("No `description.md` found for this project.")
@@ -186,7 +203,7 @@ else:
 tab_data, tab_plots, tab_code = st.tabs(["📊 Datasets (CSV)", "🖼️ Visualizations (PNG)", "💻 Source Code"])
 
 # --- TAB 1: DATA ---
-with tab_
+with tab_data:
     csv_files = glob.glob(os.path.join(project_path, "*.csv"))
     csv_files.sort(key=lambda x: natural_sort_key(os.path.basename(x)))
     
@@ -249,7 +266,7 @@ with tab_code:
                 
             with st.expander(label, expanded=False):
                 if not is_core_only:
-                    st.caption("ℹ️ No core markers found. Displaying full script.")
+                    st.caption("ℹ️ No core markers found. Displaying full script (filtered).")
                 
                 st.code(display_code, language='python')
                 
