@@ -32,7 +32,7 @@ def export_ols_to_csv(model, model_name, save_path):
     res_df.to_csv(save_path, index=False)
     print(f"✅ Saved regression results to: {save_path}")
 
-[#CORE START]
+# [CORE START]
 print("  STEP 1: THE RAW CORRELATION (EVM vs. FEMALE TURNOUT)")
 #1. Load the 1999 Election Data
 df_1999 = pd.read_csv('/Users/ganeshchandrauniyal/Desktop/Thesis Script/1999_election_data_corrected.csv')
@@ -121,7 +121,7 @@ plt.grid(axis='y', linestyle=':', alpha=0.7)
 plt.tight_layout()
 plt.show()
 
-#[CORE END]
+# [CORE END]
 
 print("\n Completed Step 1; now we run a check on whether all PCs are accounted for:")
 
