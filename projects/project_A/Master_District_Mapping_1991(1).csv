@@ -1,0 +1,757 @@
+shrid2,state_name,district_name,pc91_state_id,pc91_district_id
+11-02-023-00083-006674,himachal pradesh,chamba,09,01
+11-02-024-00093-008264,himachal pradesh,kangra,09,02
+11-02-025-00114-012146,himachal pradesh,lahul spiti,09,08
+11-02-026-00117-012658,himachal pradesh,kullu,09,07
+11-02-027-00123-012986,himachal pradesh,mandi,09,06
+11-02-028-00140-016325,himachal pradesh,hamirpur,09,03
+11-02-029-00147-018048,himachal pradesh,una,09,04
+11-02-030-00152-018896,himachal pradesh,bilaspur,09,05
+11-02-031-00158-019957,himachal pradesh,solan,09,10
+11-02-032-00167-022506,himachal pradesh,sirmaur,09,11
+11-02-033-00177-023490,himachal pradesh,shimla,09,09
+11-02-034-00194-026714,himachal pradesh,kinnaur,09,12
+11-03-035-00200-027374,punjab,gurdaspur,20,01
+11-03-036-00205-028994,punjab,kapurthala,20,06
+11-03-037-00209-029685,punjab,jalandhar,20,05
+11-03-037-00209-029705,punjab,jalandhar,20,03
+11-03-038-00214-030638,punjab,hoshiarpur,20,07
+11-03-039-00218-032058,punjab,shahid bhagat singh nagar,20,05
+11-03-039-00219-032345,punjab,shahid bhagat singh nagar,20,07
+11-03-040-00220-032530,punjab,fatehgarh sahib,20,09
+11-03-040-00220-032540,punjab,fatehgarh sahib,20,08
+11-03-041-00224-032989,punjab,ludhiana,20,07
+11-03-041-00224-032997,punjab,ludhiana,20,05
+11-03-041-00224-800189,punjab,ludhiana,20,04
+11-03-041-00225-033196,punjab,ludhiana,20,09
+11-03-041-00229-033718,punjab,ludhiana,20,10
+11-03-042-00231-033895,punjab,moga,20,12
+11-03-042-00233-034035,punjab,moga,20,03
+11-03-043-00234-034223,punjab,firozpur,20,03
+11-03-044-00239-035227,punjab,muktsar,20,12
+11-03-044-00241-035418,punjab,muktsar,20,03
+11-03-045-00242-035461,punjab,faridkot,20,12
+11-03-046-00244-035634,punjab,bathinda,20,11
+11-03-047-00247-035920,punjab,mansa,20,11
+11-03-048-00250-036160,punjab,patiala,20,09
+11-03-049-00255-037086,punjab,amritsar,20,02
+11-03-050-00259-037851,punjab,tarn taran,20,02
+11-03-050-00260-038180,punjab,tarn taran,20,03
+11-03-051-00262-038341,punjab,rupnagar,20,08
+11-03-052-00266-038957,punjab,sahibzada ajit singh nagar,20,08
+11-03-052-00266-039124,punjab,sahibzada ajit singh nagar,20,09
+11-03-053-00269-039388,punjab,sangrur,20,10
+11-03-054-00275-039961,punjab,barnala,20,10
+11-04-055-00277-800286,chandigarh,chandigarh,28,01
+11-05-056-00278-040101,uttarakhand,uttarkashi,25,01
+11-05-057-00284-040811,uttarakhand,chamoli,25,02
+11-05-058-00290-042054,uttarakhand,rudraprayag,25,02
+11-05-058-00291-042302,uttarakhand,rudraprayag,25,03
+11-05-058-00291-042320,uttarakhand,rudraprayag,25,05
+11-05-059-00293-042742,uttarakhand,tehri garhwal,25,03
+11-05-060-00300-044605,uttarakhand,dehradun,25,04
+11-05-061-00306-045366,uttarakhand,garhwal,25,05
+11-05-062-00315-048842,uttarakhand,pithoragarh,25,06
+11-05-063-00321-050517,uttarakhand,bageshwar,25,07
+11-05-064-00325-051465,uttarakhand,almora,25,07
+11-05-065-00334-053754,uttarakhand,champawat,25,06
+11-05-065-00337-054428,uttarakhand,champawat,25,08
+11-05-066-00338-054473,uttarakhand,nainital,25,08
+11-05-067-00346-055624,uttarakhand,udham singh nagar,25,08
+11-05-068-00353-056318,uttarakhand,hardwar,25,13
+11-06-069-00356-056946,haryana,panchkula,08,01
+11-06-070-00358-057171,haryana,ambala,08,01
+11-06-071-00361-057653,haryana,yamunanagar,08,02
+11-06-072-00364-058299,haryana,kurukshetra,08,03
+11-06-072-00365-058411,haryana,kurukshetra,08,04
+11-06-072-00366-058480,haryana,kurukshetra,08,05
+11-06-072-00366-058643,haryana,kurukshetra,08,02
+11-06-073-00367-058715,haryana,kaithal,08,04
+11-06-073-00368-058889,haryana,kaithal,08,14
+11-06-073-00369-058978,haryana,kaithal,08,03
+11-06-074-00370-058985,haryana,karnal,08,05
+11-06-074-00372-059296,haryana,karnal,08,06
+11-06-074-00373-059319,haryana,karnal,08,04
+11-06-074-00373-059355,haryana,karnal,08,14
+11-06-075-00375-059420,haryana,panipat,08,06
+11-06-075-00375-059448,haryana,panipat,08,05
+11-06-076-00378-059618,haryana,sonipat,08,08
+11-06-076-00378-059660,haryana,sonipat,08,07
+11-06-077-00382-059954,haryana,jind,08,14
+11-06-077-00382-059977,haryana,jind,08,04
+11-06-077-00385-060256,haryana,jind,08,08
+11-06-078-00386-060261,haryana,fatehabad,08,15
+11-06-079-00389-060507,haryana,sirsa,08,16
+11-06-080-00393-060837,haryana,hisar,08,15
+11-06-080-00396-061112,haryana,hisar,08,08
+11-06-081-00397-061113,haryana,bhiwani,08,13
+11-06-081-00398-061141,haryana,bhiwani,08,08
+11-06-082-00404-061558,haryana,rohtak,08,08
+11-06-083-00407-061702,haryana,jhajjar,08,08
+11-06-083-00409-061902,haryana,jhajjar,08,11
+11-06-084-00411-061964,haryana,mahendragarh,08,12
+11-06-085-00413-062336,haryana,rewari,08,11
+11-06-086-00416-062744,haryana,gurgaon,08,10
+11-06-087-00421-062990,haryana,mewat,08,10
+11-06-088-00425-063433,haryana,faridabad,08,09
+11-06-089-00427-063584,haryana,palwal,08,09
+11-07-090-00431-800441,nct of delhi,north west,31,01
+11-08-099-00457-064089,rajasthan,ganganagar,21,01
+11-08-100-00466-067112,rajasthan,hanumangarh,21,01
+11-08-101-00473-069019,rajasthan,bikaner,21,02
+11-08-101-00480-069842,rajasthan,bikaner,21,03
+11-08-102-00481-069940,rajasthan,churu,21,03
+11-08-103-00487-070839,rajasthan,jhunjhunun,21,04
+11-08-104-00493-071772,rajasthan,alwar,21,05
+11-08-104-00498-072693,rajasthan,alwar,21,06
+11-08-104-00504-073835,rajasthan,alwar,21,08
+11-08-105-00505-073837,rajasthan,bharatpur,21,06
+11-08-106-00515-075362,rajasthan,dhaulpur,21,07
+11-08-107-00520-076184,rajasthan,karauli,21,08
+11-08-108-00526-077073,rajasthan,sawai madhopur,21,08
+11-08-109-00533-077890,rajasthan,dausa,21,09
+11-08-109-00534-078120,rajasthan,dausa,21,05
+11-08-109-00534-078123,rajasthan,dausa,21,08
+11-08-110-00538-079000,rajasthan,jaipur,21,09
+11-08-111-00551-081188,rajasthan,sikar,21,10
+11-08-112-00557-082363,rajasthan,nagaur,21,15
+11-08-113-00567-083962,rajasthan,jodhpur,21,14
+11-08-114-00574-085804,rajasthan,jaisalmer,21,13
+11-08-115-00577-086603,rajasthan,barmer,21,17
+11-08-116-00585-089065,rajasthan,jalor,21,18
+11-08-117-00592-089867,rajasthan,sirohi,21,19
+11-08-118-00597-090349,rajasthan,pali,21,16
+11-08-119-00606-091381,rajasthan,ajmer,21,11
+11-08-120-00615-092496,rajasthan,tonk,21,12
+11-08-121-00622-093681,rajasthan,bundi,21,25
+11-08-122-00627-094558,rajasthan,bhilwara,21,20
+11-08-122-00627-094764,rajasthan,bhilwara,21,21
+11-08-122-00628-094767,rajasthan,bhilwara,21,11
+11-08-122-00629-094972,rajasthan,bhilwara,21,22
+11-08-123-00639-096394,rajasthan,rajsamand,21,21
+11-08-124-00646-097449,rajasthan,dungarpur,21,23
+11-08-125-00650-098427,rajasthan,banswara,21,24
+11-08-126-00655-099942,rajasthan,chittaurgarh,21,22
+11-08-127-00665-101674,rajasthan,kota,21,26
+11-08-127-00665-101815,rajasthan,kota,21,09
+11-08-128-00670-102556,rajasthan,baran,21,26
+11-08-129-00678-103779,rajasthan,jhalawar,21,27
+11-08-130-00685-105389,rajasthan,udaipur,21,21
+11-08-131-00696-107880,rajasthan,pratapgarh,21,21
+11-08-131-00697-108048,rajasthan,pratapgarh,21,24
+11-08-131-00697-108150,rajasthan,pratapgarh,21,22
+11-09-132-00701-108884,uttar pradesh,saharanpur,25,12
+11-09-133-00706-110462,uttar pradesh,muzaffarnagar,25,14
+11-09-134-00712-111490,uttar pradesh,bijnor,25,09
+11-09-135-00717-114485,uttar pradesh,moradabad,25,10
+11-09-136-00723-116282,uttar pradesh,rampur,25,11
+11-09-137-00729-117447,uttar pradesh,jyotiba phule nagar,25,10
+11-09-138-00732-118571,uttar pradesh,meerut,25,15
+11-09-139-00735-119238,uttar pradesh,baghpat,25,15
+11-09-140-00738-119553,uttar pradesh,ghaziabad,25,16
+11-09-140-00740-119762,uttar pradesh,ghaziabad,25,15
+11-09-141-00742-120114,uttar pradesh,gautam buddha nagar,25,16
+11-09-141-00743-120245,uttar pradesh,gautam buddha nagar,25,17
+11-09-142-00745-120441,uttar pradesh,bulandshahr,25,17
+11-09-143-00752-121694,uttar pradesh,aligarh,25,18
+11-09-144-00757-122905,uttar pradesh,mahamaya nagar,25,18
+11-09-144-00760-123444,uttar pradesh,mahamaya nagar,25,19
+11-09-145-00761-123579,uttar pradesh,mathura,25,19
+11-09-146-00765-124462,uttar pradesh,agra,25,20
+11-09-146-00770-125402,uttar pradesh,agra,25,21
+11-09-147-00771-125404,uttar pradesh,firozabad,25,21
+11-09-147-00771-125493,uttar pradesh,firozabad,25,22
+11-09-148-00775-126215,uttar pradesh,mainpuri,25,23
+11-09-149-00778-127071,uttar pradesh,budaun,25,24
+11-09-150-00784-129129,uttar pradesh,bareilly,25,25
+11-09-151-00790-131191,uttar pradesh,pilibhit,25,26
+11-09-151-00792-132529,uttar pradesh,pilibhit,25,27
+11-09-152-00793-132628,uttar pradesh,shahjahanpur,25,27
+11-09-153-00797-134956,uttar pradesh,kheri,25,28
+11-09-154-00803-136754,uttar pradesh,sitapur,25,29
+11-09-155-00809-139105,uttar pradesh,hardoi,25,30
+11-09-156-00814-141182,uttar pradesh,unnao,25,31
+11-09-157-00819-142980,uttar pradesh,lucknow,25,32
+11-09-158-00823-143789,uttar pradesh,rae bareli,25,33
+11-09-159-00830-145562,uttar pradesh,farrukhabad,25,34
+11-09-160-00833-146569,uttar pradesh,kannauj,25,34
+11-09-161-00836-147321,uttar pradesh,etawah,25,35
+11-09-161-00837-147450,uttar pradesh,etawah,25,23
+11-09-162-00841-148013,uttar pradesh,auraiya,25,35
+11-09-163-00843-148854,uttar pradesh,kanpur dehat,25,36
+11-09-164-00848-149886,uttar pradesh,kanpur nagar,25,36
+11-09-164-00849-150295,uttar pradesh,kanpur nagar,25,37
+11-09-165-00851-150895,uttar pradesh,jalaun,25,38
+11-09-166-00856-152050,uttar pradesh,jhansi,25,39
+11-09-167-00861-152872,uttar pradesh,lalitpur,25,40
+11-09-168-00864-153625,uttar pradesh,hamirpur,25,41
+11-09-169-00868-154253,uttar pradesh,mahoba,25,41
+11-09-170-00871-154774,uttar pradesh,banda,25,42
+11-09-171-00875-155469,uttar pradesh,chitrakoot,25,42
+11-09-172-00877-156126,uttar pradesh,fatehpur,25,43
+11-09-173-00880-157641,uttar pradesh,pratapgarh,25,44
+11-09-174-00885-159860,uttar pradesh,kaushambi,25,45
+11-09-175-00888-160730,uttar pradesh,allahabad,25,45
+11-09-176-00896-163814,uttar pradesh,bara banki,25,48
+11-09-177-00902-165657,uttar pradesh,faizabad,25,48
+11-09-177-00903-165900,uttar pradesh,faizabad,25,49
+11-09-178-00907-166924,uttar pradesh,ambedkar nagar,25,49
+11-09-178-00908-167775,uttar pradesh,ambedkar nagar,25,57
+11-09-179-00912-168676,uttar pradesh,sultanpur,25,50
+11-09-179-00912-168747,uttar pradesh,sultanpur,25,33
+11-09-180-00919-171210,uttar pradesh,bahraich,25,46
+11-09-181-00923-172599,uttar pradesh,shrawasti,25,46
+11-09-182-00925-173140,uttar pradesh,balrampur,25,47
+11-09-183-00928-174160,uttar pradesh,gonda,25,47
+11-09-184-00932-175981,uttar pradesh,siddharthnagar,25,51
+11-09-184-00936-178472,uttar pradesh,siddharthnagar,25,53
+11-09-185-00937-178488,uttar pradesh,basti,25,53
+11-09-186-00941-181836,uttar pradesh,sant kabir nagar,25,51
+11-09-186-00941-181997,uttar pradesh,sant kabir nagar,25,53
+11-09-187-00944-183564,uttar pradesh,mahrajganj,25,52
+11-09-188-00948-184827,uttar pradesh,gorakhpur,25,54
+11-09-189-00955-188152,uttar pradesh,kushinagar,25,55
+11-09-190-00959-189792,uttar pradesh,deoria,25,55
+11-09-191-00964-191954,uttar pradesh,azamgarh,25,57
+11-09-192-00971-196063,uttar pradesh,mau,25,56
+11-09-192-00973-197186,uttar pradesh,mau,25,59
+11-09-193-00975-197680,uttar pradesh,ballia,25,59
+11-09-193-00977-198281,uttar pradesh,ballia,25,63
+11-09-194-00981-200043,uttar pradesh,jaunpur,25,58
+11-09-195-00987-203429,uttar pradesh,ghazipur,25,60
+11-09-196-00992-206799,uttar pradesh,chandauli,25,61
+11-09-196-00993-207728,uttar pradesh,chandauli,25,63
+11-09-197-00995-208434,uttar pradesh,varanasi,25,61
+11-09-198-00997-209762,uttar pradesh,sant ravidas nagar bhadohi,25,61
+11-09-199-01000-210983,uttar pradesh,mirzapur,25,62
+11-09-200-01004-212950,uttar pradesh,sonbhadra,25,63
+11-09-200-01005-213295,uttar pradesh,sonbhadra,25,62
+11-09-201-01007-214390,uttar pradesh,etah,25,22
+11-09-202-01010-215273,uttar pradesh,kanshiram nagar,25,22
+11-10-203-01013-215990,bihar,pashchim champaran,05,12
+11-10-204-01031-217475,bihar,purba champaran,05,13
+11-10-205-01058-218768,bihar,sheohar,05,14
+11-10-206-01063-218971,bihar,sitamarhi,05,14
+11-10-207-01080-219808,bihar,madhubani,05,20
+11-10-208-01101-220920,bihar,supaul,05,21
+11-10-209-01112-221471,bihar,araria,05,41
+11-10-210-01121-222213,bihar,kishanganj,05,42
+11-10-211-01128-222984,bihar,purnia,05,23
+11-10-212-01142-224257,bihar,katihar,05,24
+11-10-213-01158-225798,bihar,madhepura,05,22
+11-10-213-01166-226079,bihar,madhepura,05,04
+11-10-213-01166-226079,bihar,madhepura,05,07
+11-10-214-01171-226238,bihar,saharsa,05,21
+11-10-215-01181-226706,bihar,darbhanga,05,19
+11-10-216-01199-227955,bihar,muzaffarpur,05,15
+11-10-217-01215-229746,bihar,gopalganj,05,11
+11-10-218-01229-231281,bihar,siwan,05,10
+11-10-219-01248-232811,bihar,saran,05,09
+11-10-220-01268-234576,bihar,vaishali,05,16
+11-10-221-01284-236145,bihar,samastipur,05,18
+11-10-221-01302-237308,bihar,samastipur,05,08
+11-10-221-01302-237308,bihar,samastipur,05,04
+11-10-222-01304-237396,bihar,begusarai,05,17
+11-10-223-01322-238540,bihar,khagaria,05,25
+11-10-224-01329-238841,bihar,bhagalpur,05,27
+11-10-224-01329-238844,bihar,bhagalpur,05,05
+11-10-224-01329-238844,bihar,bhagalpur,05,04
+11-10-225-01345-240364,bihar,banka,05,27
+11-10-226-01356-242473,bihar,munger,05,26
+11-10-226-01360-243022,bihar,munger,05,17
+11-10-227-01365-243335,bihar,lakhisarai,05,26
+11-10-228-01372-243807,bihar,sheikhpura,05,26
+11-10-228-01375-243990,bihar,sheikhpura,05,02
+11-10-229-01378-244121,bihar,nalanda,05,02
+11-10-230-01398-245179,bihar,patna,05,01
+11-10-231-01421-246572,bihar,bhojpur,05,03
+11-10-232-01435-247790,bihar,buxar,05,03
+11-10-233-01446-248923,bihar,kaimur bhabua,05,04
+11-10-234-01457-250620,bihar,rohtas,05,04
+11-10-235-01476-252696,bihar,aurangabad,05,05
+11-10-236-01487-254545,bihar,gaya,05,07
+11-10-237-01511-257434,bihar,nawada,05,08
+11-10-238-01525-258519,bihar,jamui,05,26
+11-10-239-01535-260025,bihar,jehanabad,05,06
+11-10-240-01542-260609,bihar,arwal,05,06
+11-11-241-01547-260925,sikkim,north district,22,01
+11-11-242-01549-260980,sikkim,west district,22,04
+11-11-243-01551-261105,sikkim,south district,22,03
+11-11-244-01553-261253,sikkim,east district,22,02
+11-12-245-01557-261405,arunachal pradesh,tawang,03,01
+11-12-246-01566-261612,arunachal pradesh,west kameng,03,02
+11-12-247-01579-261896,arunachal pradesh,east kameng,03,03
+11-12-248-01592-262278,arunachal pradesh,papum pare,03,04
+11-12-249-01607-262763,arunachal pradesh,upper subansiri,03,05
+11-12-250-01623-263350,arunachal pradesh,west siang,03,06
+11-12-250-01631-263524,arunachal pradesh,west siang,03,03
+11-12-251-01643-263777,arunachal pradesh,east siang,03,07
+11-12-252-01658-263929,arunachal pradesh,upper siang,03,07
+11-12-253-01670-264068,arunachal pradesh,changlang,03,10
+11-12-254-01684-264403,arunachal pradesh,tirap,03,11
+11-12-255-01695-264593,arunachal pradesh,lower subansiri,03,04
+11-12-256-01703-265195,arunachal pradesh,kurung kumey,03,04
+11-12-256-01708-265488,arunachal pradesh,kurung kumey,03,09
+11-12-258-01722-266080,arunachal pradesh,lower dibang valley,03,08
+11-12-259-01728-266362,arunachal pradesh,lohit,03,09
+11-12-260-01736-266662,arunachal pradesh,anjaw,03,09
+11-13-261-01744-266967,nagaland,mon,18,07
+11-13-262-01758-267098,nagaland,mokokchung,18,05
+11-13-263-01767-267207,nagaland,zunheboto,18,03
+11-13-263-01769-267226,nagaland,zunheboto,18,06
+11-13-264-01780-267399,nagaland,wokha,18,04
+11-13-265-01792-267553,nagaland,dimapur,18,01
+11-13-266-01800-267778,nagaland,phek,18,02
+11-13-267-01814-267895,nagaland,tuensang,18,06
+11-13-268-01830-268039,nagaland,longleng,18,06
+11-13-269-01835-268089,nagaland,kiphire,18,06
+11-13-270-01843-268184,nagaland,kohima,18,01
+11-13-271-01851-268290,nagaland,peren,18,01
+11-14-272-01858-268402,manipur,senapati,15,01
+11-14-273-01864-269089,manipur,tamenglong,15,02
+11-14-274-01868-269265,manipur,churachandpur,15,03
+11-14-275-01873-269868,manipur,bishnupur,15,06
+11-14-275-01873-801469,manipur,bishnupur,15,07
+11-14-276-01876-269917,manipur,thoubal,15,05
+11-14-277-01879-270036,manipur,imphal west,15,07
+11-14-278-01883-270153,manipur,imphal east,15,07
+11-14-279-01887-270362,manipur,ukhrul,15,08
+11-14-280-01892-270576,manipur,chandel,15,04
+11-15-281-01896-271013,mizoram,mamit,17,01
+11-15-282-01899-271139,mizoram,kolasib,17,01
+11-15-283-01901-801505,mizoram,aizawl,17,01
+11-15-284-01906-271289,mizoram,champhai,17,01
+11-15-285-01905-271379,mizoram,serchhip,17,01
+11-15-286-01912-271419,mizoram,lunglei,17,02
+11-15-287-01916-271615,mizoram,lawngtlai,17,03
+11-15-287-01919-271769,mizoram,lawngtlai,17,01
+11-15-288-01920-271785,mizoram,saiha,17,03
+11-15-288-01921-271829,mizoram,saiha,17,01
+11-16-289-01922-271845,tripura,west tripura,24,01
+11-16-290-01938-272145,tripura,south tripura,24,03
+11-16-291-01949-272420,tripura,dhalai,24,02
+11-16-291-01951-272505,tripura,dhalai,24,03
+11-16-292-01954-272574,tripura,north tripura,24,02
+11-17-293-01962-272744,meghalaya,west garo hills,16,05
+11-17-294-01970-274407,meghalaya,east garo hills,16,04
+11-17-294-01970-274408,meghalaya,east garo hills,16,05
+11-17-295-01975-275517,meghalaya,south garo hills,16,05
+11-17-296-01979-276321,meghalaya,west khasi hills,16,03
+11-17-296-01982-277016,meghalaya,west khasi hills,16,04
+11-17-296-01983-277195,meghalaya,west khasi hills,16,02
+11-17-297-01985-277439,meghalaya,ribhoi,16,02
+11-17-298-01988-278074,meghalaya,east khasi hills,16,02
+11-17-299-01996-279058,meghalaya,jaintia hills,16,01
+11-18-300-02001-279595,assam,kokrajhar,04,02
+11-18-300-02005-280503,assam,kokrajhar,04,01
+11-18-301-02001-280665,assam,dhubri,04,02
+11-18-301-02005-281040,assam,dhubri,04,01
+11-18-302-02013-281760,assam,goalpara,04,04
+11-18-303-02018-282598,assam,barpeta,04,05
+11-18-304-02026-283437,assam,morigaon,04,12
+11-18-305-02031-284073,assam,nagaon,04,13
+11-18-306-02041-285496,assam,sonitpur,04,09
+11-18-307-02048-287380,assam,lakhimpur,04,10
+11-18-308-02053-289623,assam,dhemaji,04,11
+11-18-309-02059-289886,assam,tinsukia,04,18
+11-18-310-02063-291066,assam,dibrugarh,04,17
+11-18-311-02070-292422,assam,sivasagar,04,16
+11-18-312-02076-293298,assam,jorhat,04,15
+11-18-313-02082-294165,assam,golaghat,04,14
+11-18-314-02088-295292,assam,karbi anglong,04,19
+11-18-315-02092-298214,assam,dima hasao,04,20
+11-18-316-02096-298909,assam,cachar,04,23
+11-18-317-02101-299968,assam,karimganj,04,21
+11-18-318-02106-300909,assam,hailakandi,04,22
+11-18-319-02110-301241,assam,bongaigaon,04,03
+11-18-320-02004-301807,assam,chirang,04,02
+11-18-320-02018-302309,assam,chirang,04,05
+11-18-320-02110-302043,assam,chirang,04,03
+11-18-321-02116-302343,assam,kamrup,04,07
+11-18-322-02126-303424,assam,kamrup metropolitan,04,07
+11-18-323-02132-303630,assam,nalbari,04,06
+11-18-324-02018-304093,assam,baksa,04,05
+11-18-324-02116-304412,assam,baksa,04,07
+11-18-324-02132-304454,assam,baksa,04,06
+11-18-324-02146-304781,assam,baksa,04,08
+11-18-325-02145-304782,assam,darrang,04,08
+11-18-326-02041-306126,assam,udalguri,04,09
+11-18-326-02145-305344,assam,udalguri,04,08
+11-19-327-02154-306145,west bengal,darjiling,26,03
+11-19-327-02164-306738,west bengal,darjiling,26,3
+11-19-328-02166-306856,west bengal,jalpaiguri,26,2
+11-19-329-02179-307624,west bengal,koch bihar,26,1
+11-19-330-02191-308830,west bengal,uttar dinajpur,26,4
+11-19-331-02200-310329,west bengal,dakshin dinajpur,26,4
+11-19-332-02208-311966,west bengal,maldah,26,5
+11-19-333-02223-313765,west bengal,murshidabad,26,6
+11-19-334-02249-315995,west bengal,birbhum,26,17
+11-19-335-02268-318468,west bengal,barddhaman,26,16
+11-19-336-02299-321052,west bengal,nadia,26,7
+11-19-337-02316-322414,west bengal,north twenty four parganas,26,8
+11-19-338-02338-324021,west bengal,hugli,26,12
+11-19-338-02350-325584,west bengal,hugli,26,8
+11-19-339-02356-325952,west bengal,bankura,26,14
+11-19-340-02378-329784,west bengal,puruliya,26,15
+11-19-340-02383-330484,west bengal,puruliya,26,7
+11-19-341-02398-332476,west bengal,haora,26,11
+11-19-341-02405-332911,west bengal,haora,26,5
+11-19-342-99999-801742,west bengal,kolkata,26,10
+11-19-343-02412-333262,west bengal,south twenty four parganas,26,9
+11-19-344-02441-335415,west bengal,paschim medinipur,26,13
+11-19-344-02465-343469,west bengal,paschim medinipur,26,8
+11-19-345-02470-344120,west bengal,purba medinipur,26,13
+11-20-346-02495-347134,jharkhand,garhwa,5,35
+11-20-347-02514-348023,jharkhand,chatra,5,34
+11-20-348-02526-349495,jharkhand,kodarma,5,34
+11-20-349-02532-350197,jharkhand,giridih,5,33
+11-20-349-02541-352494,jharkhand,giridih,5,34
+11-20-350-02545-352957,jharkhand,deoghar,5,31
+11-20-351-02555-355619,jharkhand,godda,5,28
+11-20-352-02564-357923,jharkhand,sahibganj,5,29
+11-20-353-02573-359742,jharkhand,pakur,5,29
+11-20-354-02579-360992,jharkhand,dhanbad,5,32
+11-20-355-02588-362195,jharkhand,bokaro,5,33
+11-20-355-02589-362291,jharkhand,bokaro,5,32
+11-20-356-02597-362855,jharkhand,lohardaga,5,36
+11-20-357-02604-363208,jharkhand,purbi singhbhum,5,39
+11-20-358-02615-364968,jharkhand,palamu,5,35
+11-20-359-02635-366844,jharkhand,latehar,5,35
+11-20-360-02644-367616,jharkhand,hazaribagh,5,34
+11-20-361-02660-368940,jharkhand,ramgarh,5,34
+11-20-362-02666-369277,jharkhand,dumka,5,30
+11-20-363-02676-372205,jharkhand,jamtara,5,30
+11-20-364-02682-373367,jharkhand,ranchi,5,38
+11-20-364-02696-374391,jharkhand,ranchi,5,29
+11-20-365-02700-374691,jharkhand,khunti,5,38
+11-20-366-02706-375448,jharkhand,gumla,5,37
+11-20-367-02718-376396,jharkhand,simdega,5,37
+11-20-368-02728-376846,jharkhand,pashchimi singhbhum,5,40
+11-20-369-02746-378528,jharkhand,saraikela kharsawan,5,40
+11-21-370-02755-379717,odisha,bargarh,19,1
+11-21-371-02770-380928,odisha,jharsuguda,19,1
+11-21-372-02780-381281,odisha,sambalpur,19,1
+11-21-373-02800-382597,odisha,debagarh,19,1
+11-21-374-02804-383475,odisha,sundargarh,19,2
+11-21-375-02834-385247,odisha,kendujhar,19,3
+11-21-376-02858-387375,odisha,mayurbhanj,19,4
+11-21-377-02889-391341,odisha,baleshwar,19,5
+11-21-378-02910-394274,odisha,bhadrak,19,5
+11-21-379-02922-395592,odisha,kendrapara,19,6
+11-21-380-02934-397139,odisha,jagatsinghapur,19,6
+11-21-380-02939-397643,odisha,jagatsinghapur,19,5
+11-21-381-02944-398433,odisha,cuttack,19,6
+11-21-382-02969-400391,odisha,jajapur,19,6
+11-21-383-02987-402183,odisha,dhenkanal,19,7
+11-21-384-02995-404195,odisha,anugul,19,7
+11-21-385-03022-405280,odisha,nayagarh,19,13
+11-21-386-03034-406978,odisha,khordha,19,13
+11-21-386-03051-407977,odisha,khordha,19,6
+11-21-386-03051-407977,odisha,khordha,19,5
+11-21-387-03056-408535,odisha,puri,19,13
+11-21-388-03071-410244,odisha,ganjam,19,12
+11-21-388-03097-413063,odisha,ganjam,19,6
+11-21-389-03100-413460,odisha,gajapati,19,12
+11-21-390-03110-415076,odisha,kandhamal,19,8
+11-21-391-03127-417665,odisha,baudh,19,8
+11-21-392-03133-418852,odisha,subarnapur,19,9
+11-21-393-03141-419815,odisha,balangir,19,9
+11-21-394-03153-421603,odisha,nuapada,19,10
+11-21-395-03159-422271,odisha,kalahandi,19,10
+11-21-396-03172-424526,odisha,rayagada,19,11
+11-21-397-03187-427196,odisha,nabarangapur,19,11
+11-21-398-03199-428091,odisha,koraput,19,11
+11-21-398-03203-428503,odisha,koraput,19,4
+11-21-399-03220-430136,odisha,malkangiri,19,11
+11-22-400-03231-431192,chhattisgarh,koriya,13,39
+11-22-401-03236-431829,chhattisgarh,surguja,13,39
+11-22-402-03255-433584,chhattisgarh,jashpur,13,41
+11-22-403-03263-434341,chhattisgarh,raigarh,13,41
+11-22-404-03272-801945,chhattisgarh,korba,13,40
+11-22-405-03277-801950,chhattisgarh,janjgir champa,13,40
+11-22-406-03287-801965,chhattisgarh,bilaspur,13,40
+11-22-407-03298-439035,chhattisgarh,kabeerdham,13,42
+11-22-407-03301-801985,chhattisgarh,kabeerdham,13,40
+11-22-408-03302-440041,chhattisgarh,rajnandgaon,13,42
+11-22-409-03311-441694,chhattisgarh,durg,13,43
+11-22-410-03324-443468,chhattisgarh,raipur,13,44
+11-22-410-03332-802034,chhattisgarh,raipur,13,24
+11-22-411-03339-445624,chhattisgarh,mahasamund,13,44
+11-22-412-03344-446769,chhattisgarh,dhamtari,13,44
+11-22-413-03348-447422,chhattisgarh,uttar bastar kanker,13,45
+11-22-414-03355-448497,chhattisgarh,bastar,13,45
+11-22-415-03367-449647,chhattisgarh,narayanpur,13,45
+11-22-416-03369-450059,chhattisgarh,dakshin bastar dantewada,13,45
+11-22-417-03376-450667,chhattisgarh,bijapur,13,45
+11-23-418-03380-451361,madhya pradesh,sheopur,13,1
+11-23-418-03380-802078,madhya pradesh,sheopur,13,6
+11-23-419-03385-451944,madhya pradesh,morena,13,1
+11-23-420-03391-452760,madhya pradesh,bhind,13,2
+11-23-421-03399-453698,madhya pradesh,gwalior,13,3
+11-23-422-03403-454357,madhya pradesh,datia,13,4
+11-23-422-03404-454579,madhya pradesh,datia,13,3
+11-23-422-03405-454799,madhya pradesh,datia,13,5
+11-23-423-03407-454988,madhya pradesh,shivpuri,13,5
+11-23-424-03415-456405,madhya pradesh,tikamgarh,13,7
+11-23-425-03424-457368,madhya pradesh,chhatarpur,13,8
+11-23-426-03435-458556,madhya pradesh,panna,13,9
+11-23-427-03443-459572,madhya pradesh,sagar,13,10
+11-23-428-03454-461657,madhya pradesh,damoh,13,11
+11-23-428-03460-802168,madhya pradesh,damoh,13,34
+11-23-429-03461-462876,madhya pradesh,satna,13,12
+11-23-430-03471-464863,madhya pradesh,rewa,13,13
+11-23-431-03482-467584,madhya pradesh,umaria,13,14
+11-23-432-03487-468239,madhya pradesh,neemuch,13,16
+11-23-433-03492-469041,madhya pradesh,mandsaur,13,16
+11-23-434-03500-469973,madhya pradesh,ratlam,13,17
+11-23-435-03508-471044,madhya pradesh,ujjain,13,18
+11-23-436-03515-472146,madhya pradesh,shajapur,13,19
+11-23-436-03523-473153,madhya pradesh,shajapur,13,11
+11-23-437-03524-473254,madhya pradesh,dewas,13,20
+11-23-438-03532-474368,madhya pradesh,dhar,13,22
+11-23-438-03539-802266,madhya pradesh,dhar,13,17
+11-23-439-03540-475905,madhya pradesh,indore,13,23
+11-23-440-03545-476555,madhya pradesh,west nimar,13,24
+11-23-441-03554-477983,madhya pradesh,barwani,13,24
+11-23-442-03563-478700,madhya pradesh,rajgarh,13,26
+11-23-443-03570-480428,madhya pradesh,vidisha,13,27
+11-23-444-03580-482043,madhya pradesh,bhopal,13,28
+11-23-445-03582-482562,madhya pradesh,sehore,13,29
+11-23-446-03590-483635,madhya pradesh,raisen,13,30
+11-23-447-03598-485120,madhya pradesh,betul,13,31
+11-23-448-03606-486521,madhya pradesh,harda,13,32
+11-23-449-03612-487090,madhya pradesh,hoshangabad,13,32
+11-23-450-03620-488058,madhya pradesh,katni,13,33
+11-23-451-03627-489003,madhya pradesh,jabalpur,13,33
+11-23-452-03634-490450,madhya pradesh,narsimhapur,13,34
+11-23-453-03639-491520,madhya pradesh,dindori,13,35
+11-23-454-03641-492444,madhya pradesh,mandla,13,35
+11-23-455-03647-493670,madhya pradesh,chhindwara,13,36
+11-23-456-03659-495651,madhya pradesh,seoni,13,37
+11-23-457-03667-497241,madhya pradesh,balaghat,13,38
+11-23-458-03677-498632,madhya pradesh,guna,13,6
+11-23-459-03684-499970,madhya pradesh,ashoknagar,13,6
+11-23-460-03689-500870,madhya pradesh,shahdol,13,14
+11-23-461-03693-501716,madhya pradesh,anuppur,13,14
+11-23-462-03697-502294,madhya pradesh,sidhi,13,15
+11-23-463-03703-503349,madhya pradesh,singrauli,13,15
+11-23-464-03706-504094,madhya pradesh,jhabua,13,21
+11-23-465-03711-504908,madhya pradesh,alirajpur,13,21
+11-23-466-03714-505452,madhya pradesh,east nimar,13,25
+11-23-467-03719-506163,madhya pradesh,burhanpur,13,25
+11-24-468-03722-506426,gujarat,kachchh,7,7
+11-24-468-03729-802446,gujarat,kachchh,7,17
+11-24-469-03732-507359,gujarat,banas kantha,7,8
+11-24-470-03744-508603,gujarat,patan,7,8
+11-24-470-03746-508732,gujarat,patan,7,10
+11-24-471-03751-509123,gujarat,mahesana,7,10
+11-24-472-03760-509732,gujarat,sabar kantha,7,9
+11-24-473-03773-511119,gujarat,gandhinagar,7,10
+11-24-473-03775-511237,gujarat,gandhinagar,7,11
+11-24-473-03775-511242,gujarat,gandhinagar,7,12
+11-24-474-03777-511403,gujarat,ahmadabad,7,12
+11-24-474-03785-511845,gujarat,ahmadabad,7,9
+11-24-474-03785-511845,gujarat,ahmadabad,7,8
+11-24-475-03788-511942,gujarat,surendranagar,7,3
+11-24-476-03798-512594,gujarat,rajkot,7,2
+11-24-477-03812-513447,gujarat,jamnagar,7,1
+11-24-478-03822-514167,gujarat,porbandar,7,6
+11-24-479-03825-514351,gujarat,junagadh,7,6
+11-24-479-03837-515100,gujarat,junagadh,7,5
+11-24-480-03839-515383,gujarat,amreli,7,5
+11-24-480-03839-515408,gujarat,amreli,7,16
+11-24-480-03845-515697,gujarat,amreli,7,8
+11-24-480-03846-515750,gujarat,amreli,7,4
+11-24-480-03849-515960,gujarat,amreli,7,18
+11-24-481-03850-516001,gujarat,bhavnagar,7,4
+11-24-482-03861-516806,gujarat,anand,7,13
+11-24-483-03869-517159,gujarat,kheda,7,13
+11-24-483-03876-517621,gujarat,kheda,7,17
+11-24-484-03879-517778,gujarat,panch mahals,7,14
+11-24-485-03890-518992,gujarat,dohad,7,14
+11-24-486-03897-519688,gujarat,vadodara,7,15
+11-24-487-03909-521255,gujarat,narmada,7,15
+11-24-487-03910-521352,gujarat,narmada,7,16
+11-24-488-03913-521868,gujarat,bharuch,7,16
+11-24-489-03921-522534,gujarat,the dangs,7,19
+11-24-490-03922-522844,gujarat,navsari,7,18
+11-24-491-03927-523227,gujarat,valsad,7,18
+11-24-492-03932-523685,gujarat,surat,7,17
+11-24-493-03942-524417,gujarat,tapi,7,17
+11-25-494-03947-524907,daman diu,diu,30,2
+11-25-495-03948-524911,daman diu,daman,30,1
+11-26-496-03949-524932,dadra nagar haveli,dadra nagar haveli,29,1
+11-27-497-03950-525002,maharashtra,nandurbar,14,7
+11-27-498-03956-525950,maharashtra,dhule,14,7
+11-27-499-03960-526633,maharashtra,jalgaon,14,8
+11-27-500-03975-528155,maharashtra,buldana,14,22
+11-27-501-03988-529595,maharashtra,akola,14,23
+11-27-501-03989-529873,maharashtra,akola,14,24
+11-27-502-03995-530587,maharashtra,washim,14,23
+11-27-503-04001-531376,maharashtra,amravati,14,24
+11-27-504-04015-533379,maharashtra,wardha,14,26
+11-27-505-04023-534757,maharashtra,nagpur,14,27
+11-27-506-04037-536645,maharashtra,bhandara,14,28
+11-27-507-04044-537518,maharashtra,gondiya,14,28
+11-27-508-04052-538468,maharashtra,gadchiroli,14,30
+11-27-509-04064-540148,maharashtra,chandrapur,14,29
+11-27-510-04079-541955,maharashtra,yavatmal,14,25
+11-27-511-04095-544101,maharashtra,nanded,14,19
+11-27-512-04111-545708,maharashtra,hingoli,14,17
+11-27-513-04116-546419,maharashtra,parbhani,14,17
+11-27-514-04125-547262,maharashtra,jalna,14,16
+11-27-515-04133-548229,maharashtra,aurangabad,14,15
+11-27-515-04136-548656,maharashtra,aurangabad,14,16
+11-27-516-04142-549593,maharashtra,nashik,14,6
+11-27-517-04157-551531,maharashtra,thane,14,2
+11-27-518-99999-802794,maharashtra,mumbai suburban,14,1
+11-27-520-04172-553291,maharashtra,raigarh,14,3
+11-27-521-04187-555231,maharashtra,pune,14,10
+11-27-522-04201-557127,maharashtra,ahmadnagar,14,9
+11-27-523-04215-558719,maharashtra,bid,14,18
+11-27-524-04226-560088,maharashtra,latur,14,21
+11-27-525-04236-561038,maharashtra,osmanabad,14,20
+11-27-526-04244-561771,maharashtra,solapur,14,13
+11-27-527-04255-562928,maharashtra,satara,14,11
+11-27-528-04266-564686,maharashtra,ratnagiri,14,4
+11-27-529-04275-566234,maharashtra,sindhudurg,14,5
+11-27-530-04283-566995,maharashtra,kolhapur,14,14
+11-27-531-04295-568217,maharashtra,sangli,14,12
+11-28-532-04305-568945,andhra pradesh,adilabad,2,19
+11-28-533-04357-570686,andhra pradesh,nizamabad,2,18
+11-28-533-04370-802905,andhra pradesh,nizamabad,2,11
+11-28-534-04393-571604,andhra pradesh,karimnagar,2,20
+11-28-535-04450-572699,andhra pradesh,medak,2,17
+11-28-536-04499-802919,andhra pradesh,hyderabad,2,16
+11-28-537-04512-573969,andhra pradesh,rangareddy,2,15
+11-28-538-04549-574899,andhra pradesh,mahbubnagar,2,14
+11-28-539-04613-576452,andhra pradesh,nalgonda,2,23
+11-28-540-04672-577605,andhra pradesh,warangal,2,21
+11-28-541-04723-578681,andhra pradesh,khammam,2,22
+11-28-542-04769-579911,andhra pradesh,srikakulam,2,1
+11-28-543-04807-581721,andhra pradesh,vizianagaram,2,2
+11-28-544-04841-583252,andhra pradesh,visakhapatnam,2,3
+11-28-545-04884-586528,andhra pradesh,east godavari,2,4
+11-28-546-04944-587919,andhra pradesh,west godavari,2,5
+11-28-546-04989-588807,andhra pradesh,west godavari,2,3
+11-28-547-04990-588808,andhra pradesh,krishna,2,6
+11-28-548-05040-589798,andhra pradesh,guntur,2,7
+11-28-549-05097-590514,andhra pradesh,prakasam,2,8
+11-28-550-05153-591604,andhra pradesh,sri potti sriramulu nellore,2,9
+11-28-551-05199-592792,andhra pradesh,ysr kadapa,2,11
+11-28-551-05218-593201,andhra pradesh,ysr kadapa,2,12
+11-28-552-05250-593723,andhra pradesh,kurnool,2,13
+11-28-553-05304-594641,andhra pradesh,anantapur,2,12
+11-28-554-05367-595600,andhra pradesh,chittoor,2,10
+11-29-555-05433-597114,karnataka,belgaum,11,3
+11-29-556-05443-598402,karnataka,bagalkot,11,6
+11-29-556-05448-598975,karnataka,bagalkot,11,4
+11-29-557-05449-599029,karnataka,bijapur,11,6
+11-29-558-05454-599721,karnataka,bidar,11,5
+11-29-559-05459-600344,karnataka,raichur,11,17
+11-29-560-05464-601230,karnataka,koppal,11,17
+11-29-561-05468-601861,karnataka,gadag,11,10
+11-29-562-05473-602198,karnataka,dharwad,11,10
+11-29-563-05478-602577,karnataka,uttara kannada,11,20
+11-29-564-05489-603880,karnataka,haveri,11,10
+11-29-565-05496-604584,karnataka,bellary,11,4
+11-29-566-05503-605139,karnataka,chitradurga,11,8
+11-29-567-05509-606204,karnataka,davanagere,11,8
+11-29-567-05510-606292,karnataka,davanagere,11,4
+11-29-567-05512-606685,karnataka,davanagere,11,18
+11-29-568-05515-607130,karnataka,shimoga,11,18
+11-29-569-05522-608660,karnataka,udupi,11,9
+11-29-570-05525-608915,karnataka,chikmagalur,11,7
+11-29-571-05532-610032,karnataka,tumkur,11,19
+11-29-572-05542-612749,karnataka,bangalore,11,1
+11-29-573-05546-613361,karnataka,mandya,11,15
+11-29-574-05553-614840,karnataka,hassan,11,12
+11-29-574-05556-803174,karnataka,hassan,11,18
+11-29-575-05561-617425,karnataka,dakshina kannada,11,9
+11-29-576-05566-617793,karnataka,kodagu,11,13
+11-29-577-05569-618090,karnataka,mysore,11,16
+11-29-578-05576-619443,karnataka,chamarajanagar,11,16
+11-29-579-05580-619952,karnataka,gulbarga,11,11
+11-29-580-05587-620874,karnataka,yadgir,11,11
+11-29-581-05590-621389,karnataka,kolar,11,14
+11-29-582-05595-623192,karnataka,chikkaballapura,11,14
+11-29-583-05601-624707,karnataka,bangalore rural,11,2
+11-29-583-05601-624776,karnataka,bangalore rural,11,1
+11-29-584-05605-625761,karnataka,ramanagara,11,2
+11-29-584-05607-626235,karnataka,ramanagara,11,1
+11-30-585-05609-626635,goa,north goa,6,1
+11-30-586-05615-626874,goa,south goa,6,2
+11-31-587-05620-627030,lakshadweep,lakshadweep,32,1
+11-32-588-05630-627057,kerala,kasaragod,12,1
+11-32-589-05632-627177,kerala,kannur,12,2
+11-32-590-05635-627293,kerala,wayanad,12,3
+11-32-591-05638-627341,kerala,kozhikode,12,4
+11-32-592-05641-627443,kerala,malappuram,12,5
+11-32-593-05647-627566,kerala,palakkad,12,6
+11-32-594-05652-627714,kerala,thrissur,12,7
+11-32-595-05657-627941,kerala,ernakulam,12,8
+11-32-595-05663-628041,kerala,ernakulam,12,9
+11-32-596-05664-628049,kerala,idukki,12,9
+11-32-597-05668-628113,kerala,kottayam,12,10
+11-32-598-05673-628206,kerala,alappuzha,12,11
+11-32-599-05679-628292,kerala,pathanamthitta,12,12
+11-32-600-05684-628357,kerala,kollam,12,13
+11-32-601-05689-628452,kerala,thiruvananthapuram,12,14
+11-33-602-05693-628548,tamil nadu,thiruvallur,23,2
+11-33-602-05697-628942,tamil nadu,thiruvallur,23,7
+11-33-603-99999-803339,tamil nadu,chennai,23,2
+11-33-603-99999-803339,tamil nadu,chennai,23,1
+11-33-604-05702-629201,tamil nadu,kancheepuram,23,2
+11-33-605-05712-630269,tamil nadu,vellore,23,3
+11-33-606-05721-631164,tamil nadu,tiruvannamalai,23,5
+11-33-607-05728-632267,tamil nadu,viluppuram,23,6
+11-33-608-05736-633754,tamil nadu,salem,23,7
+11-33-609-05745-634369,tamil nadu,namakkal,23,7
+11-33-610-05749-634768,tamil nadu,erode,23,8
+11-33-611-05754-635080,tamil nadu,the nilgiris,23,9
+11-33-612-05760-635122,tamil nadu,dindigul,23,11
+11-33-613-05768-635491,tamil nadu,karur,23,12
+11-33-614-05773-635665,tamil nadu,tiruchirappalli,23,12
+11-33-614-05779-636014,tamil nadu,tiruchirappalli,23,2
+11-33-615-05782-636146,tamil nadu,perambalur,23,12
+11-33-616-05785-636305,tamil nadu,ariyalur,23,12
+11-33-617-05788-636518,tamil nadu,cuddalore,23,6
+11-33-618-05795-637355,tamil nadu,nagapattinam,23,13
+11-33-619-05803-637848,tamil nadu,thiruvarur,23,13
+11-33-620-05810-638395,tamil nadu,thanjavur,23,13
+11-33-621-05818-639209,tamil nadu,pudukkottai,23,14
+11-33-621-05827-639835,tamil nadu,pudukkottai,23,2
+11-33-622-05829-639966,tamil nadu,sivaganga,23,15
+11-33-622-05831-640183,tamil nadu,sivaganga,23,18
+11-33-623-05835-640481,tamil nadu,madurai,23,16
+11-33-623-05841-641063,tamil nadu,madurai,23,2
+11-33-624-05842-641072,tamil nadu,theni,23,16
+11-33-625-05847-641170,tamil nadu,virudhunagar,23,17
+11-33-625-05847-641173,tamil nadu,virudhunagar,23,18
+11-33-625-05847-641198,tamil nadu,virudhunagar,23,8
+11-33-625-05847-641198,tamil nadu,virudhunagar,23,20
+11-33-625-05849-641272,tamil nadu,virudhunagar,23,10
+11-33-626-05855-641768,tamil nadu,ramanathapuram,23,18
+11-33-626-05857-641977,tamil nadu,ramanathapuram,23,10
+11-33-627-05862-642167,tamil nadu,thoothukkudi,23,19
+11-33-627-05862-642227,tamil nadu,thoothukkudi,23,20
+11-33-627-05866-642454,tamil nadu,thoothukkudi,23,13
+11-33-627-05866-642456,tamil nadu,thoothukkudi,23,17
+11-33-627-05868-642588,tamil nadu,thoothukkudi,23,6
+11-33-628-05870-642619,tamil nadu,tirunelveli,23,20
+11-33-628-05876-642884,tamil nadu,tirunelveli,23,16
+11-33-629-05881-643093,tamil nadu,kanniyakumari,23,21
+11-33-629-05884-803932,tamil nadu,kanniyakumari,23,7
+11-33-630-05885-643192,tamil nadu,dharmapuri,23,4
+11-33-631-05890-643680,tamil nadu,krishnagiri,23,4
+11-33-632-05895-644340,tamil nadu,coimbatore,23,10
+11-33-632-05899-644532,tamil nadu,coimbatore,23,7
+11-33-633-05901-644595,tamil nadu,tiruppur,23,8
+11-33-633-05903-644737,tamil nadu,tiruppur,23,10
+11-34-634-05908-804035,puducherry,yanam,33,4
+11-34-635-05909-644917,puducherry,puducherry,33,1
+11-34-636-05913-804039,puducherry,mahe,33,3
+11-34-637-05914-644984,puducherry,karaikal,33,2
+11-35-638-05916-645013,andaman nicobar islands,nicobars,27,2
+11-35-639-05919-645214,andaman nicobar islands,north middle andaman,27,1
+11-35-640-05922-645440,andaman nicobar islands,south andaman,27,1
