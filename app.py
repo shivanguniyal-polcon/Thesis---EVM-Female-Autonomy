@@ -8,7 +8,8 @@ import re
 def extract_core_code(file_path):
     """
     Extracts code between '# [CORE START]' and '# [CORE END]' markers.
-    Filters out streamlit commands and plt.show() to prevent layout breaking.
+    If markers are not found, it falls back to returning the entire file.
+    Also filters out streamlit commands and plt.show() to prevent layout breaking.
     """
     START_MARKER = "# [CORE START]"
     END_MARKER = "# [CORE END]"
@@ -23,12 +24,14 @@ def extract_core_code(file_path):
     in_core_block = False
     has_markers = False
     
+    # Regex to identify streamlit commands or plot shows to hide
     skip_patterns = [
-        r'^\s*st\.',          
-        r'^\s*plt\.show\(\)', 
+        r'^\s*st\.',          # Lines starting with st. (streamlit)
+        r'^\s*plt\.show\(\)', # Lines with plt.show()
     ]
     
     for line in lines:
+        # Check markers first
         if START_MARKER in line:
             in_core_block = True
             has_markers = True
@@ -38,6 +41,7 @@ def extract_core_code(file_path):
             continue
             
         if in_core_block:
+            # Filter out UI-breaking lines if we are in core block
             should_skip = False
             for pattern in skip_patterns:
                 if re.search(pattern, line):
@@ -50,6 +54,7 @@ def extract_core_code(file_path):
     if has_markers and core_lines:
         return "".join(core_lines), True
     else:
+        # Fallback: Return full code (but still filter UI commands for safety in dashboard)
         clean_lines = []
         for line in lines:
             should_skip = False
@@ -62,49 +67,21 @@ def extract_core_code(file_path):
         return "".join(clean_lines), False
 
 def natural_sort_key(s):
-    """Helper to sort strings with numbers naturally."""
+    """Helper to sort strings with numbers naturally (e.g., Step1, Step2, Step10)."""
     return [int(text) if text.isdigit() else text.lower()
             for text in re.split('([0-9]+)', s)]
 
-def parse_description(content):
+def clean_description_header(content):
     """
-    Parses description.md to separate the 'Data Verdict' (first line/paragraph)
-    from the 'Sequential Analysis' (rest of the content).
-    Assumes the first line starting with '**' or '#' is the summary.
+    Removes the first H1 header line from the markdown content 
+    to prevent duplicate titles in the dashboard.
     """
     lines = content.split('\n')
-    summary_lines = []
-    detail_lines = []
-    in_summary = True
-    
-    for line in lines:
-        # Heuristic: If we hit a horizontal rule or a specific header like '##', switch to detail
-        if in_summary and (line.strip().startswith('---') or line.strip().startswith('##')):
-            in_summary = False
-            detail_lines.append(line) # Include the separator/header in detail
-            continue
-        
-        if in_summary:
-            summary_lines.append(line)
-        else:
-            detail_lines.append(line)
-            
-    summary = "\n".join(summary_lines).strip()
-    detail = "\n".join(detail_lines).strip()
-    
-    # If no clear split was found, treat first non-empty line as summary
-    if not detail and summary_lines:
-        parts = summary.split('\n\n', 1)
-        if len(parts) > 1:
-            summary = parts[0]
-            detail = parts[1]
-        else:
-            detail = summary
-            summary = "**Data Verdict:** See detailed analysis below."
-            
-    return summary, detail
+    if lines and lines[0].strip().startswith('# '):
+        return '\n'.join(lines[1:])
+    return content
 
-# --- 1. Page Configuration ---
+# --- 1. Page Configuration (Aesthetic Base) ---
 st.set_page_config(
     page_title="Project Dashboard",
     page_icon="📊",
@@ -129,38 +106,75 @@ if not project_folders:
     st.info("No projects found. Add a subfolder to the `projects` directory to get started!")
     st.stop()
 
-# --- 4. Sidebar Navigation ---
+# --- 4. Sidebar Navigation (Interactivity) ---
 st.sidebar.header("📂 Navigation")
 selected_project = st.sidebar.selectbox("Choose a project to view:", project_folders)
 project_path = os.path.join(BASE_DIR, selected_project)
 
 # --- 5. Project Header & Description ---
+# Display a clean, standardized header based on the folder name
 st.header(f"📁 {selected_project.replace('_', ' ').title()}")
 
 description_file = os.path.join(project_path, "description.md")
 if os.path.exists(description_file):
     with open(description_file, "r", encoding="utf-8") as f:
-        content = f.read()
+        description = f.read()
     
-    summary, detail = parse_description(content)
+    # Clean the description to remove duplicate H1 headers
+    clean_desc = clean_description_header(description)
     
-    # Always Visible Summary
-    st.markdown(summary)
+    # Split content into Summary (always visible) and Detailed Analysis (collapsible)
+    # We assume the format: **Bold Summary** followed by detailed text.
+    # We'll split by the first occurrence of a double newline after the summary paragraph.
+    # Or simpler: The user requested "summary should be always visible" and "detailed overview... collapsible".
+    # Let's assume the first paragraph (or up to the first blank line) is the summary if it's short, 
+    # but the prompt implies the whole top part is the summary.
+    # Let's parse: The first block of text before any "###" or specific marker could be summary.
+    # However, the new description.md files likely have a specific structure now.
+    # Let's assume the first non-header paragraph is the summary.
     
-    # Collapsible Detailed Sequential Analysis
-    if detail:
-        with st.expander("🔍 View Step-by-Step Data Analysis"):
-            st.markdown(detail)
+    lines = clean_desc.split('\n')
+    summary_lines = []
+    detail_lines = []
+    in_detail = False
+    
+    for line in lines:
+        if not in_detail:
+            # Heuristic: If we hit a header (###) or a specific marker, switch to detail
+            # Or if the summary block (usually 1-2 paragraphs) is done.
+            # Let's use a explicit split if the user formatted it that way, 
+            # otherwise, let's just put the whole thing in the expander if no clear split?
+            # No, the prompt says "only the summary should be always visible".
+            # Let's assume the first paragraph (empty line separated) is the summary.
+            if line.strip() == "" and len(summary_lines) > 0:
+                in_detail = True
+                continue
+            summary_lines.append(line)
+        else:
+            detail_lines.append(line)
+            
+    summary_text = "\n".join(summary_lines).strip()
+    detail_text = "\n".join(detail_lines).strip()
+    
+    # Display Summary
+    if summary_text:
+        st.markdown(summary_text)
+    
+    # Display Detailed Analysis in Expander
+    if detail_text:
+        with st.expander("🔍 View Sequential Data Analysis & Step-by-Step Findings"):
+            st.markdown(detail_text)
+
 else:
     st.info("No `description.md` found for this project.")
 
 st.markdown("---")
 
-# --- 6. Main Content Tabs ---
+# --- 6. Main Content Tabs (Aesthetic & Organization) ---
 tab_data, tab_plots, tab_code = st.tabs(["📊 Datasets (CSV)", "🖼️ Visualizations (PNG)", "💻 Source Code"])
 
 # --- TAB 1: DATA ---
-with tab_
+with tab_data:
     csv_files = glob.glob(os.path.join(project_path, "*.csv"))
     csv_files.sort(key=lambda x: natural_sort_key(os.path.basename(x)))
     
