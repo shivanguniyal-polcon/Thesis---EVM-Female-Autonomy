@@ -1,6 +1,19 @@
 [theme]
-primaryColor="#F63366"
-backgroundColor="#FFFFFF"
-secondaryBackgroundColor="#F0F2F6"
-textColor="#262730"
-font="sans serif"
+# The color of interactive elements (buttons, sliders, checkboxes)
+# Classic Terminal/Matrix Green
+primaryColor = "#00FF41" 
+
+# The main background color of the app
+# Pure black (or very dark gray)
+backgroundColor = "#050505" 
+
+# The background color of the sidebar
+# Slightly lighter dark gray to separate it from the main screen
+secondaryBackgroundColor = "#111111" 
+
+# The color of the main text
+# Soft white/light gray for readability against black
+textColor = "#E0E0E0" 
+
+# The font family. "monospace" is mandatory for the terminal look!
+font = "monospace"
