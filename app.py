@@ -12,12 +12,17 @@ def inject_glowing_numbers(text):
     if not text: 
         return text
         
-    # Robust regex for statistical summaries:
-    # Lookbehind: Ignores numbers attached to letters, underscores, or slashes (e.g., Project1, http://site/123)
-    # Lookahead: Ignores Markdown list markers like "1. " or "1) " so your bullets don't break.
-    pattern = r'(?<![a-zA-Z0-9_/])(-?\d+(?:\.\d+)?%?)(?![a-zA-Z0-9_]|\.\s|\)\s)'
+    # Branch 1: Decimals (-?\d+\.\d+%?) -> No lookahead needed, safe from list marker conflicts.
+    # Branch 2: Integers (-?\d+%?) -> Protected by negative lookahead to avoid matching "1. " or "1) " list markers.
+    # The (?<![\w/]) prevents matching numbers inside words like "Project1" or URLs.
+    pattern = r'(?<![\w/])(?:(-?\d+\.\d+%?)|(-?\d+%?)(?!\.\s|\)\s))(?!\w)'
     
-    return re.sub(pattern, r'<span class="glow-number">\1</span>', text)
+    def replacer(m):
+        # Group 1 is decimal, Group 2 is integer. One of them will be None.
+        num = m.group(1) if m.group(1) is not None else m.group(2)
+        return f'<span class="glow-number">{num}</span>'
+        
+    return re.sub(pattern, replacer, text)
 
 # --- Helper Function for Extracting Core Code ---
 def extract_core_code(file_path):
