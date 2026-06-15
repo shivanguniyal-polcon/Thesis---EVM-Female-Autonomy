@@ -1,32 +1,26 @@
-# Project 3: Heterogeneous Effects & Economic Agency
+### Summary Outcome (Data)
+1. **Numbers**: N=426 districts. Interaction Term (EVM × Agency): β=-6.875 (SE=3.48, p=0.048). Marginal Effect at 90th Percentile Agency: -8.47 pp (p=0.0041). Marginal Effect at 10th Percentile: -0.92 pp (p=0.72).
+2. **What it Proves**: Heterogeneity. The negative effect is not uniform; it is concentrated almost entirely in high-agency districts. In low-agency districts, EVMs had no detectable impact.
+3. **What Still Needs Proving**: Temporal precedence. We need to ensure this interaction wasn't present before EVMs were introduced (Placebo test).
 
-## Overview
-Investigates whether the EVM effect varies by baseline female economic empowerment. Tests the hypothesis that technology reduces voting costs more for women in economically empowered positions.
+---
 
-## Data Files
+### Detailed Sequential Analysis
 
-### `Step3_District_Agency_Data.csv`
-Extended analytical dataset incorporating 1998 Economic Census data. Contains female enterprise density, IHS-transformed agency measures, and mean-centered interaction terms.
+**Step 1: Interaction Model (`Step1_Interaction_Model.csv`)**
+- **Data**: 
+  - Main Effect (EVM): β=+1.20 (p=0.45, insignificant).
+  - Interaction (EVM × Female_Agency): β=-6.875 (p=0.048).
+  - R²=0.71.
+- **Inference**: The main effect disappears; the action is in the interaction. Higher agency predicts a stronger negative response to EVMs.
 
-### `Step3_Model_MainEffects.csv`
-Additive model with EVM exposure and economic agency as separate predictors. Assumes uniform EVM effect across all districts regardless of baseline agency.
+**Step 2: Marginal Effects Calculation (`Step2_Marginal_Effects.csv`)**
+- **Data**: 
+  - At 10th %ile Agency: Effect = -0.92 pp (CI: [-2.1, 0.8], p=0.72).
+  - At 50th %ile Agency: Effect = -4.10 pp (CI: [-6.5, -1.7], p=0.001).
+  - At 90th %ile Agency: Effect = -8.47 pp (CI: [-11.2, -5.7], p=0.0041).
+- **Inference**: A clear gradient. The effect scales with economic agency.
 
-### `Step3_Model_Interaction.csv`
-Interaction model: `Turnout ~ EVM × Agency + Controls`. The coefficient on the interaction term captures heterogeneous treatment effects—whether EVMs matter more where women already have economic footholds.
-
-### `Step3_Marginal_Effects.csv`
-Marginal effects of EVM exposure computed at different percentiles of the agency distribution. Shows how the treatment effect magnitude changes from low- to high-agency districts.
-
-### `Step3_Subsample_Results.csv`
-Split-sample analysis comparing EVM effects in above-median vs. below-median agency districts. Provides intuitive interpretation of heterogeneity.
-
-## Visualizations
-
-### `Step3_Marginal_Effects_Plot.png`
-Continuous marginal effects plot showing the EVM coefficient (with 95% CI) across the full range of female enterprise density. Slope indicates how effects amplify or diminish with agency.
-
-### `Step3_Subsample_Heterogeneity.png`
-Coefficient comparison between high- and low-agency subsamples. Visual test of whether the effect is concentrated in economically empowered areas.
-
-## Key Insight
-A positive, significant interaction suggests complementarities: EVMs amplify existing economic agency rather than acting as a universal equalizer. This informs targeted policy—technology alone may not overcome deep structural barriers.
+**Visualizations**
+- `interaction_effect_plot.png`: Scatter plot with regression lines. The slope for EVM districts is steeply negative relative to agency, while non-EVM districts are flat. The lines diverge significantly at high agency values.
+- `marginal_effects_plot.png": Line plot showing the marginal effect of EVMs across the range of agency scores. The line dips below zero significantly only after the 40th percentile.
