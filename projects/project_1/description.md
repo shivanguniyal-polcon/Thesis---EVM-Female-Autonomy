@@ -29,4 +29,4 @@ The analysis initiates with raw electoral returns from 543 Parliamentary Constit
 - **Inference**: Confirms the T-test result in a regression framework. The "raw penalty" is robustly estimated at ~6.9 percentage points.
 
 **Visualizations**
-- `boxplot_comparison.png`: Visually demonstrates the distribution shift. The median line for EVM constituencies is visibly lower than the non-EVM box. The interquartile ranges show overlap, but the central tendency difference is clear.
+- `boxplot_comparison.png`: The included visualization is a side-by-side boxplot designed to compare the statistical distribution, including the median, interquartile range, and outliers, of continuous data (female voter turnout) across two categorical groups (paper ballots versus EVMs).
