@@ -43,6 +43,7 @@ def extract_core_code(file_path):
                 if re.search(pattern, line):
                     should_skip = True
                     break
+            
             if not should_skip:
                 core_lines.append(line)
             
@@ -65,85 +66,41 @@ def natural_sort_key(s):
     return [int(text) if text.isdigit() else text.lower()
             for text in re.split('([0-9]+)', s)]
 
-def parse_description_content(content):
+def parse_description(content):
     """
-    Parses description.md into:
-    1. process_summary (First paragraph/block before detailed steps)
-    2. outcome_data (Structured data section if present, or derived)
-    3. detailed_analysis (The rest, usually step-by-step)
+    Parses description.md into three parts:
+    1. process_summary: The first paragraph (before the first double newline or '##').
+    2. outcome_data: The block starting with '### Summary Outcome (Data)' up to '## Detailed'.
+    3. detailed_analysis: Everything after '## Detailed Sequential Analysis'.
     """
     lines = content.split('\n')
     
-    # Remove H1 header if present
-    if lines and lines[0].strip().startswith('# '):
-        lines = lines[1:]
+    process_summary = []
+    outcome_data = []
+    detailed_analysis = []
     
-    # Split into blocks by double newline
-    blocks = []
-    current_block = []
+    current_section = 'process'
+    
     for line in lines:
-        if line.strip() == '':
-            if current_block:
-                blocks.append('\n'.join(current_block))
-                current_block = []
-        else:
-            current_block.append(line)
-    if current_block:
-        blocks.append('\n'.join(current_block))
-    
-    process_summary = ""
-    detailed_analysis = ""
-    
-    # Heuristic: First block is process summary. 
-    # Look for a block starting with "**Numbers**" or similar for outcome, 
-    # otherwise assume the structure is: Summary -> Detailed Steps.
-    # Based on user request, we want:
-    # 1. Summary of Process (Always Visible)
-    # 2. Summary of Outcome (Always Visible) - We will look for a specific marker or use the first block if it contains data verdict.
-    # 3. Detailed Analysis (Collapsible)
-    
-    # Let's assume the user's new format puts the "Data Verdict" early or we construct it.
-    # Actually, per previous turn, the description.md has:
-    # Block 1: Bold Data Verdict / Summary
-    # Block 2+: Sequential Steps
-    
-    # Revised Logic based on "Data Dictum":
-    # Block 0: The high level summary (Process + Outcome combined in text, but we need to split them visually?)
-    # Let's assume the FIRST block is the "Summary of Process & Outcome" combined text, 
-    # and we need to manually separate or just display the whole first block as "Summary"?
-    
-    # Re-reading user request: "under Project header: 1. Summary of process 2. Summary of outcome".
-    # And "overview and summary of outcomes to be outside the collapse window".
-    
-    # Let's try to detect the "Outcome" section by looking for keywords like "Numbers", "Proves", "Needs Proving".
-    # If found, that block is the Outcome. The preceding text is Process.
-    
-    outcome_block_index = -1
-    for i, block in enumerate(blocks):
-        if "**Numbers**" in block or "**What it Proves**" in block:
-            outcome_block_index = i
-            break
+        # Detect section headers
+        if line.strip().startswith('### Summary Outcome (Data)'):
+            current_section = 'outcome'
+            continue
+        elif line.strip().startswith('## Detailed Sequential Analysis'):
+            current_section = 'detailed'
+            continue
             
-    if outcome_block_index != -1:
-        # Everything before the outcome block is process summary
-        process_summary = '\n\n'.join(blocks[:outcome_block_index])
-        # The outcome block itself
-        # We might have multiple blocks for outcome? Let's assume just the one identified or until next major header?
-        # For safety, let's take the identified block and potentially the next one if it looks related, 
-        # but let's stick to the specific block found.
-        outcome_data = blocks[outcome_block_index]
-        # Everything after is detailed
-        detailed_analysis = '\n\n'.join(blocks[outcome_block_index+1:])
-    else:
-        # Fallback: First block is summary, rest is detailed
-        if blocks:
-            process_summary = blocks[0]
-            detailed_analysis = '\n\n'.join(blocks[1:])
-        else:
-            process_summary = ""
-            detailed_analysis = content
-
-    return process_summary, outcome_data, detailed_analysis
+        if current_section == 'process':
+            # Stop process summary if we hit a major header or empty line after text
+            if line.strip().startswith('# ') and not line.strip().startswith('###'):
+                continue # Skip main title if present
+            process_summary.append(line)
+        elif current_section == 'outcome':
+            outcome_data.append(line)
+        elif current_section == 'detailed':
+            detailed_analysis.append(line)
+            
+    return "\n".join(process_summary).strip(), "\n".join(outcome_data).strip(), "\n".join(detailed_analysis).strip()
 
 # --- 1. Page Configuration ---
 st.set_page_config(
@@ -175,31 +132,30 @@ st.sidebar.header("📂 Navigation")
 selected_project = st.sidebar.selectbox("Choose a project to view:", project_folders)
 project_path = os.path.join(BASE_DIR, selected_project)
 
-# --- 5. Project Header & Content Parsing ---
+# --- 5. Project Header & Description Parsing ---
 st.header(f"📁 {selected_project.replace('_', ' ').title()}")
 
 description_file = os.path.join(project_path, "description.md")
-
 if os.path.exists(description_file):
     with open(description_file, "r", encoding="utf-8") as f:
-        raw_content = f.read()
+        full_content = f.read()
     
-    process_summary, outcome_data, detailed_analysis = parse_description_content(raw_content)
+    process_summary, outcome_data, detailed_analysis = parse_description(full_content)
     
     # 1. Summary of the Process (Always Visible)
-    if process_summary.strip():
+    if process_summary:
         st.markdown(process_summary)
-        st.markdown("---") # Visual separator
+        st.markdown("---")
     
     # 2. Summary of Outcome (Data) (Always Visible)
-    if outcome_data.strip():
+    if outcome_data:
         st.subheader("📊 Summary Outcome (Data)")
         st.markdown(outcome_data)
-        st.markdown("---") # Visual separator
-
+        st.markdown("---")
+    
     # 3. Detailed Sequential Analysis (Collapsible)
-    if detailed_analysis.strip():
-        with st.expander("🔍 Detailed Sequential Analysis (Step-by-Step)", expanded=False):
+    if detailed_analysis:
+        with st.expander("🔍 Detailed Sequential Analysis (Click to Expand)", expanded=False):
             st.markdown(detailed_analysis)
 else:
     st.info("No `description.md` found for this project.")
@@ -208,7 +164,7 @@ else:
 tab_data, tab_plots, tab_code = st.tabs(["📊 Datasets (CSV)", "🖼️ Visualizations (PNG)", "💻 Source Code"])
 
 # --- TAB 1: DATA ---
-with tab_
+with tab_data:
     csv_files = glob.glob(os.path.join(project_path, "*.csv"))
     csv_files.sort(key=lambda x: natural_sort_key(os.path.basename(x)))
     
