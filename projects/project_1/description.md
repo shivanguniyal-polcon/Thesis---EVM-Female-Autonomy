@@ -1,3 +1,6 @@
+**Process Summary:**
+The analysis initiates with raw electoral returns from 543 Parliamentary Constituencies (PCs). The workflow involves merging 1991 and 1999 turnout datasets, filtering for the 46 treated PCs where EVMs were introduced, and constructing a binary treatment indicator. The core statistical engine applies a two-sample T-test to compare mean female turnout between treated and control groups, followed by a univariate OLS regression to quantify the raw "EVM penalty" without covariate adjustments. Visualizations include a boxplot distribution comparison and a map of treated constituencies.
+
 ### Summary Outcome (Data)
 1. **Numbers**: N=543 PCs; Raw Mean Diff = -6.86 pp (EVM=-41.3%, Non-EVM=-48.2%); T-test p=0.00038; OLS β=-6.86 (SE=1.89, p=0.0004), R²=0.018.
 2. **What it Proves**: A statistically significant, unadjusted negative association exists between EVM presence and female turnout in the raw data.
