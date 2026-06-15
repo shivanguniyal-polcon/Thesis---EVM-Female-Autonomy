@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import glob
 import re
+import json
 
 # --- Helper Function for Extracting Core Code ---
 def extract_core_code(file_path):
@@ -195,7 +196,13 @@ else:
     st.info("No `description.md` found for this project.")
 
 # --- 6. Main Content Tabs ---
-tab_data, tab_plots, tab_code = st.tabs(["📊 Datasets (CSV)", "🖼️ Visualizations (PNG)", "💻 Source Code"])
+# Added '🗺️ Maps (GeoJSON)' tab
+tab_data, tab_plots, tab_maps, tab_code = st.tabs([
+    "📊 Datasets (CSV)", 
+    "🖼️ Visualizations (PNG)", 
+    "🗺️ Maps (GeoJSON)",
+    "💻 Source Code"
+])
 
 # --- TAB 1: DATA ---
 with tab_data:
@@ -245,7 +252,57 @@ with tab_plots:
     else:
         st.info("No PNG visualizations found in this project.")
 
-# --- TAB 3: CODE ---
+# --- TAB 3: MAPS (GEOJSON) ---
+with tab_maps:
+    geojson_files = glob.glob(os.path.join(project_path, "*.geojson"))
+    # Also check for .json files that might be geojson
+    json_files = glob.glob(os.path.join(project_path, "*.json"))
+    # Combine and filter unique
+    all_geo = list(set(geojson_files + json_files))
+    all_geo.sort(key=lambda x: natural_sort_key(os.path.basename(x)))
+    
+    if all_geo:
+        st.info("ℹ️ Select a GeoJSON file to inspect its structure or download it for use in mapping tools.")
+        selected_geo = st.selectbox("Select a map file:", all_geo, key="geo_select")
+        
+        try:
+            with open(selected_geo, "r", encoding="utf-8") as f:
+                geo_data = json.load(f)
+            
+            # Display basic stats
+            col1, col2 = st.columns(2)
+            with col1:
+                st.metric("Feature Type", geo_data.get("type", "Unknown"))
+            with col2:
+                features = geo_data.get("features", [])
+                st.metric("Number of Features", len(features))
+            
+            # Show a sample of properties if available
+            if features and "properties" in features[0]:
+                st.write("**Sample Properties (First Feature):**")
+                st.json(features[0]["properties"])
+            
+            # Option to view full raw JSON (collapsible)
+            with st.expander("View Full GeoJSON Structure"):
+                st.json(geo_data)
+            
+            # Download Button
+            with open(selected_geo, "rb") as f:
+                st.download_button(
+                    label="📥 Download GeoJSON",
+                    data=f,
+                    file_name=os.path.basename(selected_geo),
+                    mime="application/geo+json"
+                )
+                
+        except json.JSONDecodeError:
+            st.error("Error: This file is not valid JSON/GeoJSON.")
+        except Exception as e:
+            st.error(f"Error reading file: {e}")
+    else:
+        st.info("No GeoJSON files found in this project.")
+
+# --- TAB 4: CODE ---
 with tab_code:
     py_files = glob.glob(os.path.join(project_path, "*.py"))
     py_files.sort(key=lambda x: natural_sort_key(os.path.basename(x)))
