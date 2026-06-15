@@ -332,9 +332,9 @@ with tab_code:
             display_code, is_core_only = extract_core_code(py)
             
             if is_core_only:
-                label = f"✨ {os.path.basename(py)} (Core Logic Only)"
+                label = f"{os.path.basename(py)} (Core Logic Only)"
             else:
-                label = f"📄 {os.path.basename(py)} (Full Script)"
+                label = f"{os.path.basename(py)} (Full Script)"
                 
             with st.expander(label, expanded=False):
                 if not is_core_only:
