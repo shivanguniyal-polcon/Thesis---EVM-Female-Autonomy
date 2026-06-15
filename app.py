@@ -9,6 +9,7 @@ def extract_core_code(file_path):
     """
     Extracts code between '# [CORE START]' and '# [CORE END]' markers.
     If markers are not found, it falls back to returning the entire file.
+    Also filters out streamlit commands and plt.show() to prevent layout breaking.
     """
     START_MARKER = "# [CORE START]"
     END_MARKER = "# [CORE END]"
@@ -23,35 +24,68 @@ def extract_core_code(file_path):
     in_core_block = False
     has_markers = False
     
+    # Regex to identify streamlit commands or plot shows to hide
+    skip_patterns = [
+        r'^\s*st\.',          # Lines starting with st. (streamlit)
+        r'^\s*plt\.show\(\)', # Lines with plt.show()
+    ]
+    
     for line in lines:
+        # Check markers first
         if START_MARKER in line:
             in_core_block = True
             has_markers = True
-            continue # Skip the marker comment itself
+            continue
         elif END_MARKER in line:
             in_core_block = False
-            continue # Skip the marker comment itself
+            continue
             
         if in_core_block:
-            core_lines.append(line)
+            # Filter out UI-breaking lines if we are in core block
+            should_skip = False
+            for pattern in skip_patterns:
+                if re.search(pattern, line):
+                    should_skip = True
+                    break
+            
+            if not should_skip:
+                core_lines.append(line)
             
     if has_markers and core_lines:
-        # Return the extracted core code and a flag that it is partial
         return "".join(core_lines), True
     else:
-        # Fallback: Return full code if no markers were found
-        return "".join(lines), False
+        # Fallback: Return full code (but still filter UI commands for safety in dashboard)
+        clean_lines = []
+        for line in lines:
+            should_skip = False
+            for pattern in skip_patterns:
+                if re.search(pattern, line):
+                    should_skip = True
+                    break
+            if not should_skip:
+                clean_lines.append(line)
+        return "".join(clean_lines), False
 
 def natural_sort_key(s):
     """Helper to sort strings with numbers naturally (e.g., Step1, Step2, Step10)."""
     return [int(text) if text.isdigit() else text.lower()
             for text in re.split('([0-9]+)', s)]
 
+def clean_description_header(content):
+    """
+    Removes the first H1 header line from the markdown content 
+    to prevent duplicate titles in the dashboard.
+    """
+    lines = content.split('\n')
+    if lines and lines[0].strip().startswith('# '):
+        return '\n'.join(lines[1:])
+    return content
+
 # --- 1. Page Configuration (Aesthetic Base) ---
 st.set_page_config(
     page_title="Project Dashboard",
     page_icon="📊",
-    layout="wide",              # Uses the full screen width
+    layout="wide",
     initial_sidebar_state="expanded"
 )
 
@@ -78,15 +112,19 @@ selected_project = st.sidebar.selectbox("Choose a project to view:", project_fol
 project_path = os.path.join(BASE_DIR, selected_project)
 
 # --- 5. Project Header & Description ---
+# Display a clean, standardized header based on the folder name
 st.header(f"📁 {selected_project.replace('_', ' ').title()}")
 
 description_file = os.path.join(project_path, "description.md")
 if os.path.exists(description_file):
     with open(description_file, "r", encoding="utf-8") as f:
         description = f.read()
-    # st.container(border=True) creates a nice, clean card-like aesthetic
+    
+    # Clean the description to remove duplicate H1 headers
+    clean_desc = clean_description_header(description)
+    
     with st.container(border=True):
-        st.markdown(description)
+        st.markdown(clean_desc)
 else:
     st.info("No `description.md` found for this project.")
 
@@ -98,17 +136,14 @@ tab_data, tab_plots, tab_code = st.tabs(["📊 Datasets (CSV)", "🖼️ Visuali
 # --- TAB 1: DATA ---
 with tab_data:
     csv_files = glob.glob(os.path.join(project_path, "*.csv"))
-    # Sort naturally so Step1 comes before Step10
     csv_files.sort(key=lambda x: natural_sort_key(os.path.basename(x)))
     
     if csv_files:
         selected_csv = st.selectbox("Select a dataset to preview:", csv_files, key="csv_select")
         try:
             df = pd.read_csv(selected_csv)
-            # Interactive Dataframe (allows sorting/searching without server-side recalculation)
             st.dataframe(df, use_container_width=True, height=400)
             
-            # Download Button
             with open(selected_csv, "rb") as f:
                 st.download_button(
                     label="📥 Download Dataset",
@@ -127,7 +162,6 @@ with tab_plots:
     png_files.sort(key=lambda x: natural_sort_key(os.path.basename(x)))
     
     if png_files:
-        # Dynamic columns: max 3 per row
         cols_per_row = 3
         for i in range(0, len(png_files), cols_per_row):
             cols = st.columns(cols_per_row)
@@ -154,24 +188,19 @@ with tab_code:
     
     if py_files:
         for py in py_files:
-            # 1. Extract the code using our helper function
             display_code, is_core_only = extract_core_code(py)
             
-            # 2. Dynamic UI Labeling based on what was extracted
             if is_core_only:
                 label = f"✨ {os.path.basename(py)} (Core Logic Only)"
             else:
                 label = f"📄 {os.path.basename(py)} (Full Script)"
                 
             with st.expander(label, expanded=False):
-                # 3. Add a helpful note if we are showing the full script because markers were missing
                 if not is_core_only:
                     st.caption("ℹ️ No core markers found. Displaying full script.")
                 
-                # 4. Display the extracted code
                 st.code(display_code, language='python')
                 
-                # 5. Download Button (Always downloads the FULL original file so it runs locally)
                 with open(py, "rb") as f:
                     st.download_button(
                         label="📥 Download Full Script",
