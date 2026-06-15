@@ -74,9 +74,9 @@ def natural_sort_key(s):
 def parse_description(content):
     """
     Parses the description.md content into three parts:
-    1. process_summary: The first non-empty paragraph (before the first double newline or '##').
+    1. process_summary: The first paragraph (before the first double newline or '##').
     2. outcome_data: The section between '## Summary Outcome (Data)' and '## Detailed Sequential Analysis'.
-    3. detailed_analysis: Everything after '## Detailed Sequential Analysis'.
+    3. detailed_analysis: The section after '## Detailed Sequential Analysis'.
     """
     lines = content.split('\n')
     
@@ -99,25 +99,16 @@ def parse_description(content):
             
         # Assign lines to sections
         if current_section == 'process':
-            # Stop collecting process summary if we hit a header or empty line after some text
+            # Stop collecting process summary if we hit a new major header or empty line after some text
             if stripped.startswith("# ") and not stripped.startswith("##"):
-                continue # Skip main H1 if present
-            if stripped == "" and process_summary:
-                # If we have content and hit an empty line, check if next is a header
-                # For simplicity, we just take the first block of text as process summary
-                pass 
+                continue # Skip main title if present
             process_summary.append(line)
         elif current_section == 'outcome':
             outcome_data.append(line)
         elif current_section == 'detailed':
             detailed_analysis.append(line)
             
-    # Clean up empty lines at start/end of sections
-    def clean_section(section_lines):
-        text = "\n".join(section_lines)
-        return text.strip()
-
-    return clean_section(process_summary), clean_section(outcome_data), clean_section(detailed_analysis)
+    return "\n".join(process_summary), "\n".join(outcome_data), "\n".join(detailed_analysis)
 
 # --- 1. Page Configuration ---
 st.set_page_config(
@@ -157,23 +148,23 @@ if os.path.exists(description_file):
     with open(description_file, "r", encoding="utf-8") as f:
         raw_content = f.read()
     
-    proc_sum, out_data, det_anal = parse_description(raw_content)
+    process_summary, outcome_data, detailed_analysis = parse_description(raw_content)
     
-    # 1. Summary of the Process (Always Visible)
-    if proc_sum:
-        st.markdown(proc_sum)
+    # 1. Always Visible: Summary of the Process
+    if process_summary.strip():
+        st.markdown(process_summary)
         st.markdown("---") # Separator
     
-    # 2. Summary of Outcome (Data) (Always Visible)
-    if out_data:
+    # 2. Always Visible: Summary of Outcome (Data)
+    if outcome_data.strip():
         st.subheader("📊 Summary Outcome (Data)")
-        st.markdown(out_data)
+        st.markdown(outcome_data)
         st.markdown("---") # Separator
 
-    # 3. Detailed Sequential Analysis (Collapsible)
-    if det_anal:
-        with st.expander("🔍 Detailed Sequential Analysis", expanded=False):
-            st.markdown(det_anal)
+    # 3. Collapsible: Detailed Sequential Analysis
+    if detailed_analysis.strip():
+        with st.expander("🔍 Detailed Sequential Analysis (Click to Expand)", expanded=False):
+            st.markdown(detailed_analysis)
 else:
     st.info("No `description.md` found for this project.")
 
@@ -181,7 +172,7 @@ else:
 tab_data, tab_plots, tab_code = st.tabs(["📊 Datasets (CSV)", "🖼️ Visualizations (PNG)", "💻 Source Code"])
 
 # --- TAB 1: DATA ---
-with tab_
+with tab_data:
     csv_files = glob.glob(os.path.join(project_path, "*.csv"))
     csv_files.sort(key=lambda x: natural_sort_key(os.path.basename(x)))
     
