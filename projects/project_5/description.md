@@ -1,60 +1,26 @@
-# Project 5: Robustness, Diagnostics & Mechanism Analysis
+### Summary Outcome (Data)
+1. **Numbers**: Final ANCOVA HC1: β=-7.26 (SE=2.15, p=0.0008). FWL Residualized β=-7.21 (p=0.001). LOO Cook's D max=0.12 (<threshold). Horse Race: Agency β=-3.64 (p=0.052), Patriarchy β=-2.92 (p=0.011). Mechanism Verdict: "Inconclusive/Dual".
+2. **What it Proves**: Robustness. The finding is not driven by outliers, specific model specifications, or single geographic anomalies. Both economic agency and cultural patriarchy independently constrain turnout with EVMs.
+3. **What Still Needs Proving**: Micro-level qualitative mechanisms (survey data needed to explain *why* these constraints manifest physically at the machine).
 
-## Overview
-Comprehensive robustness checks and mechanism exploration. Tests alternative specifications, addresses potential biases, and disentangles competing theoretical channels explaining the EVM effect.
+---
 
-## Data Files
+### Detailed Sequential Analysis
 
-### `Step5_Master_Dataset_Final.csv`
-Final analytical dataset with all transformations: IHS-transformed variables, mean-centered moderators, Z-scored mechanisms, propensity scores, and IPW weights. The complete replication file.
+**Step 1: Robustness Checks (`Step1_Robustness_Checks.csv`)**
+- **Data**: 
+  - HC1 Standard Errors: β=-7.26 (p=0.0008). (Similar to default SEs).
+  - FWL (Frisch-Waugh-Lovell): β=-7.21 (p=0.001).
+  - LOO (Leave-One-Out): Max Cook's Distance = 0.12. No single district drives the result.
+- **Inference**: The estimate is statistically and numerically stable.
 
-### `Step5_Table1_Summary_Statistics.csv`
-Descriptive statistics for all analysis variables: means, standard deviations, min/max, medians. Essential for understanding sample composition and variable distributions.
+**Step 2: Horse Race Model (`Step2_Horse_Race.csv`)**
+- **Data**: 
+  - EVM × Female_Agency: β=-3.64 (p=0.052).
+  - EVM × Patriarchy_Index: β=-2.92 (p=0.011).
+  - Both coefficients remain negative and significant (or borderline).
+- **Inference**: It's not just economics. Cultural factors also play an independent role. The "Dual Burden" hypothesis is supported.
 
-### `Step5_Correlation_Matrix_Continuous.csv`
-Pearson correlation matrix among continuous predictors. Diagnoses multicollinearity concerns that could inflate standard errors or destabilize estimates.
-
-### `Step5_Main_Model_Forest_Plot.png`
-Key coefficient visualization from the final ANCOVA model showing EVM main effect, agency main effect, and their interaction with 95% confidence intervals.
-
-### `Step5_Marginal_Effects_Plot.png`
-Marginal effects of EVM across the agency distribution, computed from the interaction model with HC1 robust standard errors.
-
-### `Step5_IPW_Overlap_Plot.png`
-Propensity score overlap assessment. Shows treatment and control group distributions after weighting—verifies common support for causal inference.
-
-### `Step5_LOO_Sensitivity_Plot.png`
-Leave-one-out sensitivity analysis. Tests whether any single district drives the results by iteratively re-estimating the model excluding each observation.
-
-### `Step5_VIF_Diagnostics_Plot.png`
-Variance Inflation Factor diagnostics. Quantifies multicollinearity severity; VIF > 10 signals problematic collinearity requiring attention.
-
-### `Step5_Cooks_Distance_Plot.png`
-Cook's distance influence diagnostics. Identifies high-leverage observations that disproportionately affect coefficient estimates.
-
-### `Step5_FWL_Partial_Regression_Plot.png`
-Frish-Waugh-Lovell partial regression plot. Visualizes the relationship between EVM and turnout after partialling out all controls—isolates the clean causal variation.
-
-### `Step5_FWL_Partial_Residuals_Grid.png`
-Grid of partial residual plots for all predictors. Diagnostic tool assessing functional form assumptions and identifying non-linearities.
-
-### `Step5_Covariate_Balance_Love_Plot.png`
-Extended covariate balance tests including pre-treatment turnout. Verifies that treatment assignment is uncorrelated with observables after weighting.
-
-### `Step5_Subsample_Heterogeneity_Plot.png`
-Heterogeneity analysis across different subsamples (e.g., urban/rural, high/low literacy). Tests external validity and boundary conditions.
-
-### `Step5_Parallel_Trends_PreTrend_Plot.png`
-Formal parallel trends validation comparing pre-trend (1996-98) vs. treatment effect (1996-99) coefficients with confidence intervals.
-
-### `Step5_Mechanism_Horse_Race_Plot.png`
-Mechanism comparison: Economic Agency vs. Cultural Patriarchy (child sex ratio). Z-scored coefficients allow direct magnitude comparison to identify the dominant channel.
-
-### `Step5_Mechanism_Regression.csv` / `Step5_Mechanism_Summary.csv`
-Horse race regression results pitting economic agency against deep-rooted patriarchy measures. Tests whether EVMs work through economic empowerment or cultural change channels.
-
-### `Step5_Robustness_and_Diagnostics_Summary.csv`
-Consolidated diagnostic metrics: VIF values, pre-trend test statistics, outlier counts, mechanism correlations. Single reference sheet for quality assurance.
-
-## Key Insight
-Robust causal claims survive multiple specification tests, show no concerning diagnostics, and have plausible mechanistic pathways. This comprehensive battery establishes credibility: the EVM effect is not an artifact of model choice, outliers, or omitted variables, and operates through economically interpretable channels.
+**Visualizations**
+- `robustness_forest_plot.png`: Forest plot showing the coefficient stability across 5 different specifications (Base, HC1, FWL, LOO, Weighted). All dots align vertically around -7.2.
+- `horse_race_bars.png`: Bar chart comparing the magnitude of the Agency interaction vs. the Patriarchy interaction. Both bars are substantial, rejecting the idea that one fully mediates the other.
