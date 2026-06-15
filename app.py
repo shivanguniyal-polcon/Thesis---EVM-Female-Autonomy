@@ -134,20 +134,6 @@ def render_detailed_analysis(md_content):
     # Render the markdown directly. Streamlit handles ### headers correctly.
     st.markdown(md_content, unsafe_allow_html=True)
 
-# --- 1. Page Configuration ---
-st.set_page_config(
-    page_title="Project Dashboard",
-    page_icon="📊",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
-
-import streamlit as st
-import pandas as pd
-import os
-import glob
-import re
-import json
 
 # --- 1. Page Configuration (MUST come first) ---
 st.set_page_config(
@@ -156,6 +142,73 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+# --- NUMBER GLOW EFFECT (For description.md text) ---
+st.markdown("""
+<style>
+    /* Glowing green style for numbers */
+    .glow-number {
+        color: #00FF41 !important;
+        text-shadow: 0 0 5px rgba(0, 255, 65, 0.8), 0 0 10px rgba(0, 255, 65, 0.4);
+        font-weight: bold;
+        background-color: rgba(0, 40, 0, 0.4);
+        padding: 1px 5px;
+        border-radius: 4px;
+        border: 1px solid rgba(0, 255, 65, 0.2);
+        font-family: monospace;
+    }
+</style>
+
+<script>
+    // Function to safely highlight numbers in text nodes
+    function highlightNumbers() {
+        // Target only Streamlit's markdown and expander containers (ignores CSV tables)
+        const containers = document.querySelectorAll('.stMarkdown, .stExpander, .stTabs');
+
+        containers.forEach(container => {
+            if (container.dataset.numbersHighlighted) return;
+
+            // Use a TreeWalker to ONLY look at actual text nodes (ignores HTML tags/attributes)
+            const walker = document.createTreeWalker(
+                container,
+                NodeFilter.SHOW_TEXT,
+                null,
+                false
+            );
+
+            let node;
+            const nodesToReplace = [];
+
+            while (node = walker.nextNode()) {
+                // Check if the text contains numbers, decimals, percentages, or negatives
+                if (/-?\d+(\.\d+)?%?/.test(node.nodeValue)) {
+                    nodesToReplace.push(node);
+                }
+            }
+
+            nodesToReplace.forEach(textNode => {
+                // Skip if it's inside a script or style tag
+                if (textNode.parentNode.tagName === 'SCRIPT' || textNode.parentNode.tagName === 'STYLE') return;
+
+                const span = document.createElement('span');
+                // Wrap numbers in the glow class
+                span.innerHTML = textNode.nodeValue.replace(/(-?\d+(?:\.\d+)?%?)/g, '<span class="glow-number">$1</span>');
+                textNode.parentNode.replaceChild(span, textNode);
+            });
+
+            container.dataset.numbersHighlighted = "true";
+        });
+    }
+
+    // Run initially after the page loads
+    setTimeout(highlightNumbers, 1000);
+
+    // Automatically re-run when Streamlit updates the DOM (e.g., switching tabs, expanding sections)
+    const observer = new MutationObserver(highlightNumbers);
+    observer.observe(document.body, { childList: true, subtree: true });
+</script>
+""", unsafe_allow_html=True)
+
 # --- 2. Header ---
 st.title("Female Agency and Voting Technology​")
 st.markdown("A Case for Economic Agency moderating the effect of EVMs on Female Voter Turnout during 1999 Lok Sabha Elections in India​")
