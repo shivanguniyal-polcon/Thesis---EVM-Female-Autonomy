@@ -13,8 +13,8 @@ def inject_glowing_numbers(text):
         return text
         
     # Regex matches integers, decimals, negatives, and percentages.
-    # Lookarounds prevent matching numbers inside URLs, HTML tags, or Markdown links.
-    pattern = r'(?<![/=\w])(-?\d+(?:\.\d+)?%?)(?![/\w>])'
+    # ADDED: (?!\.\s) and (?!\)\s) to prevent matching ordered list markers like "1. " or "1) "
+    pattern = r'(?<![/=\w])(-?\d+(?:\.\d+)?%?)(?![/\w>]|(?:\.\s)|(?:\)\s))'
     
     return re.sub(pattern, r'<span class="glow-number">\1</span>', text)
 
@@ -144,8 +144,8 @@ def render_detailed_analysis(md_content):
         st.info("No detailed analysis available.")
         return
 
-    # Render the markdown directly. Streamlit handles ### headers correctly.
-    st.markdown(md_content, unsafe_allow_html=True)
+    # Apply the Python injection function here as well!
+    st.markdown(inject_glowing_numbers(md_content), unsafe_allow_html=True)
 
 
 # --- 1. Page Configuration (MUST come first) ---
@@ -155,6 +155,28 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+# --- RESTORED CSS FOR GLOWING NUMBERS ---
+st.markdown("""
+<style>
+    /* Glowing green style for numbers - updated for modern Streamlit data-testid */
+    [data-testid="stMarkdown"] .glow-number, 
+    [data-testid="stExpander"] .glow-number,
+    .stMarkdown .glow-number, 
+    .stExpander .glow-number {
+        color: #00FF41 !important;
+        text-shadow: 0 0 5px rgba(0, 255, 65, 0.8), 0 0 10px rgba(0, 255, 65, 0.4) !important;
+        font-weight: bold !important;
+        background-color: rgba(0, 40, 0, 0.5) !important;
+        padding: 1px 5px !important;
+        border-radius: 4px !important;
+        border: 1px solid rgba(0, 255, 65, 0.3) !important;
+        font-family: monospace !important;
+        display: inline-block !important;
+        margin: 0 1px !important;
+    }
+</style>
+""", unsafe_allow_html=True)
 
 # --- 2. Header ---
 st.title("Female Agency and Voting Technology​")
