@@ -137,7 +137,7 @@ def render_detailed_analysis(md_content):
 # --- 1. Page Configuration ---
 st.set_page_config(
     page_title="Project Dashboard",
-    page_icon="📊",
+    page_icon="S",
     layout="wide",
     initial_sidebar_state="expanded"
 )
