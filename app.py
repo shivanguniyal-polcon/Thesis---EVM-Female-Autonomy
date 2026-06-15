@@ -8,8 +8,7 @@ import re
 def extract_core_code(file_path):
     """
     Extracts code between '# [CORE START]' and '# [CORE END]' markers.
-    If markers are not found, it falls back to returning the entire file.
-    Also filters out streamlit commands and plt.show() to prevent layout breaking.
+    Filters out streamlit commands and plt.show() to prevent layout breaking.
     """
     START_MARKER = "# [CORE START]"
     END_MARKER = "# [CORE END]"
@@ -67,79 +66,92 @@ def extract_core_code(file_path):
         return "".join(clean_lines), False
 
 def natural_sort_key(s):
-    """Helper to sort strings with numbers naturally (e.g., Step1, Step2, Step10)."""
+    """Helper to sort strings with numbers naturally."""
     return [int(text) if text.isdigit() else text.lower()
             for text in re.split('([0-9]+)', s)]
 
-def parse_description(content):
+def parse_description_content(content):
     """
     Parses the description.md content into three parts:
-    1. Process Summary (First paragraph before '##' or '###')
-    2. Outcome Summary (The block starting with '**Numbers:**', '**What it Proves:**', etc.)
-    3. Detailed Analysis (The rest, usually starting with '## Detailed Sequential Analysis')
+    1. Process Summary (First paragraph before 'Outcome' or 'Numbers')
+    2. Outcome Summary (The structured Numbers/Proves/Needs Proving section)
+    3. Detailed Analysis (The rest, intended for the collapsible section)
     """
     lines = content.split('\n')
     
-    process_summary = []
-    outcome_summary = []
-    detailed_analysis = []
+    process_summary_lines = []
+    outcome_summary_lines = []
+    detailed_analysis_lines = []
     
-    current_section = 'process'
+    state = 'process' # 'process', 'outcome', 'detailed'
     
-    # State flags
-    found_outcome_header = False
-    found_detailed_header = False
+    # Heuristics to detect sections
+    # We assume the file structure is:
+    # [Process Summary Paragraphs]
+    # [Outcome Summary Header & Content]
+    # [Detailed Sequential Analysis Header & Content]
     
     i = 0
     while i < len(lines):
-        line = lines[i]
-        stripped = line.strip()
+        line = lines[i].strip()
         
-        # Detect Section Headers
-        if stripped.startswith("## Detailed Sequential Analysis"):
-            current_section = 'detailed'
-            found_detailed_header = True
+        # Detect Outcome Section Start
+        if "Summary of Outcome" in line or "Numbers:" in line or line.startswith("### Numbers"):
+            state = 'outcome'
+            # Don't skip the line, add it to outcome
+            outcome_summary_lines.append(lines[i])
             i += 1
             continue
             
-        if stripped.startswith("### Summary of Outcome"):
-            current_section = 'outcome'
-            found_outcome_header = True
+        # Detect Detailed Analysis Section Start
+        if "Detailed Sequential Analysis" in line or line.startswith("## Detailed"):
+            state = 'detailed'
+            # Skip the header itself if we want to render it inside the expander, 
+            # or keep it. Let's keep it for context inside the expander.
+            detailed_analysis_lines.append(lines[i])
             i += 1
             continue
             
-        # Assign lines to sections
-        if current_section == 'process':
-            # Stop process summary if we hit a header or the outcome section implicitly
-            if stripped.startswith("#") or stripped.startswith("###"):
-                 # Skip headers in process summary, they belong to structure
-                 i += 1
-                 continue
-            if stripped: # Only add non-empty lines
-                process_summary.append(line)
-        
-        elif current_section == 'outcome':
-            outcome_summary.append(line)
-            
-        elif current_section == 'detailed':
-            detailed_analysis.append(line)
+        if state == 'process':
+            # If we hit an empty line after some text, it might be the end of the summary
+            # But we rely on the explicit headers above mostly.
+            # If we encounter a header that isn't outcome/detailed, it's likely part of process or detailed
+            if line.startswith('#') and "Outcome" not in line and "Detailed" not in line:
+                 # If it's a subheader like "### Step 1", it usually belongs to detailed analysis 
+                 # UNLESS it's clearly part of the intro. 
+                 # Given the prompt, let's assume everything before "Outcome" is process summary.
+                 pass 
+            process_summary_lines.append(lines[i])
+        elif state == 'outcome':
+            outcome_summary_lines.append(lines[i])
+        elif state == 'detailed':
+            detailed_analysis_lines.append(lines[i])
             
         i += 1
 
-    # Clean up empty lines at start/end of sections
-    def clean_section(section_list):
-        # Remove leading/trailing empty lines
-        while section_list and not section_list[0].strip():
-            section_list.pop(0)
-        while section_list and not section_list[-1].strip():
-            section_list.pop()
-        return "\n".join(section_list)
+    process_md = "\n".join(process_summary_lines).strip()
+    outcome_md = "\n".join(outcome_summary_lines).strip()
+    detailed_md = "\n".join(detailed_analysis_lines).strip()
+    
+    return process_md, outcome_md, detailed_md
 
-    return (
-        clean_section(process_summary),
-        clean_section(outcome_summary),
-        clean_section(detailed_analysis)
-    )
+def render_detailed_analysis(md_content):
+    """
+    Renders the detailed analysis markdown, ensuring Steps become subheaders.
+    """
+    if not md_content:
+        st.info("No detailed analysis available.")
+        return
+
+    lines = md_content.split('\n')
+    
+    # We will process lines to ensure headers are rendered correctly
+    # Streamlit's st.markdown handles #, ##, ### automatically.
+    # The issue might be that the whole block was passed as one code block previously.
+    # Passing directly to st.markdown should work if the syntax is correct.
+    
+    # Let's just render it directly. If the MD has '### Step X', st.markdown makes it a subheader.
+    st.markdown(md_content, unsafe_allow_html=True)
 
 # --- 1. Page Configuration ---
 st.set_page_config(
@@ -177,25 +189,25 @@ st.header(f"📁 {selected_project.replace('_', ' ').title()}")
 description_file = os.path.join(project_path, "description.md")
 if os.path.exists(description_file):
     with open(description_file, "r", encoding="utf-8") as f:
-        raw_content = f.read()
+        content = f.read()
     
-    process_sum, outcome_sum, detailed_sum = parse_description(raw_content)
+    process_summary, outcome_summary, detailed_analysis = parse_description_content(content)
     
     # 1. Always Visible: Process Summary
-    if process_sum:
-        st.markdown(process_sum)
+    if process_summary:
+        st.markdown(process_summary)
         st.markdown("---") # Separator
-
+    
     # 2. Always Visible: Outcome Summary (Data)
-    if outcome_sum:
-        st.subheader("💡 Summary of Outcome (Data)")
-        st.markdown(outcome_sum)
+    if outcome_summary:
+        st.subheader("📊 Summary of Outcome (Data)")
+        st.markdown(outcome_summary)
         st.markdown("---") # Separator
 
     # 3. Collapsible: Detailed Sequential Analysis
-    if detailed_sum:
+    if detailed_analysis:
         with st.expander("🔍 Detailed Sequential Analysis (Click to Expand)", expanded=False):
-            st.markdown(detailed_sum)
+            render_detailed_analysis(detailed_analysis)
 else:
     st.info("No `description.md` found for this project.")
 
@@ -203,7 +215,7 @@ else:
 tab_data, tab_plots, tab_code = st.tabs(["📊 Datasets (CSV)", "🖼️ Visualizations (PNG)", "💻 Source Code"])
 
 # --- TAB 1: DATA ---
-with tab_data:
+with tab_
     csv_files = glob.glob(os.path.join(project_path, "*.csv"))
     csv_files.sort(key=lambda x: natural_sort_key(os.path.basename(x)))
     
