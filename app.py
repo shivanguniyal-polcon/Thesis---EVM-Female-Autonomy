@@ -8,8 +8,7 @@ import re
 def extract_core_code(file_path):
     """
     Extracts code between '# [CORE START]' and '# [CORE END]' markers.
-    If markers are not found, it falls back to returning the entire file.
-    Also filters out streamlit commands and plt.show() to prevent layout breaking.
+    Filters out streamlit commands and plt.show() to prevent layout breaking.
     """
     START_MARKER = "# [CORE START]"
     END_MARKER = "# [CORE END]"
@@ -24,14 +23,12 @@ def extract_core_code(file_path):
     in_core_block = False
     has_markers = False
     
-    # Regex to identify streamlit commands or plot shows to hide
     skip_patterns = [
-        r'^\s*st\.',          # Lines starting with st. (streamlit)
-        r'^\s*plt\.show\(\)', # Lines with plt.show()
+        r'^\s*st\.',          
+        r'^\s*plt\.show\(\)', 
     ]
     
     for line in lines:
-        # Check markers first
         if START_MARKER in line:
             in_core_block = True
             has_markers = True
@@ -41,7 +38,6 @@ def extract_core_code(file_path):
             continue
             
         if in_core_block:
-            # Filter out UI-breaking lines if we are in core block
             should_skip = False
             for pattern in skip_patterns:
                 if re.search(pattern, line):
@@ -54,7 +50,6 @@ def extract_core_code(file_path):
     if has_markers and core_lines:
         return "".join(core_lines), True
     else:
-        # Fallback: Return full code (but still filter UI commands for safety in dashboard)
         clean_lines = []
         for line in lines:
             should_skip = False
@@ -67,21 +62,49 @@ def extract_core_code(file_path):
         return "".join(clean_lines), False
 
 def natural_sort_key(s):
-    """Helper to sort strings with numbers naturally (e.g., Step1, Step2, Step10)."""
+    """Helper to sort strings with numbers naturally."""
     return [int(text) if text.isdigit() else text.lower()
             for text in re.split('([0-9]+)', s)]
 
-def clean_description_header(content):
+def parse_description(content):
     """
-    Removes the first H1 header line from the markdown content 
-    to prevent duplicate titles in the dashboard.
+    Parses description.md to separate the 'Data Verdict' (first line/paragraph)
+    from the 'Sequential Analysis' (rest of the content).
+    Assumes the first line starting with '**' or '#' is the summary.
     """
     lines = content.split('\n')
-    if lines and lines[0].strip().startswith('# '):
-        return '\n'.join(lines[1:])
-    return content
+    summary_lines = []
+    detail_lines = []
+    in_summary = True
+    
+    for line in lines:
+        # Heuristic: If we hit a horizontal rule or a specific header like '##', switch to detail
+        if in_summary and (line.strip().startswith('---') or line.strip().startswith('##')):
+            in_summary = False
+            detail_lines.append(line) # Include the separator/header in detail
+            continue
+        
+        if in_summary:
+            summary_lines.append(line)
+        else:
+            detail_lines.append(line)
+            
+    summary = "\n".join(summary_lines).strip()
+    detail = "\n".join(detail_lines).strip()
+    
+    # If no clear split was found, treat first non-empty line as summary
+    if not detail and summary_lines:
+        parts = summary.split('\n\n', 1)
+        if len(parts) > 1:
+            summary = parts[0]
+            detail = parts[1]
+        else:
+            detail = summary
+            summary = "**Data Verdict:** See detailed analysis below."
+            
+    return summary, detail
 
-# --- 1. Page Configuration (Aesthetic Base) ---
+# --- 1. Page Configuration ---
 st.set_page_config(
     page_title="Project Dashboard",
     page_icon="📊",
@@ -106,35 +129,38 @@ if not project_folders:
     st.info("No projects found. Add a subfolder to the `projects` directory to get started!")
     st.stop()
 
-# --- 4. Sidebar Navigation (Interactivity) ---
+# --- 4. Sidebar Navigation ---
 st.sidebar.header("📂 Navigation")
 selected_project = st.sidebar.selectbox("Choose a project to view:", project_folders)
 project_path = os.path.join(BASE_DIR, selected_project)
 
 # --- 5. Project Header & Description ---
-# Display a clean, standardized header based on the folder name
 st.header(f"📁 {selected_project.replace('_', ' ').title()}")
 
 description_file = os.path.join(project_path, "description.md")
 if os.path.exists(description_file):
     with open(description_file, "r", encoding="utf-8") as f:
-        description = f.read()
+        content = f.read()
     
-    # Clean the description to remove duplicate H1 headers
-    clean_desc = clean_description_header(description)
+    summary, detail = parse_description(content)
     
-    with st.container(border=True):
-        st.markdown(clean_desc)
+    # Always Visible Summary
+    st.markdown(summary)
+    
+    # Collapsible Detailed Sequential Analysis
+    if detail:
+        with st.expander("🔍 View Step-by-Step Data Analysis"):
+            st.markdown(detail)
 else:
     st.info("No `description.md` found for this project.")
 
 st.markdown("---")
 
-# --- 6. Main Content Tabs (Aesthetic & Organization) ---
+# --- 6. Main Content Tabs ---
 tab_data, tab_plots, tab_code = st.tabs(["📊 Datasets (CSV)", "🖼️ Visualizations (PNG)", "💻 Source Code"])
 
 # --- TAB 1: DATA ---
-with tab_data:
+with tab_
     csv_files = glob.glob(os.path.join(project_path, "*.csv"))
     csv_files.sort(key=lambda x: natural_sort_key(os.path.basename(x)))
     
