@@ -1,3 +1,6 @@
+### Investigating heterogeneity, this step merges district-level economic agency proxies (female enterprise density) with the main dataset. The workflow centers on constructing an interaction term between the EVM treatment indicator and the continuous agency variable. We estimate an interaction model (
+Turnout∼EVM+Agency+EVM*Agency) and calculate marginal effects at specific percentiles (10th, 50th, 90th) of the agency distribution. The visual output is an interaction plot displaying the conditional effect of EVMs across the range of female economic agency, with confidence intervals.
+
 ### Summary Outcome (Data)
 1. **Numbers**: N=426 districts. Interaction Term (EVM × Agency): β=-6.875 (SE=3.48, p=0.048). Marginal Effect at 90th Percentile Agency: -8.47 pp (p=0.0041). Marginal Effect at 10th Percentile: -0.92 pp (p=0.72).
 2. **What it Proves**: Heterogeneity. The negative effect is not uniform; it is concentrated almost entirely in high-agency districts. In low-agency districts, EVMs had no detectable impact.
