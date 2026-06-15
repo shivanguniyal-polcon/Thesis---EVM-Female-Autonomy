@@ -1,78 +1,4 @@
 import streamlit as st
-
-# Add Matrix background effect
-def add_matrix_background():
-    st.markdown("""
-    <style>
-    /* Make the main container transparent to see the background */
-    .stApp {
-        background: transparent;
-    }
-    
-    /* Hide the default background */
-    .main > div {
-        background: transparent;
-    }
-    </style>
-    
-    <canvas id="matrix-canvas" style="position: fixed; top: 0; left: 0; z-index: -1; width: 100%; height: 100%;"></canvas>
-    
-    <script>
-    const canvas = document.getElementById('matrix-canvas');
-    const ctx = canvas.getContext('2d');
-
-    // Set canvas size
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    // Matrix characters (Katakana + Latin + Numbers)
-    const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const charArray = chars.split('');
-    
-    const fontSize = 14;
-    const columns = canvas.width / fontSize;
-    const drops = [];
-    
-    // Initialize drops
-    for (let i = 0; i < columns; i++) {
-        drops[i] = Math.random() * -100; // Start at random heights above screen
-    }
-    
-    function drawMatrix() {
-        // Semi-transparent black to create fade effect
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        ctx.fillStyle = '#0F0'; // Green text
-        ctx.font = fontSize + 'px monospace';
-        
-        for (let i = 0; i < drops.length; i++) {
-            const char = charArray[Math.floor(Math.random() * charArray.length)];
-            ctx.fillText(char, i * fontSize, drops[i] * fontSize);
-            
-            // Reset drop to top randomly after it crosses screen
-            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                drops[i] = 0;
-            }
-            drops[i]++;
-        }
-    }
-    
-    // Animation loop
-    setInterval(drawMatrix, 35);
-    
-    // Handle window resize
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
-    </script>
-    """, unsafe_allow_html=True)
-
-# Call this function at the beginning of your app
-add_matrix_background()
-
-import streamlit as st
 import pandas as pd
 import os
 import glob
@@ -215,6 +141,81 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+import streamlit as st
+
+# Add Matrix background effect
+def add_matrix_background():
+    st.markdown("""
+    <style>
+    /* Make the main container transparent to see the background */
+    .stApp {
+        background: transparent;
+    }
+    
+    /* Hide the default background */
+    .main > div {
+        background: transparent;
+    }
+    </style>
+    
+    <canvas id="matrix-canvas" style="position: fixed; top: 0; left: 0; z-index: -1; width: 100%; height: 100%;"></canvas>
+    
+    <script>
+    const canvas = document.getElementById('matrix-canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Set canvas size
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Matrix characters (Katakana + Latin + Numbers)
+    const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const charArray = chars.split('');
+    
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = [];
+    
+    // Initialize drops
+    for (let i = 0; i < columns; i++) {
+        drops[i] = Math.random() * -100; // Start at random heights above screen
+    }
+    
+    function drawMatrix() {
+        // Semi-transparent black to create fade effect
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.fillStyle = '#0F0'; // Green text
+        ctx.font = fontSize + 'px monospace';
+        
+        for (let i = 0; i < drops.length; i++) {
+            const char = charArray[Math.floor(Math.random() * charArray.length)];
+            ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+            
+            // Reset drop to top randomly after it crosses screen
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
+            drops[i]++;
+        }
+    }
+    
+    // Animation loop
+    setInterval(drawMatrix, 35);
+    
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+    </script>
+    """, unsafe_allow_html=True)
+
+# Call this function at the beginning of your app
+add_matrix_background()
+
 
 # --- 2. Header ---
 st.title("Female Agency and Voting Technology​")
