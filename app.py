@@ -8,6 +8,7 @@ import re
 def extract_core_code(file_path):
     """
     Extracts code between '# [CORE START]' and '# [CORE END]' markers.
+    If markers are not found, it falls back to returning the entire file.
     Filters out streamlit commands and plt.show() to prevent layout breaking.
     """
     START_MARKER = "# [CORE START]"
@@ -23,12 +24,14 @@ def extract_core_code(file_path):
     in_core_block = False
     has_markers = False
     
+    # Regex to identify streamlit commands or plot shows to hide
     skip_patterns = [
-        r'^\s*st\.',          
-        r'^\s*plt\.show\(\)', 
+        r'^\s*st\.',          # Lines starting with st. (streamlit)
+        r'^\s*plt\.show\(\)', # Lines with plt.show()
     ]
     
     for line in lines:
+        # Check markers first
         if START_MARKER in line:
             in_core_block = True
             has_markers = True
@@ -38,6 +41,7 @@ def extract_core_code(file_path):
             continue
             
         if in_core_block:
+            # Filter out UI-breaking lines if we are in core block
             should_skip = False
             for pattern in skip_patterns:
                 if re.search(pattern, line):
@@ -50,6 +54,7 @@ def extract_core_code(file_path):
     if has_markers and core_lines:
         return "".join(core_lines), True
     else:
+        # Fallback: Return full code (but still filter UI commands for safety in dashboard)
         clean_lines = []
         for line in lines:
             should_skip = False
@@ -62,15 +67,15 @@ def extract_core_code(file_path):
         return "".join(clean_lines), False
 
 def natural_sort_key(s):
-    """Helper to sort strings with numbers naturally."""
+    """Helper to sort strings with numbers naturally (e.g., Step1, Step2, Step10)."""
     return [int(text) if text.isdigit() else text.lower()
             for text in re.split('([0-9]+)', s)]
 
 def parse_description(content):
     """
-    Parses description.md into three parts:
-    1. process_summary: The first paragraph (before the first double newline or '##').
-    2. outcome_data: The block starting with '### Summary Outcome (Data)' up to '## Detailed'.
+    Parses the description.md content into three parts:
+    1. process_summary: The first non-empty paragraph (before the first double newline or '##').
+    2. outcome_data: The section between '## Summary Outcome (Data)' and '## Detailed Sequential Analysis'.
     3. detailed_analysis: Everything after '## Detailed Sequential Analysis'.
     """
     lines = content.split('\n')
@@ -82,25 +87,37 @@ def parse_description(content):
     current_section = 'process'
     
     for line in lines:
+        stripped = line.strip()
+        
         # Detect section headers
-        if line.strip().startswith('### Summary Outcome (Data)'):
+        if stripped.startswith("## Summary Outcome (Data)"):
             current_section = 'outcome'
             continue
-        elif line.strip().startswith('## Detailed Sequential Analysis'):
+        elif stripped.startswith("## Detailed Sequential Analysis"):
             current_section = 'detailed'
             continue
             
+        # Assign lines to sections
         if current_section == 'process':
-            # Stop process summary if we hit a major header or empty line after text
-            if line.strip().startswith('# ') and not line.strip().startswith('###'):
-                continue # Skip main title if present
+            # Stop collecting process summary if we hit a header or empty line after some text
+            if stripped.startswith("# ") and not stripped.startswith("##"):
+                continue # Skip main H1 if present
+            if stripped == "" and process_summary:
+                # If we have content and hit an empty line, check if next is a header
+                # For simplicity, we just take the first block of text as process summary
+                pass 
             process_summary.append(line)
         elif current_section == 'outcome':
             outcome_data.append(line)
         elif current_section == 'detailed':
             detailed_analysis.append(line)
             
-    return "\n".join(process_summary).strip(), "\n".join(outcome_data).strip(), "\n".join(detailed_analysis).strip()
+    # Clean up empty lines at start/end of sections
+    def clean_section(section_lines):
+        text = "\n".join(section_lines)
+        return text.strip()
+
+    return clean_section(process_summary), clean_section(outcome_data), clean_section(detailed_analysis)
 
 # --- 1. Page Configuration ---
 st.set_page_config(
@@ -138,25 +155,25 @@ st.header(f"📁 {selected_project.replace('_', ' ').title()}")
 description_file = os.path.join(project_path, "description.md")
 if os.path.exists(description_file):
     with open(description_file, "r", encoding="utf-8") as f:
-        full_content = f.read()
+        raw_content = f.read()
     
-    process_summary, outcome_data, detailed_analysis = parse_description(full_content)
+    proc_sum, out_data, det_anal = parse_description(raw_content)
     
     # 1. Summary of the Process (Always Visible)
-    if process_summary:
-        st.markdown(process_summary)
-        st.markdown("---")
+    if proc_sum:
+        st.markdown(proc_sum)
+        st.markdown("---") # Separator
     
     # 2. Summary of Outcome (Data) (Always Visible)
-    if outcome_data:
+    if out_data:
         st.subheader("📊 Summary Outcome (Data)")
-        st.markdown(outcome_data)
-        st.markdown("---")
-    
+        st.markdown(out_data)
+        st.markdown("---") # Separator
+
     # 3. Detailed Sequential Analysis (Collapsible)
-    if detailed_analysis:
-        with st.expander("🔍 Detailed Sequential Analysis (Click to Expand)", expanded=False):
-            st.markdown(detailed_analysis)
+    if det_anal:
+        with st.expander("🔍 Detailed Sequential Analysis", expanded=False):
+            st.markdown(det_anal)
 else:
     st.info("No `description.md` found for this project.")
 
@@ -164,7 +181,7 @@ else:
 tab_data, tab_plots, tab_code = st.tabs(["📊 Datasets (CSV)", "🖼️ Visualizations (PNG)", "💻 Source Code"])
 
 # --- TAB 1: DATA ---
-with tab_data:
+with tab_
     csv_files = glob.glob(os.path.join(project_path, "*.csv"))
     csv_files.sort(key=lambda x: natural_sort_key(os.path.basename(x)))
     
@@ -227,7 +244,7 @@ with tab_code:
                 
             with st.expander(label, expanded=False):
                 if not is_core_only:
-                    st.caption("ℹ️ No core markers found. Displaying full script.")
+                    st.caption("ℹ️ No core markers found. Displaying full script (UI commands filtered).")
                 
                 st.code(display_code, language='python')
                 
