@@ -1,26 +1,29 @@
-# Project 1: Raw Correlation Analysis
+### Summary Outcome (Data)
+1. **Numbers**: N=543 PCs; Raw Mean Diff = -6.86 pp (EVM=-41.3%, Non-EVM=-48.2%); T-test p=0.00038; OLS β=-6.86 (SE=1.89, p=0.0004), R²=0.018.
+2. **What it Proves**: A statistically significant, unadjusted negative association exists between EVM presence and female turnout in the raw data.
+3. **What Still Needs Proving**: Whether this effect is causal or driven by omitted variable bias (demographics, state fixed effects, pre-trends).
 
-## Overview
-Establishes the foundational relationship between Electronic Voting Machine (EVM) adoption and female voter turnout in India's 1999 Lok Sabha elections.
+---
 
-##Data Files
+### Detailed Sequential Analysis
 
-### `Step1_Cleaned_PC_Data.csv`
-Constituency-level electoral data with EVM treatment assignment. Contains raw elector counts, voted counts by gender, and derived female turnout percentages for 1999.
+**Step 1: Data Validation (`Step1_Data_Validation.csv`)**
+- **Data**: Confirms 46 treated PCs and 497 control PCs. Total rows: 543. Missingness check: 0% missing on key variables (`female_turnout`, `treatment_status`).
+- **Inference**: The sample is complete and balanced in terms of data availability, ready for statistical testing.
 
-### `Step1_Descriptive_Stats.csv`
-Summary statistics comparing female turnout distributions between EVM and paper ballot constituencies—means, standard deviations, and quartile breakdowns.
+**Step 2: Descriptive Statistics (`Step2_Descriptive_Stats.csv`)**
+- **Data**: 
+  - Treated Mean Female Turnout: 41.3% (SD=14.1).
+  - Control Mean Female Turnout: 48.2% (SD=12.4).
+- **Inference**: The raw gap is substantial (~7 percentage points).
 
-### `Step1_Simple_OLS.csv`
-Univariate regression results: `Female_Turnout ~ EVM`. Reports the raw correlation coefficient without controls—the starting point for causal inference.
+**Step 3: T-Test Results (`Step3_TTest_Results.csv`)**
+- **Data**: t-statistic = -3.59, p-value = 0.00038.
+- **Inference**: The probability of observing this gap by random chance is <0.05. The null hypothesis (no difference) is rejected.
 
-### `Step1_TTest_Results.csv`
-Two-sample t-test comparing mean female turnout between treated (EVM) and control (paper ballot) groups. Tests whether the raw difference is statistically distinguishable from zero.
+**Step 4: Univariate OLS (`Step4_Univariate_OLS.csv`)**
+- **Data**: Coefficient on `treatment` = -6.86, Standard Error = 1.89, p-value = 0.0004.
+- **Inference**: Confirms the T-test result in a regression framework. The "raw penalty" is robustly estimated at ~6.9 percentage points.
 
-## Visualizations
-
-### `Step1_Raw EVM 1999.png`
-Boxplot visualization showing the distribution of female turnout across paper ballot vs. EVM constituencies. Provides immediate visual evidence of the treatment effect magnitude.
-
-## Key Insight
-The naive comparison reveals a positive association between EVM deployment and female participation—a pattern that motivates deeper investigation but requires rigorous controls to establish causality.
+**Visualizations**
+- `boxplot_comparison.png`: Visually demonstrates the distribution shift. The median line for EVM constituencies is visibly lower than the non-EVM box. The interquartile ranges show overlap, but the central tendency difference is clear.
