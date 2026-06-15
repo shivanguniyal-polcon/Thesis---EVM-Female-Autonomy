@@ -6,8 +6,6 @@ Analyzing the 1999 cross-sectional election data across 543 constituencies, the 
 2. **What it Proves**: A statistically significant, unadjusted negative association exists between EVM presence and female turnout in the raw data.
 3. **What Still Needs Proving**: Whether this effect is causal or driven by omitted variable bias (demographics, state fixed effects, pre-trends).
 
----
-
 ### Detailed Sequential Analysis
 
 **Step 1: Data Validation (`Step1_Cleaned_PC_Data.csv`)**
