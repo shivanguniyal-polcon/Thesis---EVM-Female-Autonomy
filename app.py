@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import os
 import glob
+import re
 
 # --- Helper Function for Extracting Core Code ---
 def extract_core_code(file_path):
@@ -40,6 +41,11 @@ def extract_core_code(file_path):
     else:
         # Fallback: Return full code if no markers were found
         return "".join(lines), False
+
+def natural_sort_key(s):
+    """Helper to sort strings with numbers naturally (e.g., Step1, Step2, Step10)."""
+    return [int(text) if text.isdigit() else text.lower()
+            for text in re.split('([0-9]+)', s)]
 
 # --- 1. Page Configuration (Aesthetic Base) ---
 st.set_page_config(
@@ -92,6 +98,9 @@ tab_data, tab_plots, tab_code = st.tabs(["📊 Datasets (CSV)", "🖼️ Visuali
 # --- TAB 1: DATA ---
 with tab_data:
     csv_files = glob.glob(os.path.join(project_path, "*.csv"))
+    # Sort naturally so Step1 comes before Step10
+    csv_files.sort(key=lambda x: natural_sort_key(os.path.basename(x)))
+    
     if csv_files:
         selected_csv = st.selectbox("Select a dataset to preview:", csv_files, key="csv_select")
         try:
@@ -115,27 +124,34 @@ with tab_data:
 # --- TAB 2: PLOTS ---
 with tab_plots:
     png_files = glob.glob(os.path.join(project_path, "*.png"))
+    png_files.sort(key=lambda x: natural_sort_key(os.path.basename(x)))
+    
     if png_files:
-        # Dynamically create columns to display images side-by-side (Max 3 per row)
-        cols = st.columns(min(len(png_files), 3))
-        for i, png in enumerate(png_files):
-            with cols[i % 3]:
-                st.image(png, caption=os.path.basename(png), use_container_width=True)
-                with open(png, "rb") as f:
-                    st.download_button(
-                        label="📥 Download Image",
-                        data=f,
-                        file_name=os.path.basename(png),
-                        mime="image/png",
-                        key=f"dl_img_{i}"
-                    )
+        # Dynamic columns: max 3 per row
+        cols_per_row = 3
+        for i in range(0, len(png_files), cols_per_row):
+            cols = st.columns(cols_per_row)
+            batch = png_files[i:i+cols_per_row]
+            
+            for j, png in enumerate(batch):
+                with cols[j]:
+                    st.image(png, caption=os.path.basename(png), use_container_width=True)
+                    with open(png, "rb") as f:
+                        st.download_button(
+                            label="📥 Download Image",
+                            data=f,
+                            file_name=os.path.basename(png),
+                            mime="image/png",
+                            key=f"dl_img_{i}_{j}"
+                        )
     else:
         st.info("No PNG visualizations found in this project.")
 
 # --- TAB 3: CODE ---
 with tab_code:
-    # Looking specifically for .py files to apply the marker extraction logic
-    py_files = glob.glob(os.path.join(project_path, "*.py")) 
+    py_files = glob.glob(os.path.join(project_path, "*.py"))
+    py_files.sort(key=lambda x: natural_sort_key(os.path.basename(x)))
+    
     if py_files:
         for py in py_files:
             # 1. Extract the code using our helper function
@@ -150,7 +166,7 @@ with tab_code:
             with st.expander(label, expanded=False):
                 # 3. Add a helpful note if we are showing the full script because markers were missing
                 if not is_core_only:
-                    st.caption("ℹ️ No `[CORE START]` or `[CORE END]` markers found. Displaying the full file.")
+                    st.caption("ℹ️ No core markers found. Displaying full script.")
                 
                 # 4. Display the extracted code
                 st.code(display_code, language='python')
