@@ -8,8 +8,7 @@ import re
 def extract_core_code(file_path):
     """
     Extracts code between '# [CORE START]' and '# [CORE END]' markers.
-    If markers are not found, it falls back to returning the entire file.
-    Also filters out streamlit commands and plt.show() to prevent layout breaking.
+    Filters out streamlit commands and plt.show() to prevent layout breaking.
     """
     START_MARKER = "# [CORE START]"
     END_MARKER = "# [CORE END]"
@@ -24,14 +23,12 @@ def extract_core_code(file_path):
     in_core_block = False
     has_markers = False
     
-    # Regex to identify streamlit commands or plot shows to hide
     skip_patterns = [
-        r'^\s*st\.',          # Lines starting with st. (streamlit)
-        r'^\s*plt\.show\(\)', # Lines with plt.show()
+        r'^\s*st\.',          
+        r'^\s*plt\.show\(\)', 
     ]
     
     for line in lines:
-        # Check markers first
         if START_MARKER in line:
             in_core_block = True
             has_markers = True
@@ -41,20 +38,17 @@ def extract_core_code(file_path):
             continue
             
         if in_core_block:
-            # Filter out UI-breaking lines if we are in core block
             should_skip = False
             for pattern in skip_patterns:
                 if re.search(pattern, line):
                     should_skip = True
                     break
-            
             if not should_skip:
                 core_lines.append(line)
             
     if has_markers and core_lines:
         return "".join(core_lines), True
     else:
-        # Fallback: Return full code (but still filter UI commands for safety in dashboard)
         clean_lines = []
         for line in lines:
             should_skip = False
@@ -67,83 +61,91 @@ def extract_core_code(file_path):
         return "".join(clean_lines), False
 
 def natural_sort_key(s):
-    """Helper to sort strings with numbers naturally (e.g., Step1, Step2, Step10)."""
+    """Helper to sort strings with numbers naturally."""
     return [int(text) if text.isdigit() else text.lower()
             for text in re.split('([0-9]+)', s)]
 
 def parse_description_content(content):
     """
-    Parses the description.md content to separate:
-    1. The Overview (first non-empty line, usually bold summary)
-    2. The Summary Outcome (Numbers, Proves, Needs Proving)
-    3. The Detailed Analysis (everything else)
-    
-    Assumes a specific structure in the markdown:
-    - Line 1: Overview
-    - Blank line
-    - "### Summary Outcome (Data)" header
-    - Content for Numbers, Proves, Needs Proving
-    - Blank line
-    - "### Detailed Sequential Analysis" header (optional, rest is detailed)
+    Parses description.md into:
+    1. process_summary (First paragraph/block before detailed steps)
+    2. outcome_data (Structured data section if present, or derived)
+    3. detailed_analysis (The rest, usually step-by-step)
     """
     lines = content.split('\n')
     
-    overview = ""
-    summary_outcome = ""
+    # Remove H1 header if present
+    if lines and lines[0].strip().startswith('# '):
+        lines = lines[1:]
+    
+    # Split into blocks by double newline
+    blocks = []
+    current_block = []
+    for line in lines:
+        if line.strip() == '':
+            if current_block:
+                blocks.append('\n'.join(current_block))
+                current_block = []
+        else:
+            current_block.append(line)
+    if current_block:
+        blocks.append('\n'.join(current_block))
+    
+    process_summary = ""
     detailed_analysis = ""
     
-    # State machine to parse sections
-    state = "overview" # overview, summary, detailed
-    current_section_lines = []
+    # Heuristic: First block is process summary. 
+    # Look for a block starting with "**Numbers**" or similar for outcome, 
+    # otherwise assume the structure is: Summary -> Detailed Steps.
+    # Based on user request, we want:
+    # 1. Summary of Process (Always Visible)
+    # 2. Summary of Outcome (Always Visible) - We will look for a specific marker or use the first block if it contains data verdict.
+    # 3. Detailed Analysis (Collapsible)
     
-    # Skip empty lines at the very start
-    while lines and not lines[0].strip():
-        lines.pop(0)
-        
-    if not lines:
-        return "", "", content
-
-    # The first line is the Overview
-    overview = lines[0].strip()
-    lines = lines[1:]
+    # Let's assume the user's new format puts the "Data Verdict" early or we construct it.
+    # Actually, per previous turn, the description.md has:
+    # Block 1: Bold Data Verdict / Summary
+    # Block 2+: Sequential Steps
     
-    # Skip empty lines after overview
-    while lines and not lines[0].strip():
-        lines.pop(0)
-        
-    # Now look for sections
-    in_summary = False
-    in_detailed = False
+    # Revised Logic based on "Data Dictum":
+    # Block 0: The high level summary (Process + Outcome combined in text, but we need to split them visually?)
+    # Let's assume the FIRST block is the "Summary of Process & Outcome" combined text, 
+    # and we need to manually separate or just display the whole first block as "Summary"?
     
-    summary_lines = []
-    detailed_lines = []
+    # Re-reading user request: "under Project header: 1. Summary of process 2. Summary of outcome".
+    # And "overview and summary of outcomes to be outside the collapse window".
     
-    for line in lines:
-        stripped = line.strip()
-        
-        if stripped.startswith("### Summary Outcome (Data)"):
-            in_summary = True
-            in_detailed = False
-            continue
-        elif stripped.startswith("### Detailed Sequential Analysis"):
-            in_summary = False
-            in_detailed = True
-            continue
+    # Let's try to detect the "Outcome" section by looking for keywords like "Numbers", "Proves", "Needs Proving".
+    # If found, that block is the Outcome. The preceding text is Process.
+    
+    outcome_block_index = -1
+    for i, block in enumerate(blocks):
+        if "**Numbers**" in block or "**What it Proves**" in block:
+            outcome_block_index = i
+            break
             
-        if in_summary:
-            summary_lines.append(line)
-        elif in_detailed:
-            detailed_lines.append(line)
+    if outcome_block_index != -1:
+        # Everything before the outcome block is process summary
+        process_summary = '\n\n'.join(blocks[:outcome_block_index])
+        # The outcome block itself
+        # We might have multiple blocks for outcome? Let's assume just the one identified or until next major header?
+        # For safety, let's take the identified block and potentially the next one if it looks related, 
+        # but let's stick to the specific block found.
+        outcome_data = blocks[outcome_block_index]
+        # Everything after is detailed
+        detailed_analysis = '\n\n'.join(blocks[outcome_block_index+1:])
+    else:
+        # Fallback: First block is summary, rest is detailed
+        if blocks:
+            process_summary = blocks[0]
+            detailed_analysis = '\n\n'.join(blocks[1:])
         else:
-            # If no headers found, assume everything remaining is detailed
-            detailed_lines.append(line)
-            
-    summary_outcome = "\n".join(summary_lines)
-    detailed_analysis = "\n".join(detailed_lines)
-    
-    return overview, summary_outcome, detailed_analysis
+            process_summary = ""
+            detailed_analysis = content
 
-# --- 1. Page Configuration (Aesthetic Base) ---
+    return process_summary, outcome_data, detailed_analysis
+
+# --- 1. Page Configuration ---
 st.set_page_config(
     page_title="Project Dashboard",
     page_icon="📊",
@@ -168,46 +170,45 @@ if not project_folders:
     st.info("No projects found. Add a subfolder to the `projects` directory to get started!")
     st.stop()
 
-# --- 4. Sidebar Navigation (Interactivity) ---
+# --- 4. Sidebar Navigation ---
 st.sidebar.header("📂 Navigation")
 selected_project = st.sidebar.selectbox("Choose a project to view:", project_folders)
 project_path = os.path.join(BASE_DIR, selected_project)
 
-# --- 5. Project Header & Description ---
-# Display a clean, standardized header based on the folder name
+# --- 5. Project Header & Content Parsing ---
 st.header(f"📁 {selected_project.replace('_', ' ').title()}")
 
 description_file = os.path.join(project_path, "description.md")
+
 if os.path.exists(description_file):
     with open(description_file, "r", encoding="utf-8") as f:
         raw_content = f.read()
     
-    # Parse the content into three parts
-    overview, summary_outcome, detailed_analysis = parse_description_content(raw_content)
+    process_summary, outcome_data, detailed_analysis = parse_description_content(raw_content)
     
-    # 1. Always Visible: Overview
-    if overview:
-        st.markdown(f"**{overview}**")
-        st.markdown("---") # Separator after overview
+    # 1. Summary of the Process (Always Visible)
+    if process_summary.strip():
+        st.markdown(process_summary)
+        st.markdown("---") # Visual separator
+    
+    # 2. Summary of Outcome (Data) (Always Visible)
+    if outcome_data.strip():
+        st.subheader("📊 Summary Outcome (Data)")
+        st.markdown(outcome_data)
+        st.markdown("---") # Visual separator
 
-    # 2. Always Visible: Summary Outcome (Data)
-    if summary_outcome:
-        st.subheader("Summary Outcome (Data)")
-        st.markdown(summary_outcome)
-        st.markdown("---") # Separator before collapsible section
-
-    # 3. Collapsible: Detailed Sequential Analysis
-    if detailed_analysis:
-        with st.expander("🔍 Detailed Sequential Analysis (Click to Expand)", expanded=False):
+    # 3. Detailed Sequential Analysis (Collapsible)
+    if detailed_analysis.strip():
+        with st.expander("🔍 Detailed Sequential Analysis (Step-by-Step)", expanded=False):
             st.markdown(detailed_analysis)
 else:
     st.info("No `description.md` found for this project.")
 
-# --- 6. Main Content Tabs (Aesthetic & Organization) ---
+# --- 6. Main Content Tabs ---
 tab_data, tab_plots, tab_code = st.tabs(["📊 Datasets (CSV)", "🖼️ Visualizations (PNG)", "💻 Source Code"])
 
 # --- TAB 1: DATA ---
-with tab_data:
+with tab_
     csv_files = glob.glob(os.path.join(project_path, "*.csv"))
     csv_files.sort(key=lambda x: natural_sort_key(os.path.basename(x)))
     
