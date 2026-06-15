@@ -143,69 +143,78 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- NUMBER GLOW EFFECT (For description.md text) ---
+# --- NUMBER GLOW EFFECT (Bulletproof for Streamlit's Reactive DOM) ---
 st.markdown("""
 <style>
-    /* Glowing green style for numbers */
-    .glow-number {
+    /* Glowing green style for numbers - highly specific to override Streamlit */
+    .stMarkdown .glow-number, .stExpander .glow-number {
         color: #00FF41 !important;
-        text-shadow: 0 0 5px rgba(0, 255, 65, 0.8), 0 0 10px rgba(0, 255, 65, 0.4);
-        font-weight: bold;
-        background-color: rgba(0, 40, 0, 0.4);
-        padding: 1px 5px;
-        border-radius: 4px;
-        border: 1px solid rgba(0, 255, 65, 0.2);
-        font-family: monospace;
+        text-shadow: 0 0 5px rgba(0, 255, 65, 0.8), 0 0 10px rgba(0, 255, 65, 0.4) !important;
+        font-weight: bold !important;
+        background-color: rgba(0, 40, 0, 0.5) !important;
+        padding: 1px 5px !important;
+        border-radius: 4px !important;
+        border: 1px solid rgba(0, 255, 65, 0.3) !important;
+        font-family: monospace !important;
+        display: inline-block !important;
+        margin: 0 1px !important;
     }
 </style>
 
 <script>
-    // Function to safely highlight numbers in text nodes
     function highlightNumbers() {
-        // Target only Streamlit's markdown and expander containers (ignores CSV tables)
-        const containers = document.querySelectorAll('.stMarkdown, .stExpander, .stTabs');
+        // Target Streamlit's markdown containers
+        const containers = document.querySelectorAll('.stMarkdown, .stExpander');
 
         containers.forEach(container => {
-            if (container.dataset.numbersHighlighted) return;
-
-            // Use a TreeWalker to ONLY look at actual text nodes (ignores HTML tags/attributes)
+            // Create a TreeWalker to safely find ONLY text nodes (ignores HTML tags)
             const walker = document.createTreeWalker(
                 container,
                 NodeFilter.SHOW_TEXT,
-                null,
-                false
+                {
+                    acceptNode: function(node) {
+                        // Skip if the parent is already our glow span (prevents infinite loops)
+                        if (node.parentNode.classList && node.parentNode.classList.contains('glow-number')) {
+                            return NodeFilter.FILTER_REJECT;
+                        }
+                        // Skip script and style tags
+                        if (['SCRIPT', 'STYLE'].includes(node.parentNode.tagName)) {
+                            return NodeFilter.FILTER_REJECT;
+                        }
+                        return NodeFilter.FILTER_ACCEPT;
+                    }
+                }
             );
 
             let node;
             const nodesToReplace = [];
 
+            // Collect all text nodes that contain numbers
             while (node = walker.nextNode()) {
-                // Check if the text contains numbers, decimals, percentages, or negatives
-                if (/-?\d+(\.\d+)?%?/.test(node.nodeValue)) {
+                // Matches integers, decimals, negatives, and percentages (e.g., 1999, -3.4, 85%)
+                if (/-?\d+(?:\.\d+)?%?/.test(node.nodeValue)) {
                     nodesToReplace.push(node);
                 }
             }
 
+            // Replace the text nodes with HTML containing the glow spans
             nodesToReplace.forEach(textNode => {
-                // Skip if it's inside a script or style tag
-                if (textNode.parentNode.tagName === 'SCRIPT' || textNode.parentNode.tagName === 'STYLE') return;
-
                 const span = document.createElement('span');
-                // Wrap numbers in the glow class
                 span.innerHTML = textNode.nodeValue.replace(/(-?\d+(?:\.\d+)?%?)/g, '<span class="glow-number">$1</span>');
-                textNode.parentNode.replaceChild(span, textNode);
+                
+                // Only replace if we actually created a glow span
+                if (span.querySelector('.glow-number')) {
+                    textNode.parentNode.replaceChild(span, textNode);
+                }
             });
-
-            container.dataset.numbersHighlighted = "true";
         });
     }
 
-    // Run initially after the page loads
-    setTimeout(highlightNumbers, 1000);
-
-    // Automatically re-run when Streamlit updates the DOM (e.g., switching tabs, expanding sections)
-    const observer = new MutationObserver(highlightNumbers);
-    observer.observe(document.body, { childList: true, subtree: true });
+    // Run every 500ms to catch Streamlit's constant DOM re-renders
+    setInterval(highlightNumbers, 500);
+    
+    // Run once immediately on load
+    highlightNumbers();
 </script>
 """, unsafe_allow_html=True)
 
