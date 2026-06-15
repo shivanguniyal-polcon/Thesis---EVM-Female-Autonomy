@@ -1,32 +1,25 @@
-# Project 2: Spatial Projection & Demographic Controls
+### Summary Outcome (Data)
+1. **Numbers**: N=426 districts. Covariate Balance: Urbanization gap +33.8% (p<0.001), Literacy gap +18.6% (p<0.001). Model 1 (Raw): β=-7.10 (p<0.001). Model 2 (Controls): β=-3.20 (SE=1.51, p=0.034). R² increases from 0.04 to 0.68.
+2. **What it Proves**: The initial large effect was heavily confounded by selection bias (EVMs went to richer/urban areas). Controlling for demographics reduces the effect size by >50% and weakens significance.
+3. **What Still Needs Proving**: Whether the remaining -3.2% effect is causal or due to unobserved time-invariant heterogeneity (requires DiD).
 
-## Overview
-Projects constituency-level data to 1991 district boundaries and introduces demographic covariates to address selection bias. Tests whether the EVM effect persists after accounting for observable differences.
+---
 
-## Data Files
+### Detailed Sequential Analysis
 
-### `Step2_District_Level_Data.csv`
-Analytical dataset aggregated to 1991 district boundaries using spatial crosswalks. Contains district-level female turnout, continuous EVM exposure measures, and demographic controls.
+**Step 1: Covariate Balance Check (`Step1_Covariate_Balance.csv`)**
+- **Data**: 
+  - Urbanization: Treated Mean=65.2%, Control Mean=31.4% (Diff=+33.8%, p<0.001).
+  - Literacy: Treated Mean=72.1%, Control Mean=53.5% (Diff=+18.6%, p<0.001).
+- **Inference**: Treatment assignment was non-random. EVMs were deployed in significantly more developed districts.
 
-### `Step2_Covariate_Balance.csv`
-Balance tests examining whether EVM rollout correlates with baseline demographics. Each row tests if a covariate (literacy, urbanization, caste composition) predicts treatment assignment.
+**Step 2: Multivariate OLS (`Step2_Multivariate_OLS.csv`)**
+- **Data**: 
+  - Model 1 (Bivariate): β=-7.10 (p<0.001).
+  - Model 2 (+Demographics + State FE): β=-3.20 (SE=1.51, p=0.034).
+  - R² Jump: 0.042 → 0.684.
+- **Inference**: Once we account for urbanization, literacy, and state-specific factors, the "EVM penalty" shrinks drastically. The remaining effect is marginally significant (p<0.05).
 
-### `Step2_Model1_NoControls.csv`
-Baseline regression: `Female_Turnout ~ EVM_Exposure` at district level. Replicates Step 1 correlation with spatially aggregated data.
-
-### `Step2_Model2_Demographics.csv`
-Multivariate regression adding demographic controls: literacy rate, Scheduled Caste/Tribe percentages, and urbanization. Tests robustness to observable confounders.
-
-### `Step2_Model3_StateFEs.csv`
-Full specification with state fixed effects. Absorbs unobserved state-level heterogeneity—policy environments, cultural factors, administrative quality.
-
-## Visualizations
-
-### `Step2_EVM_Coef_Forest_Plot.png`
-Forest plot displaying the EVM coefficient across three model specifications. Demonstrates coefficient stability as controls are progressively added.
-
-### `Step2_Covariate_Balance_Plot.png`
-Love plot showing correlations between EVM exposure and covariates. Green bars indicate balanced covariates; red signals potential selection concerns.
-
-## Key Insight
-If the EVM coefficient remains stable across specifications and covariates are balanced, this supports the identifying assumption that treatment assignment is quasi-random conditional on observables and state fixed effects.
+**Visualizations**
+- `covariate_balance_plot.png`: Bar chart showing massive positive gaps for Urbanization and Literacy in treated districts. Visual proof of selection bias.
+- `coefficient_shrinkage_plot.png`: Dot plot with error bars showing the coefficient moving from -7.1 to -3.2 as controls are added. The second bar's error bar nearly crosses zero, visually indicating fragility.
