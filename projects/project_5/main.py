@@ -51,7 +51,7 @@ def export_ols_to_csv(model, model_name, save_path):
     res_df.to_csv(save_path, index=False)
     print(f"✅ Saved regression results to: {save_path}")
 
-#[CORE START]
+# [CORE START]
 
 # 1. Load Crosswalk
 cw = pd.read_csv(os.path.join(BASE_DIR, "PC2004_to_Dist1991_Weightage_Crosswalk (1).csv"))
@@ -1009,7 +1009,7 @@ if fem_col in census.columns and male_col in census.columns:
     print("✅ Saved 'Mechanism_Horse_Race_Plot.png'")
     plt.show()
 
-#[CORE END[
+# [CORE END]
 
     # ==========================================
 # MASTER APPENDIX EXPORTS (COMPREHENSIVE THESIS PACKAGE)
