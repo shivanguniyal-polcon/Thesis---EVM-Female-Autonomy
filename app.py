@@ -143,8 +143,8 @@ st.set_page_config(
 )
 
 # --- 2. Header ---
-st.title("📊 Project Showcase Dashboard")
-st.markdown("Browse through readymade analyses, datasets, visualizations, and core code logic.")
+st.title("Female Agency and Voting Technology​")
+st.markdown("A Case for Economic Agency moderating the effect of EVMs on Female Voter Turnout during 1999 Lok Sabha Elections in India​")
 
 # --- 3. Directory Setup ---
 BASE_DIR = "./projects"
