@@ -3,7 +3,6 @@ import pandas as pd
 import os
 import glob
 import re
-import datetime
 
 # --- Helper Function for Extracting Core Code ---
 def extract_core_code(file_path):
@@ -67,13 +66,19 @@ def extract_core_code(file_path):
         return "".join(clean_lines), False
 
 def natural_sort_key(s):
-    """Helper to sort strings with numbers naturally."""
+    """
+    Helper to sort strings with numbers and letters naturally.
+    Ensures project_A, project_B, project_C come before project_1, project_2...
+    """
     return [int(text) if text.isdigit() else text.lower()
             for text in re.split('([0-9]+)', s)]
 
 def parse_description_content(content):
     """
-    Parses the description.md content into three parts.
+    Parses the description.md content into three parts:
+    1. Process Summary (Text before 'Summary of Outcome')
+    2. Outcome Summary (The structured Numbers/Proves/Needs Proving section)
+    3. Detailed Analysis (Everything from 'Detailed Sequential Analysis' onwards)
     """
     lines = content.split('\n')
     
@@ -81,30 +86,33 @@ def parse_description_content(content):
     outcome_summary_lines = []
     detailed_analysis_lines = []
     
-    state = 'process' 
+    state = 'process' # 'process', 'outcome', 'detailed'
     
     i = 0
     while i < len(lines):
-        line = lines[i].strip()
+        line = lines[i]
+        stripped_line = line.strip()
         
-        if "Summary of Outcome" in line or "Numbers:" in line or line.startswith("### Numbers"):
+        # Detect Outcome Section Start
+        if "Summary of Outcome" in stripped_line or stripped_line.startswith("### Numbers"):
             state = 'outcome'
-            outcome_summary_lines.append(lines[i])
+            outcome_summary_lines.append(line)
             i += 1
             continue
             
-        if "Detailed Sequential Analysis" in line or line.startswith("## Detailed"):
+        # Detect Detailed Analysis Section Start
+        if "Detailed Sequential Analysis" in stripped_line or stripped_line.startswith("## Detailed"):
             state = 'detailed'
-            detailed_analysis_lines.append(lines[i])
+            detailed_analysis_lines.append(line)
             i += 1
             continue
             
         if state == 'process':
-            process_summary_lines.append(lines[i])
+            process_summary_lines.append(line)
         elif state == 'outcome':
-            outcome_summary_lines.append(lines[i])
+            outcome_summary_lines.append(line)
         elif state == 'detailed':
-            detailed_analysis_lines.append(lines[i])
+            detailed_analysis_lines.append(line)
             
         i += 1
 
@@ -115,9 +123,14 @@ def parse_description_content(content):
     return process_md, outcome_md, detailed_md
 
 def render_detailed_analysis(md_content):
+    """
+    Renders the detailed analysis markdown, ensuring Steps become subheaders.
+    """
     if not md_content:
         st.info("No detailed analysis available.")
         return
+
+    # Render the markdown directly. Streamlit handles ### headers correctly.
     st.markdown(md_content, unsafe_allow_html=True)
 
 # --- 1. Page Configuration ---
@@ -127,10 +140,6 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
-
-# Initialize Session State for Feedback
-if 'feedback_log' not in st.session_state:
-    st.session_state.feedback_log = []
 
 # --- 2. Header ---
 st.title("📊 Project Showcase Dashboard")
@@ -143,7 +152,9 @@ if not os.path.exists(BASE_DIR):
     st.warning(f"Please create a folder named `{BASE_DIR}` and add your project subfolders to it.")
     st.stop()
 
-project_folders = sorted([f for f in os.listdir(BASE_DIR) if os.path.isdir(os.path.join(BASE_DIR, f))])
+# Get all project folders and sort them naturally
+all_folders = [f for f in os.listdir(BASE_DIR) if os.path.isdir(os.path.join(BASE_DIR, f))]
+project_folders = sorted(all_folders, key=natural_sort_key)
 
 if not project_folders:
     st.info("No projects found. Add a subfolder to the `projects` directory to get started!")
@@ -155,6 +166,7 @@ selected_project = st.sidebar.selectbox("Choose a project to view:", project_fol
 project_path = os.path.join(BASE_DIR, selected_project)
 
 # --- 5. Project Header & Description Parsing ---
+# Display a clean, standardized header based on the folder name
 st.header(f"📁 {selected_project.replace('_', ' ').title()}")
 
 description_file = os.path.join(project_path, "description.md")
@@ -164,28 +176,26 @@ if os.path.exists(description_file):
     
     process_summary, outcome_summary, detailed_analysis = parse_description_content(content)
     
+    # 1. Always Visible: Process Summary
     if process_summary:
         st.markdown(process_summary)
-        st.markdown("---")
+        st.markdown("---") # Separator
     
+    # 2. Always Visible: Outcome Summary (Data)
     if outcome_summary:
         st.subheader("📊 Summary of Outcome (Data)")
         st.markdown(outcome_summary)
-        st.markdown("---")
+        st.markdown("---") # Separator
 
+    # 3. Collapsible: Detailed Sequential Analysis
     if detailed_analysis:
         with st.expander("🔍 Detailed Sequential Analysis (Click to Expand)", expanded=False):
             render_detailed_analysis(detailed_analysis)
 else:
     st.info("No `description.md` found for this project.")
 
-# --- 6. Main Content Tabs (Including Feedback) ---
-tab_data, tab_plots, tab_code, tab_feedback = st.tabs([
-    "📊 Datasets (CSV)", 
-    "🖼️ Visualizations (PNG)", 
-    "💻 Source Code",
-    "💬 Guide Feedback & Notes"
-])
+# --- 6. Main Content Tabs ---
+tab_data, tab_plots, tab_code = st.tabs(["📊 Datasets (CSV)", "🖼️ Visualizations (PNG)", "💻 Source Code"])
 
 # --- TAB 1: DATA ---
 with tab_data:
@@ -265,66 +275,3 @@ with tab_code:
                     )
     else:
         st.info("No Python source code (`.py`) found in this project.")
-
-# --- TAB 4: FEEDBACK & NOTES ---
-with tab_feedback:
-    st.subheader("📝 Guide's Query & Feedback Log")
-    st.markdown(f"**Current Project:** `{selected_project}`")
-    st.info("Use this section to record observations, queries, or required changes. Data is stored temporarily for this session. Download the CSV to save your notes permanently.")
-    
-    col1, col2 = st.columns([2, 1])
-    
-    with col1:
-        feedback_category = st.selectbox(
-            "Category",
-            ["Data Quality", "Methodology", "Visualization", "Code Logic", "General Query", "Next Steps"]
-        )
-        feedback_text = st.text_area(
-            "Enter your feedback or query here:",
-            height=150,
-            placeholder="e.g., The coefficient in Step 3 seems unstable. Check robustness..."
-        )
-    
-    with col2:
-        st.write("### Actions")
-        if st.button("➕ Add to Log", type="primary", use_container_width=True):
-            if feedback_text:
-                new_entry = {
-                    "Timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    "Project": selected_project,
-                    "Category": feedback_category,
-                    "Feedback": feedback_text
-                }
-                st.session_state.feedback_log.append(new_entry)
-                st.success("Added to session log!")
-                st.rerun()
-            else:
-                st.warning("Please enter some text before adding.")
-        
-        if st.session_state.feedback_log:
-            if st.button("🗑️ Clear Log", use_container_width=True):
-                st.session_state.feedback_log = []
-                st.rerun()
-
-    # Display Current Session Log
-    if st.session_state.feedback_log:
-        st.markdown("---")
-        st.subheader("📋 Current Session Log")
-        
-        # Filter log to show current project first, but show all for context if needed
-        df_log = pd.DataFrame(st.session_state.feedback_log)
-        
-        # Display table
-        st.dataframe(df_log, use_container_width=True, hide_index=True)
-        
-        # Download Button for the log
-        csv_log = df_log.to_csv(index=False).encode('utf-8')
-        st.download_button(
-            label="📥 Download Feedback Log (CSV)",
-            data=csv_log,
-            file_name=f"feedback_log_{selected_project}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
-            mime="text/csv",
-            key="download_feedback"
-        )
-    else:
-        st.info("No feedback entries added yet for this session.")
