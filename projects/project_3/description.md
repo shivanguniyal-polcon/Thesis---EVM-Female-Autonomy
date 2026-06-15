@@ -1,4 +1,5 @@
-### Investigating heterogeneity, this step merges district-level economic agency proxies (female enterprise density) with the main dataset. The workflow centers on constructing an interaction term between the EVM treatment indicator and the continuous agency variable. We estimate an interaction model (
+### Process Summary
+Investigating heterogeneity, this step merges district-level economic agency proxies (female enterprise density) with the main dataset. The workflow centers on constructing an interaction term between the EVM treatment indicator and the continuous agency variable. We estimate an interaction model (
 Turnout∼EVM+Agency+EVM*Agency) and calculate marginal effects at specific percentiles (10th, 50th, 90th) of the agency distribution. The visual output is an interaction plot displaying the conditional effect of EVMs across the range of female economic agency, with confidence intervals.
 
 ### Summary Outcome (Data)
