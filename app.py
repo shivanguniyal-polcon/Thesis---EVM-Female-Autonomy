@@ -8,7 +8,8 @@ import re
 def extract_core_code(file_path):
     """
     Extracts code between '# [CORE START]' and '# [CORE END]' markers.
-    Filters out streamlit commands and plt.show() to prevent layout breaking.
+    If markers are not found, it falls back to returning the entire file.
+    Also filters out streamlit commands and plt.show() to prevent layout breaking.
     """
     START_MARKER = "# [CORE START]"
     END_MARKER = "# [CORE END]"
@@ -23,12 +24,14 @@ def extract_core_code(file_path):
     in_core_block = False
     has_markers = False
     
+    # Regex to identify streamlit commands or plot shows to hide
     skip_patterns = [
-        r'^\s*st\.',          
-        r'^\s*plt\.show\(\)', 
+        r'^\s*st\.',          # Lines starting with st. (streamlit)
+        r'^\s*plt\.show\(\)', # Lines with plt.show()
     ]
     
     for line in lines:
+        # Check markers first
         if START_MARKER in line:
             in_core_block = True
             has_markers = True
@@ -38,6 +41,7 @@ def extract_core_code(file_path):
             continue
             
         if in_core_block:
+            # Filter out UI-breaking lines if we are in core block
             should_skip = False
             for pattern in skip_patterns:
                 if re.search(pattern, line):
@@ -50,6 +54,7 @@ def extract_core_code(file_path):
     if has_markers and core_lines:
         return "".join(core_lines), True
     else:
+        # Fallback: Return full code (but still filter UI commands for safety in dashboard)
         clean_lines = []
         for line in lines:
             should_skip = False
@@ -62,37 +67,83 @@ def extract_core_code(file_path):
         return "".join(clean_lines), False
 
 def natural_sort_key(s):
-    """Helper to sort strings with numbers naturally."""
+    """Helper to sort strings with numbers naturally (e.g., Step1, Step2, Step10)."""
     return [int(text) if text.isdigit() else text.lower()
             for text in re.split('([0-9]+)', s)]
 
 def parse_description_content(content):
     """
-    Parses the description.md content.
-    Expects the first block of text (before any '##' or '###') to be the Summary Outcome.
-    The rest is treated as Detailed Sequential Analysis.
+    Parses the description.md content to separate:
+    1. The Overview (first non-empty line, usually bold summary)
+    2. The Summary Outcome (Numbers, Proves, Needs Proving)
+    3. The Detailed Analysis (everything else)
+    
+    Assumes a specific structure in the markdown:
+    - Line 1: Overview
+    - Blank line
+    - "### Summary Outcome (Data)" header
+    - Content for Numbers, Proves, Needs Proving
+    - Blank line
+    - "### Detailed Sequential Analysis" header (optional, rest is detailed)
     """
     lines = content.split('\n')
+    
+    overview = ""
+    summary_outcome = ""
+    detailed_analysis = ""
+    
+    # State machine to parse sections
+    state = "overview" # overview, summary, detailed
+    current_section_lines = []
+    
+    # Skip empty lines at the very start
+    while lines and not lines[0].strip():
+        lines.pop(0)
+        
+    if not lines:
+        return "", "", content
+
+    # The first line is the Overview
+    overview = lines[0].strip()
+    lines = lines[1:]
+    
+    # Skip empty lines after overview
+    while lines and not lines[0].strip():
+        lines.pop(0)
+        
+    # Now look for sections
+    in_summary = False
+    in_detailed = False
+    
     summary_lines = []
-    detail_lines = []
-    in_detail = False
+    detailed_lines = []
     
     for line in lines:
-        # If we hit a secondary header, switch to detail mode
-        if line.strip().startswith('##') or line.strip().startswith('###'):
-            in_detail = True
+        stripped = line.strip()
         
-        if in_detail:
-            detail_lines.append(line)
-        else:
-            summary_lines.append(line)
+        if stripped.startswith("### Summary Outcome (Data)"):
+            in_summary = True
+            in_detailed = False
+            continue
+        elif stripped.startswith("### Detailed Sequential Analysis"):
+            in_summary = False
+            in_detailed = True
+            continue
             
-    summary_text = "\n".join(summary_lines).strip()
-    detail_text = "\n".join(detail_lines).strip()
+        if in_summary:
+            summary_lines.append(line)
+        elif in_detailed:
+            detailed_lines.append(line)
+        else:
+            # If no headers found, assume everything remaining is detailed
+            detailed_lines.append(line)
+            
+    summary_outcome = "\n".join(summary_lines)
+    detailed_analysis = "\n".join(detailed_lines)
     
-    return summary_text, detail_text
+    return overview, summary_outcome, detailed_analysis
 
-# --- 1. Page Configuration ---
+# --- 1. Page Configuration (Aesthetic Base) ---
 st.set_page_config(
     page_title="Project Dashboard",
     page_icon="📊",
@@ -117,41 +168,42 @@ if not project_folders:
     st.info("No projects found. Add a subfolder to the `projects` directory to get started!")
     st.stop()
 
-# --- 4. Sidebar Navigation ---
+# --- 4. Sidebar Navigation (Interactivity) ---
 st.sidebar.header("📂 Navigation")
 selected_project = st.sidebar.selectbox("Choose a project to view:", project_folders)
 project_path = os.path.join(BASE_DIR, selected_project)
 
-# --- 5. Project Header ---
+# --- 5. Project Header & Description ---
+# Display a clean, standardized header based on the folder name
 st.header(f"📁 {selected_project.replace('_', ' ').title()}")
 
 description_file = os.path.join(project_path, "description.md")
 if os.path.exists(description_file):
     with open(description_file, "r", encoding="utf-8") as f:
-        full_content = f.read()
+        raw_content = f.read()
     
-    # Parse into Summary and Detail
-    summary_part, detail_part = parse_description_content(full_content)
+    # Parse the content into three parts
+    overview, summary_outcome, detailed_analysis = parse_description_content(raw_content)
     
-    # --- ALWAYS VISIBLE: Summary Outcome (Data) ---
-    # We render the summary part directly. 
-    # Assuming the MD file starts with the 1-2-3 structure requested.
-    st.markdown(summary_part)
-    
-    st.markdown("---")
-    
-    # --- COLLAPSIBLE: Detailed Sequential Analysis ---
-    if detail_part:
-        with st.expander("🔍 View Detailed Sequential Analysis & File Breakdown", expanded=False):
-            st.markdown(detail_part)
-    else:
-        st.info("No detailed sequential analysis available for this project.")
+    # 1. Always Visible: Overview
+    if overview:
+        st.markdown(f"**{overview}**")
+        st.markdown("---") # Separator after overview
 
+    # 2. Always Visible: Summary Outcome (Data)
+    if summary_outcome:
+        st.subheader("Summary Outcome (Data)")
+        st.markdown(summary_outcome)
+        st.markdown("---") # Separator before collapsible section
+
+    # 3. Collapsible: Detailed Sequential Analysis
+    if detailed_analysis:
+        with st.expander("🔍 Detailed Sequential Analysis (Click to Expand)", expanded=False):
+            st.markdown(detailed_analysis)
 else:
-    st.error("No `description.md` found for this project.")
-    st.stop()
+    st.info("No `description.md` found for this project.")
 
-# --- 6. Main Content Tabs ---
+# --- 6. Main Content Tabs (Aesthetic & Organization) ---
 tab_data, tab_plots, tab_code = st.tabs(["📊 Datasets (CSV)", "🖼️ Visualizations (PNG)", "💻 Source Code"])
 
 # --- TAB 1: DATA ---
