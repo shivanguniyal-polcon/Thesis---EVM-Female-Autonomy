@@ -11,8 +11,6 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
-
-
 # ==========================================
 # CONFIGURATION & PATHS
 # ==========================================
@@ -44,7 +42,7 @@ def export_ols_to_csv(model, model_name, save_path):
     res_df.to_csv(save_path, index=False)
     print(f"✅ Saved regression results to: {save_path}")
 
-#[CORE START]
+# [CORE START]
 # Define the 47 Treated PCs based on ECI 1999 EVM rollout data
 TREATED_PCS_1999 = [
     'HYDERABAD', 'SECUNDERABAD', 'PANAJI', 'MORMUGAO', 'AHMEDABAD', 'GANDHINAGAR',
@@ -235,7 +233,7 @@ print("\n" + "="*70)
 print("  STEP 2 COMPLETE")
 print("="*70)
 
-#[CORE END]
+# [CORE END]
 
 # 1. Final District-Level Analytical Dataset
 final_df.to_csv(os.path.join(CSV_DIR, "Step2_District_Level_Data.csv"), index=False)
