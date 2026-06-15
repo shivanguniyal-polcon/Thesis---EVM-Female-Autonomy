@@ -155,7 +155,7 @@ PROJECT_DISPLAY_NAMES = {
     "project_2": "📈 Project 2: Spatial Projection & Demographic Controls (1999 Lok Sabha)​",
     "project_3": "🤖 Project 3: Heterogeneous Effects & Economic Agency​",
     "project_4": "🌐 Project 4: Difference-in-Differences & Pre-Trend Validation​",
-    "project_5": "📊 Project 5: Causal Validation & Mechanism "Horse Race"​",
+    "project_5": "📊 Project 5: Causal Validation & Mechanism Horse Race​",
     "project_A": "🗺️ Project A: Master District Mapping (1991)",
     "project_B": "🗺️ Project B: Pristine Census Map Creation",
     "project_C": "⚖️ Project C: PC2004-District1991 Weightage Crosswalk",
