@@ -137,17 +137,29 @@ def render_detailed_analysis(md_content):
 # --- 1. Page Configuration ---
 st.set_page_config(
     page_title="Project Dashboard",
-    page_icon="S",
+    page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 # --- 2. Header ---
-st.title("Female Agency and Voting Technology​")
-st.markdown("A Case for Economic Agency moderating the effect of EVMs on Female Voter Turnout during 1999 Lok Sabha Elections in India​")
+st.title("📊 Project Showcase Dashboard")
+st.markdown("Browse through readymade analyses, datasets, visualizations, and core code logic.")
 
 # --- 3. Directory Setup ---
 BASE_DIR = "./projects"
+
+# Custom display names for projects (Folder Name -> Display Title)
+PROJECT_DISPLAY_NAMES = {
+    "project_1": "🔍 Project 1: Raw EVM Correlation (1999)​",
+    "project_2": "📈 Project 2: Spatial Projection & Demographic Controls (1999 Lok Sabha)​",
+    "project_3": "🤖 Project 3: Heterogeneous Effects & Economic Agency​",
+    "project_4": "🌐 Project 4: Difference-in-Differences & Pre-Trend Validation​",
+    "project_5": "📊 Project 5: Causal Validation & Mechanism "Horse Race"​",
+    "project_A": "🗺️ Project A: Master District Mapping (1991)",
+    "project_B": "🗺️ Project B: Pristine Census Map Creation",
+    "project_C": "⚖️ Project C: PC2004-District1991 Weightage Crosswalk",
+}
 
 if not os.path.exists(BASE_DIR):
     st.warning(f"Please create a folder named `{BASE_DIR}` and add your project subfolders to it.")
@@ -157,18 +169,26 @@ if not os.path.exists(BASE_DIR):
 all_folders = [f for f in os.listdir(BASE_DIR) if os.path.isdir(os.path.join(BASE_DIR, f))]
 project_folders = sorted(all_folders, key=natural_sort_key)
 
+# Create a mapping for display: use custom name if available, else fallback to formatted folder name
+def get_display_name(folder_name):
+    return PROJECT_DISPLAY_NAMES.get(folder_name, folder_name.replace('_', ' ').title())
+
+display_mapping = {get_display_name(f): f for f in project_folders}
+display_options = list(display_mapping.keys())
+
 if not project_folders:
     st.info("No projects found. Add a subfolder to the `projects` directory to get started!")
     st.stop()
 
 # --- 4. Sidebar Navigation ---
 st.sidebar.header("📂 Navigation")
-selected_project = st.sidebar.selectbox("Choose a project to view:", project_folders)
+selected_display = st.sidebar.selectbox("Choose a project to view:", display_options)
+selected_project = display_mapping[selected_display]  # Get actual folder name
 project_path = os.path.join(BASE_DIR, selected_project)
 
 # --- 5. Project Header & Description Parsing ---
-# Display a clean, standardized header based on the folder name
-st.header(f"📁 {selected_project.replace('_', ' ').title()}")
+# Display the custom display name as the header
+st.header(f"{selected_display}")
 
 description_file = os.path.join(project_path, "description.md")
 if os.path.exists(description_file):
@@ -198,10 +218,10 @@ else:
 # --- 6. Main Content Tabs ---
 # Added '🗺️ Maps (GeoJSON)' tab
 tab_data, tab_plots, tab_maps, tab_code = st.tabs([
-    "📊 Datasets (CSV)", 
-    "🖼️ Visualizations (PNG)", 
-    "🗺️ Maps (GeoJSON)",
-    "💻 Source Code"
+    "📊 Data & Outputs", 
+    "🖼️ Charts & Visuals", 
+    "🗺️ Geographic Maps",
+    "💻 Core Code Logic"
 ])
 
 # --- TAB 1: DATA ---
