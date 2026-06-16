@@ -2,7 +2,7 @@
 Analyzing the 1999 cross-sectional election data across 543 constituencies, the analysis isolates 46 EVM-treated areas. A two-sample T-test and univariate OLS regression quantify the raw "EVM penalty" on female turnout, visualized via boxplots.
 
 ### Summary Outcome (Data)
-1. **Numbers**: N=543 PCs; Raw Mean Diff = -6.86 pp (EVM=49.75%, Non-EVM=56.61%); T-test p=0.00038; OLS β=-6.86 (SE=1.92, p=0.0004), R²=0.023.
+1. **Numbers**: N=543 PCs; Raw Mean Diff in turnout= -6.86 pp (EVM=49.75%, Non-EVM=56.61%); T-test p=0.00038; OLS β=-6.86 (SE=1.92, p=0.0004), R²=0.023.
 2. **What it Proves**: A statistically significant, unadjusted negative association exists between EVM presence and female turnout in the raw data.
 3. **What Still Needs Proving**: Whether this effect is causal or driven by omitted variable bias (demographics, state fixed effects, pre-trends).
 
