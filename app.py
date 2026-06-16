@@ -185,14 +185,15 @@ BASE_DIR = "./projects"
 
 # Custom display names for projects (Folder Name -> Display Title)
 PROJECT_DISPLAY_NAMES = {
+    "project_A": "Script A: Master District Mapping (1991)",
+    "project_B": "Script B: Pristine Census Map Creation",
+    "project_C": "Script C: PC2004-District1991 Weightage Crosswalk",
     "project_1": "Script 1: Raw EVM Correlation (1999)​",
     "project_2": "Script 2: Spatial Projection & Demographic Controls (1999 Lok Sabha)​",
     "project_3": "Script 3: Heterogeneous Effects & Economic Agency​",
     "project_4": "Script 4: Difference-in-Differences & Pre-Trend Validation​",
     "project_5": "Script 5: Causal Validation & Mechanism Horse Race​",
-    "project_A": "Script A: Master District Mapping (1991)",
-    "project_B": "Script B: Pristine Census Map Creation",
-    "project_C": "Script C: PC2004-District1991 Weightage Crosswalk",
+    "project_Final: Ultimate Findings: The Dual Burden of Electoral Technology",
 }
 
 if not os.path.exists(BASE_DIR):
