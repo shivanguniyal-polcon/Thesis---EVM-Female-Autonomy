@@ -10,7 +10,7 @@ The introduction of Electronic Voting Machines (EVMs) in India’s 1999 Lok Sabh
 - **The Extremes:** In districts with low female economic agency (10th percentile), EVMs had no negative impact (+3.46 pp, statistically insignificant). However, in high-agency districts (90th percentile), the introduction of EVMs triggered a severe, statistically significant -8.47 percentage point collapse in female turnout. 
 
 ## 3. The Penalty is Causal, Not a Pre-Existing Trend
-- **Parallel Trends Validated:** To ensure high-agency districts weren't already experiencing declining turnout before EVMs arrived, a placebo Event Study was conducted on the 1996-1998 period. The pre-trend interaction was completely flat ($\beta=-3.84$, p=0.122).
+- **Parallel Trends Validated:** To ensure high-agency districts weren't already experiencing declining turnout before EVMs arrived, a placebo Event Study was conducted on the 1996-1998 period. The pre-trend interaction was completely flat ($\beta$=-3.84, p=0.122).
 - **The Causal Spike:** The negative divergence only occurred strictly in the 1996-1999 treatment window, yielding a highly significant Difference-in-Differences interaction effect ($\beta$=-6.73, p=0.0018). The counterfactual holds: without EVMs, these high-agency women would have continued to vote at their historical rates.
 
 ## 4. The "Dual Burden" Hypothesis is Confirmed
