@@ -193,7 +193,7 @@ PROJECT_DISPLAY_NAMES = {
     "project_3": "Script 3: Heterogeneous Effects & Economic Agency​",
     "project_4": "Script 4: Difference-in-Differences & Pre-Trend Validation​",
     "project_5": "Script 5: Causal Validation & Mechanism Horse Race​",
-    "project_Final: Ultimate Findings: The Dual Burden of Electoral Technology,":
+    "project_Final": "Ultimate Findings: The Dual Burden of Electoral Technology",
 }
 
 if not os.path.exists(BASE_DIR):
