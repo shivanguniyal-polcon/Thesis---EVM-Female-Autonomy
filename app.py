@@ -37,6 +37,28 @@ def inject_glowing_numbers(text):
         
     return '$$'.join(math_block_parts)
 
+# --- DISABLE COPYING & TEXT SELECTION ---
+st.markdown("""
+<style>
+    /* 1. Disable text selection and copying globally */
+    * {
+        -webkit-user-select: none !important; /* Safari/Chrome */
+        -moz-user-select: none !important;    /* Firefox */
+        -ms-user-select: none !important;     /* IE/Edge */
+        user-select: none !important;         /* Standard */
+    }
+
+    /* 2. RE-ENABLE copying for Code Blocks and Dataframes (Highly Recommended) */
+    /* Delete this section if you want to block copying literally everywhere */
+    pre, code, [data-testid="stDataFrame"] {
+        -webkit-user-select: text !important;
+        -moz-user-select: text !important;
+        -ms-user-select: text !important;
+        user-select: text !important;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 # --- Helper Function for Extracting Core Code ---
 def extract_core_code(file_path):
     """
