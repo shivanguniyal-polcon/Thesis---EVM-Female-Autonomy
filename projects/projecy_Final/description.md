@@ -18,5 +18,5 @@ The introduction of Electronic Voting Machines (EVMs) in India’s 1999 Lok Sabh
 - **The Verdict:** Female Economic Agency ($\beta$=-3.64, p=0.052) and the Cultural Patriarchy Index ($\beta$=-2.92, p=0.011) both exert simultaneous, negative pressure on female turnout when new voting technology is introduced. Women facing high time poverty (economic agency) in rigid traditional environments (patriarchy) are the most vulnerable to technological disenfranchisement.
 
 ## 5. Methodological Ironclad Robustness
-- **Structural Stability:** The findings are not mathematical artifacts. The models mathematically isolate the variation using Frisch-Waugh-Lovell (FWL) orthogonal residualization ($\beta=-7.26$, p=0.0049).
+- **Structural Stability:** The findings are not mathematical artifacts. The models mathematically isolate the variation using Frisch-Waugh-Lovell (FWL) orthogonal residualization ($\beta$=-7.26, p=0.0049).
 - **Outlier & Error Resilience:** The causal link survives the rigorous exclusion of 18 highly influential extreme geographic anomalies (via Cook's Distance thresholds) and maintains high significance when utilizing both heteroskedasticity-consistent (HC1) and state-clustered standard errors. Multicollinearity is virtually non-existent (Max VIF=1.73).
