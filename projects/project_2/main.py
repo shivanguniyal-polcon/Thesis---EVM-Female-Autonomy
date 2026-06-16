@@ -10,10 +10,6 @@ import os
 import warnings
 
 warnings.filterwarnings('ignore')
-
-# ==========================================
-# CONFIGURATION & PATHS
-# ==========================================
 BASE_DIR = "/Users/ganeshchandrauniyal/Desktop/Thesis Script"
 
 import os
@@ -43,7 +39,7 @@ def export_ols_to_csv(model, model_name, save_path):
     print(f"✅ Saved regression results to: {save_path}")
 
 # [CORE START]
-# Define the 47 Treated PCs based on ECI 1999 EVM rollout data
+# Define the 46 Treated PCs based on ECI 1999 EVM rollout data
 def main():
 TREATED_PCS_1999 = [
 'HYDERABAD', 'SECUNDERABAD', 'PANAJI', 'MORMUGAO', 'AHMEDABAD', 'GANDHINAGAR',
@@ -68,7 +64,7 @@ df_1999['pc_name_clean'] = df_1999['pc_name_clean'].replace({
 
 df_1999['EVM'] = df_1999['pc_name_clean'].isin(TREATED_PCS_1999).astype(int)
 df_1999['Female_Turnout'] = (df_1999['Voted_Female'] / df_1999['Electors_Female']) * 100
-print(f"Loaded {len(df_1999)} PCs. Tagged {df_1999['EVM'].sum()} EVM PCs.")
+print(f"Loaded {len(df_1999)} PCs. Tagged {df_1999['EVM'].sum()}EVM PCs.")
 
 cw = pd.read_csv(os.path.join(BASE_DIR, "PC2004_to_Dist1991_Weightage_Crosswalk (1).csv"))
 cw['pc_name_clean'] = cw['Constituency Clean'].str.upper()
@@ -88,8 +84,8 @@ dist_electoral = m.groupby(['pc91_state_id', 'pc91_district_id', 'state_clean'])
     'alloc_voters_f': 'sum',
     'alloc_treated_electors_f': 'sum'}).reset_index()
 
-dist_electoral['Female_Turnout_Dist'] = (dist_electoral['alloc_voters_f'] / dist_electoral['alloc_electors_f']) * 100
-dist_electoral['EVM_Exposure'] = dist_electoral['alloc_treated_electors_f'] / dist_electoral['alloc_electors_f']
+dist_electoral['Female_Turnout_Dist'] = (dist_electoral['alloc_voters_f']/dist_electoral['alloc_electors_f']) * 100
+dist_electoral['EVM_Exposure'] = dist_electoral['alloc_treated_electors_f']/ dist_electoral['alloc_electors_f']
 print(f"Aggregated data into {len(dist_electoral)} 1991 districts.")
 
 census = pd.read_csv(os.path.join(BASE_DIR, "shrug-pca91-csv/pc91_pca_clean_pc91dist.csv"))
@@ -99,22 +95,20 @@ census['Lit_Pct'] = (census['pc91_pca_p_lit'] / census['pc91_pca_tot_p'].replace
 census['SC_Pct'] = (census['pc91_pca_p_sc'] / census['pc91_pca_tot_p'].replace(0, np.nan)) * 100
 census['ST_Pct'] = (census['pc91_pca_p_st'] / census['pc91_pca_tot_p'].replace(0, np.nan)) * 100
 
-td_merged = pd.merge(td, census[['pc91_state_id', 'pc91_district_id', 'pc91_pca_tot_p']], 
-                     on=['pc91_state_id', 'pc91_district_id'], how='left')
+td_merged = pd.merge(td, census[['pc91_state_id', 'pc91_district_id', 'pc91_pca_tot_p']], on=['pc91_state_id', 'pc91_district_id'], how='left')
 td_merged['Urban_Pct'] = (td_merged['pc91_td_p_7andup'] / td_merged['pc91_pca_tot_p'].replace(0, np.nan)) * 100
 td_merged['Urban_Pct'] = td_merged['Urban_Pct'].clip(upper=100)
 print("Demographic covariates calculated.")
 
-final_df = pd.merge(dist_electoral, census[['pc91_state_id', 'pc91_district_id', 'Lit_Pct', 'SC_Pct', 'ST_Pct']], 
-                    on=['pc91_state_id', 'pc91_district_id'], how='left')
+final_df = pd.merge(dist_electoral, census[['pc91_state_id', 'pc91_district_id', 'Lit_Pct', 'SC_Pct', 'ST_Pct']], on=['pc91_state_id', 'pc91_district_id'], how='left')
 final_df = pd.merge(final_df, td_merged[['pc91_state_id', 'pc91_district_id', 'Urban_Pct']], 
                     on=['pc91_state_id', 'pc91_district_id'], how='left')
 
 initial_n = len(final_df)
 final_df = final_df.dropna()
-print(f"Final Analytical Sample: {len(final_df)} districts (Dropped {initial_n - len(final_df)} due to missing census data).")
+print(f"Final Analytical Sample: {len(final_df)} districts (Dropped {initial_n - len(final_df)}")
 
-print("ESTIMATING MULTIVARIABLE REGRESSIONS...")
+print("Using various specifications and runnuing 3 models")
 mod1 = smf.ols("Female_Turnout_Dist~EVM_Exposure", data=final_df).fit(cov_type='HC1')
 mod2 = smf.ols("Female_Turnout_Dist ~ EVM_Exposure + Lit_Pct + SC_Pct + ST_Pct + Urban_Pct", data=final_df).fit(cov_type='HC1')
 mod3 = smf.ols("Female_Turnout_Dist ~ EVM_Exposure + Lit_Pct + SC_Pct + ST_Pct + Urban_Pct + C(state_clean)", data=final_df).fit(cov_type='HC1')
@@ -125,7 +119,6 @@ res_table = summary_col([mod1, mod2, mod3], stars=True, float_format='%0.3f',
                                    'R2': lambda x: "{0:.3f}".format(x.rsquared)})
 print(res_table)
 
-print("GENERATING VISUALIZATIONS...")
 models = [mod1, mod2, mod3]
 model_labels = ['(1) No Controls', '(2) Demographics', '(3) State FEs']
 coefs = [m.params['EVM_Exposure'] for m in models]
@@ -138,8 +131,7 @@ errors = [[c - l, u - c] for c, l, u in zip(coefs, lower_bounds, upper_bounds)]
 fig, ax = plt.subplots(figsize=(9, 5))
 y_pos = np.arange(len(models))
 
-ax.errorbar(coefs, y_pos, xerr=np.array(errors).T, fmt='o', color='#6A0DAD', 
-            ecolor='gray', capsize=6, markersize=10, elinewidth=2)
+ax.errorbar(coefs, y_pos, xerr=np.array(errors).T, fmt='o', color='#6A0DAD',ecolor='gray', capsize=6, markersize=10, elinewidth=2)
 ax.axvline(0, color='red', linestyle='--', lw=2, label='Zero Effect')
 
 ax.set_yticks(y_pos)
@@ -154,7 +146,7 @@ plt.savefig(os.path.join(BASE_DIR, "Step2_EVM_Coef_Forest_Plot.png"), dpi=300)
 print("Saved 'Step2_EVM_Coef_Forest_Plot.png'")
 plt.show()
 
-print("COVARIATE BALANCE CHECK (Selection on Observables)...")
+print("Covariate Balance")
 covariates = ['Lit_Pct', 'SC_Pct', 'ST_Pct', 'Urban_Pct']
 balance_coefs, balance_pvals = [], []
 
@@ -180,8 +172,6 @@ plt.tight_layout()
 plt.savefig(os.path.join(BASE_DIR, "Step2_Covariate_Balance_Plot.png"), dpi=300)
 print("Saved 'Step2_Covariate_Balance_Plot.png'")
 plt.show()
-
-print("STEP 2 COMPLETE")
 
 # [CORE END]
 
