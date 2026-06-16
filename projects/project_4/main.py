@@ -161,33 +161,27 @@ def main():
         bp_stat, bp_pval, _, _ = bp_test
         
         print(f"{'Metric':<35} | {'Value':<20}")
-        print("-" * 60)
         print(f"{'Observations (N)':<35} | {n_obs:<20}")
         print(f"{'R-squared':<35} | {r2:<20.4f}")
         print(f"{'Adjusted R-squared':<35} | {r2_adj:<20.4f}")
         print(f"{'F-statistic (Overall Significance)':<35} | {f_stat:<20.4f}")
         print(f"{'Prob (F-statistic)':<35} | {f_pval:<20.4e}")
-        print("-" * 60)
         print(f"{'Akaike Info Criterion (AIC)':<35} | {aic:<20.2f}")
         print(f"{'Bayesian Info Criterion (BIC)':<35} | {bic:<20.2f}")
         print(f"{'Condition Number (Multicollinearity)':<35} | {cond_num:<20.2f}")
-        print("-" * 60)
         print(f"{'Durbin-Watson (Autocorrelation)':<35} | {dw_stat:<20.4f}")
-        print("-" * 60)
         print(f"{'Breusch-Pagan (Heteroskedasticity)':<35} | {bp_stat:<20.4f}")
         print(f"{'Prob (Breusch-Pagan)':<35} | {bp_pval:<20.4e}")
         if bp_pval < 0.05:
             print("  Heteroskedasticity detected. Robust SEs (HC1) applied.")
-        print("-" * 60)
         print(f"{'Jarque-Bera (Normality of Residuals)':<35} | {jb_stat:<20.4f}")
         print(f"{'Prob (Jarque-Bera)':<35} | {jb_pval:<20.4e}")
         print(f"{'Skewness':<35} | {jb_skew:<20.4f}")
         print(f"{'Kurtosis':<35} | {jb_kurt:<20.4f}")
         if jb_pval < 0.05:
             print("  Residuals are non-normal. OLS unbiased, but rely on HC1 SEs.")
-        print("=" * 60)
 
-    print("ESTIMATING CAUSAL MODELS...")
+    print("\nESTIMATING CAUSAL MODELS...")
     controls = "Lit_Pct + SC_Pct + ST_Pct + Urban_Pct + C(state_clean)"
     interaction = "EVM_Exposure * Agency_Centered"
 
@@ -253,9 +247,6 @@ def main():
     plt.savefig(os.path.join(BASE_DIR, "Step4_Diagnostic_Residual_Plots.png"), dpi=300)
     print("Saved 'Step4_Diagnostic_Residual_Plots.png'")
     plt.show()
-
-    print("STEP 4 COMPLETE")
-
     # [CORE END]
 
     panel.to_csv(os.path.join(CSV_DIR, "Step4_Panel_Data.csv"), index=False)
