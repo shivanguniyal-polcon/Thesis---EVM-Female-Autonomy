@@ -8,21 +8,34 @@ import json
 import re
 
 def inject_glowing_numbers(text):
-    """Wraps numbers in HTML spans before rendering to bypass JS restrictions."""
+    """Wraps numbers in HTML spans, but safely ignores Markdown code and math blocks."""
     if not text: 
         return text
         
-    # Branch 1: Decimals (-?\d+\.\d+%?) -> No lookahead needed, safe from list marker conflicts.
-    # Branch 2: Integers (-?\d+%?) -> Protected by negative lookahead to avoid matching "1. " or "1) " list markers.
-    # The (?<![\w/]) prevents matching numbers inside words like "Project1" or URLs.
     pattern = r'(?<![\w/])(?:(-?\d+\.\d+%?)|(-?\d+%?)(?!\.\s|\)\s))(?!\w)'
     
     def replacer(m):
-        # Group 1 is decimal, Group 2 is integer. One of them will be None.
         num = m.group(1) if m.group(1) is not None else m.group(2)
         return f'<span class="glow-number">{num}</span>'
         
-    return re.sub(pattern, replacer, text)
+    # 1. Protect inline code (backticks `)
+    # Splitting by ` creates a list where even indices are outside code, odd are inside.
+    backtick_parts = text.split('`')
+    for i in range(0, len(backtick_parts), 2):
+        backtick_parts[i] = re.sub(pattern, replacer, backtick_parts[i])
+    text = '`'.join(backtick_parts)
+    
+    # 2. Protect math blocks ($$...$$ and $...$)
+    # Split by $$ for block math first
+    math_block_parts = text.split('$$')
+    for i in range(0, len(math_block_parts), 2):
+        # Then protect inline math ($) within the non-block parts
+        inline_math_parts = math_block_parts[i].split('$')
+        for j in range(0, len(inline_math_parts), 2):
+            inline_math_parts[j] = re.sub(pattern, replacer, inline_math_parts[j])
+        math_block_parts[i] = '$'.join(inline_math_parts)
+        
+    return '$$'.join(math_block_parts)
 
 # --- Helper Function for Extracting Core Code ---
 def extract_core_code(file_path):
