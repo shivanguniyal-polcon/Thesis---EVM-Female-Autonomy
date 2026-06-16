@@ -51,7 +51,7 @@ def main():
         'EAST DELHI', 'CHANDNI CHOWK', 'DELHI SADAR', 'KAROL BAGH', 'PUDUCHERRY'
     ]
 
-    print("STEP 3: HETEROGENEOUS EFFECTS & ECONOMIC AGENCY")
+    print("STEP 3: HETEROGENEOUS EFFECTS & ECONOMIC AGENCY!")
 
     df_1999 = pd.read_csv(os.path.join(BASE_DIR, "1999_election_data_corrected.csv"))
     df_1999['pc_name_clean'] = df_1999['Constituency'].str.split(' NO :').str[0].str.strip().str.upper()
@@ -134,7 +134,6 @@ def main():
     cov_evm_int = cov_matrix.loc['EVM_Exposure', int_term]
 
     print(f"{'Percentile':<12} | {'Raw Agency %':<15} | {'Marginal Effect':<18} | {'P-Value'}")
-    print("-" * 65)
 
     for p in [0.10, 0.25, 0.50, 0.75, 0.90]:
         raw_val = final_df['Fem_Enterprise_Pct'].quantile(p)
@@ -204,8 +203,6 @@ def main():
     plt.savefig(os.path.join(BASE_DIR, "Step3_Subsample_Heterogeneity.png"), dpi=300)
     print("Saved 'Step3_Subsample_Heterogeneity.png'")
     plt.show()
-
-    print("STEP 3 COMPLETE")
 
     # [CORE END]
 
