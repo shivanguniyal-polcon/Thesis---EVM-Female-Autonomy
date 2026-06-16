@@ -10,7 +10,6 @@ BASE_DIR = "/Users/ganeshchandrauniyal/Desktop/Thesis Script"
 CSV_DIR = os.path.join(BASE_DIR, "CSV_OUTPUTS")
 os.makedirs(CSV_DIR, exist_ok=True)
 
-# Helper function to export any statsmodels OLS result to CSV
 def export_ols_to_csv(model, model_name, save_path):
     ci = model.conf_int()
     res_df = pd.DataFrame({
@@ -30,13 +29,13 @@ def export_ols_to_csv(model, model_name, save_path):
         'BIC': model.bic
     })
     res_df.to_csv(save_path, index=False)
-    print(f"✅ Saved regression results to: {save_path}")
+    print(f"Saved regression results to: {save_path}")
 def main():
 # [CORE START]
-print("  STEP 1: THE RAW CORRELATION (EVM vs. FEMALE TURNOUT)")
+print("  STEP 1: THE RAW CORRELATION (EVM use against FEMALE TURNOUT)")
 #1. Load the 1999 Election Data
 df_1999 = pd.read_csv(os.path.join(BASE_DIR, "1999_election_data_corrected.csv"))
-df_1999['pc_name_clean'] = df_1999['Constituency'].str.split(' NO :').str[0].str.strip().str.upper()
+df_1999['pc_name_clean']=df_1999['Constituency'].str.split(' NO :').str[0].str.strip().str.upper()
 
 TREATED_PCS_1999 = [
     'HYDERABAD', 'SECUNDERABAD', 'PANAJI', 'MORMUGAO', 'AHMEDABAD', 'GANDHINAGAR',
@@ -54,7 +53,7 @@ df_1999['EVM'] = df_1999['pc_name_clean'].isin(TREATED_PCS_1999).astype(int)
 df_1999['Female_Turnout'] = (df_1999['Voted_Female'] /df_1999['Electors_Female']) * 100
 
 matched_count = df_1999['EVM'].sum()
-print(f"Total EVM PCs identified: {matched_count}")
+print(f"Total EVM PCs identified:{matched_count}")
 
 if matched_count < 47:
     missing = set(TREATED_PCS_1999)-set(df_1999[df_1999['EVM'] == 1]['pc_name_clean'])
@@ -63,7 +62,7 @@ if matched_count < 47:
 print("\n[1] DESCRIPTIVE STATISTICS")
 print(df_1999.groupby('EVM')['Female_Turnout'].describe())
 
-evm_turnout = df_1999[df_1999['EVM'] == 1]['Female_Turnout']
+evm_turnout = df_1999[df_1999['EVM']== 1]['Female_Turnout']
 paper_turnout = df_1999[df_1999['EVM'] == 0]['Female_Turnout']
 t_stat, p_val = stats.ttest_ind(evm_turnout, paper_turnout)
 
@@ -73,7 +72,7 @@ print(f"Paper Mean Turnout: {paper_turnout.mean():.2f}%")
 print(f"Raw Difference: {evm_turnout.mean() - paper_turnout.mean():.2f}%")
 print(f"P-value: {p_val:.4f}")
 
-print("\n[3] SIMPLE OLS REGRESSION (Female_Turnout ~ EVM)")
+print("\n[3]SIMPLE OLS REGRESSION (Female_Turnout ~ EVM)")
 model = smf.ols("Female_Turnout ~ EVM", data=df_1999).fit()
 print(model.summary().tables[1])
 
