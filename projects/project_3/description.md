@@ -4,7 +4,7 @@ To explore heterogeneity, district-level female economic agency is interacted wi
 ### Summary Outcome (Data)
 1. **Numbers**: N=426 districts. Interaction Term (EVM × Agency): $\beta$=-6.875 (SE=3.13, p=0.028). Marginal Effect at 90th Percentile Agency: -8.47 pp (p=0.004). Marginal Effect at 10th Percentile: +3.46 pp (p=0.388).
 2. **What it Proves**: Heterogeneity. The negative effect is not uniform; it is concentrated almost entirely in high-agency districts. In low-agency districts, EVMs had no detectable negative impact, and potentially a slight (though statistically insignificant) positive trend.
-3. **What Still Needs Proving**: Temporal precedence. We need to ensure this interaction wasn't present before EVMs were introduced (Placebo test).
+3. **What Still Needs Proving**: We need to ensure this interaction wasn't present before EVMs were introduced (Placebo test).
 
 ### Detailed Sequential Analysis
 
