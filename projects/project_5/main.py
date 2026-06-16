@@ -204,8 +204,7 @@ def main():
         index=['pc91_state_id', 'pc91_district_id', 'state_clean', 
                'Lit_Pct', 'SC_Pct', 'ST_Pct', 'Fem_Enterprise_Pct', 'Urban_Pct'],
         columns='Year', 
-        values='Female_Turnout'
-    ).reset_index()
+        values='Female_Turnout'    ).reset_index()
 
     wide = wide.rename(columns={1996: 'Turnout_96', 1998: 'Turnout_98', 1999: 'Turnout_99'})
     wide = wide.dropna(subset=['Turnout_96', 'Turnout_98', 'Turnout_99'])
@@ -243,10 +242,8 @@ def main():
     })
     print(res_df.to_string(float_format="%.4f"))
 
-    print("--- MARGINAL EFFECTS OF EVM ACROSS AGENCY DISTRIBUTION ---")
+    print("MARGINAL EFFECTS OF EVM ACROSS AGENCY DISTRIBUTION")
     print(f"{'Percentile':<12} | {'Raw Agency %':<15} | {'Centered IHS':<15} | {'Marginal Effect':<18} | {'P-Value'}")
-    print("-" * 85)
-
     beta_evm = final_model.params['EVM_Exposure_Cont']
     beta_int = final_model.params['EVM_Post_Agency']
     cov_matrix = final_model.cov_params()
@@ -264,7 +261,7 @@ def main():
         p_val = 2 * (1 - stats.norm.cdf(abs(z_score)))
         print(f"{int(p*100):<12} | {raw_val:<15.2f} | {centered_val:<15.4f} | {me:<18.4f} | {p_val:.4f}")
 
-    print("--- GENERATING MAIN MODEL FOREST PLOT ---")
+    print("GENERATING MAIN MODEL FOREST PLOT")
     key_vars = ['EVM_Exposure_Cont', 'Agency_Centered', 'EVM_Post_Agency']
     coefs = [final_model.params[var] for var in key_vars]
     conf_ints = [final_model.conf_int().loc[var] for var in key_vars]
@@ -287,13 +284,13 @@ def main():
     fig.savefig(os.path.join(BASE_DIR, "Main_Model_Forest_Plot.png"), dpi=300)
     plt.show()
 
-    print("--- COVARIATE BALANCE (SELECTION TEST) ---")
+    print("COVARIATE BALANCE (SELECTION TEST)")
     covariates = ['Lit_Pct', 'SC_Pct', 'ST_Pct', 'Fem_Enterprise_Pct', 'Urban_Pct', 'Turnout_96']
     for cov in covariates:
         mod = smf.ols(f"{cov} ~ EVM_Exposure_Cont", data=wide).fit(cov_type='HC3')
         print(f"{cov}: Beta={mod.params['EVM_Exposure_Cont']:.4f} (p={mod.pvalues['EVM_Exposure_Cont']:.3f})")
 
-    print("--- GENERATING COVARIATE BALANCE LOVE PLOT ---")
+    print("GENERATING COVARIATE BALANCE LOVE PLOT")
     balance_coefs, balance_pvals = [], []
     for cov in covariates:
         mod = smf.ols(f"{cov} ~ EVM_Exposure_Cont", data=wide).fit(cov_type='HC3')
@@ -314,7 +311,7 @@ def main():
     fig.savefig(os.path.join(BASE_DIR, "Covariate_Balance_Love_Plot.png"), dpi=300)
     plt.show()
 
-    print("--- FRISCH-WAUGH-LOVELL (FWL) THEOREM ---")
+    print("FRISCH-WAUGH-LOVELL (FWL) THEOREM")
     controls = "Turnout_96 + Lit_Pct + SC_Pct + ST_Pct_ihs + Agency_Centered + Urban_Pct_ihs + EVM_Exposure_Cont + C(state_clean)"
     res_y = smf.ols(f"Turnout_99 ~ {controls}", data=wide).fit().resid
     res_x = smf.ols(f"EVM_Post_Agency ~ {controls}", data=wide).fit().resid
@@ -322,7 +319,7 @@ def main():
     fwl_mod = smf.ols("Res_Y ~ Res_X", data=fwl_df).fit()
     print(f"FWL Interaction Beta: {fwl_mod.params['Res_X']:.4f}")
 
-    print("--- GENERATING FWL PARTIAL REGRESSION PLOT ---")
+    print("GENERATING FWL PARTIAL REGRESSION PLOT")
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.scatter(fwl_df['Res_X'], fwl_df['Res_Y'], alpha=0.5, edgecolors='k', color='#6A0DAD', s=40)
 
@@ -340,7 +337,7 @@ def main():
     fig.savefig(os.path.join(BASE_DIR, "FWL_Partial_Regression_Plot.png"), dpi=300)
     plt.show()
 
-    print("--- GENERATING FWL PARTIAL RESIDUAL PLOTS FOR ALL COVARIATES ---")
+    print("GENERATING FWL PARTIAL RESIDUAL PLOTS FOR ALL COVARIATES")
     continuous_covariates = [
         'EVM_Exposure_Cont', 'Agency_Centered', 'Urban_Pct_ihs', 
         'Turnout_96', 'Lit_Pct', 'SC_Pct', 'ST_Pct_ihs'
@@ -378,7 +375,7 @@ def main():
     print("Plot saved as 'FWL_Partial_Residuals_Grid.png'.")
     plt.show()
 
-    print("--- LEAVE-ONE-OUT (STATE LEVEL) ---")
+    print("LEAVE-ONE-OUT (STATE LEVEL)")
     interaction_terms = [p for p in final_model.params.index if 'EVM' in p and ('Agency' in p or 'Fem' in p or 'Post' in p) and p != 'EVM_Exposure_Cont']
     target_param = interaction_terms[0] if interaction_terms else 'EVM_Post_Agency'
     print(f"Target interaction parameter: '{target_param}'")
@@ -404,7 +401,7 @@ def main():
     else:
         print("LOO returned no results. Check if states have enough variation.")
 
-    print("--- GENERATING LEAVE-ONE-OUT SENSITIVITY PLOT ---")
+    print("GENERATING LEAVE-ONE-OUT SENSITIVITY PLOT")
     if not loo_df.empty:
         fig, ax = plt.subplots(figsize=(10, 8))
         y_pos = np.arange(len(loo_df))
@@ -421,7 +418,7 @@ def main():
         fig.savefig(os.path.join(BASE_DIR, "LOO_Sensitivity_Plot.png"), dpi=300)
         plt.show()
 
-    print("--- SUB-SAMPLE HETEROGENEITY ---")
+    print("SUB-SAMPLE HETEROGENEITY")
     median_agency_orig = wide['Fem_Enterprise_Pct'].median()
     high_agency = wide[wide['Fem_Enterprise_Pct'] >= median_agency_orig]
     low_agency = wide[wide['Fem_Enterprise_Pct'] < median_agency_orig]
@@ -431,7 +428,7 @@ def main():
     print(f"High Agency Beta: {mod_high.params['EVM_Post_Agency']:.4f} (p={mod_high.pvalues['EVM_Post_Agency']:.3f})")
     print(f"Low Agency Beta:  {mod_low.params['EVM_Post_Agency']:.4f} (p={mod_low.pvalues['EVM_Post_Agency']:.3f})")
 
-    print("--- GENERATING SUB-SAMPLE HETEROGENEITY PLOT ---")
+    print("GENERATING SUB-SAMPLE HETEROGENEITY PLOT")
     sub_betas = [mod_high.params['EVM_Post_Agency'], mod_low.params['EVM_Post_Agency']]
     sub_ci_high = mod_high.conf_int().loc['EVM_Post_Agency']
     sub_ci_low = mod_low.conf_int().loc['EVM_Post_Agency']
@@ -485,40 +482,33 @@ def main():
     bp_stat, bp_pval, bp_f, bp_fpval = bp_test
 
     print(f"{'Metric':<35} | {'Value':<20}")
-    print("-" * 60)
     print(f"{'Observations (N)':<35} | {n_obs:<20}")
     print(f"{'Degrees of Freedom (Model)':<35} | {df_model:<20}")
     print(f"{'Degrees of Freedom (Residual)':<35} | {df_resid:<20}")
-    print("-" * 60)
     print(f"{'R-squared':<35} | {r2:<20.4f}")
     print(f"{'Adjusted R-squared':<35} | {r2_adj:<20.4f}")
     print(f"{'F-statistic':<35} | {f_stat:<20.4f}")
     print(f"{'Prob (F-statistic)':<35} | {f_pval:<20.4e}")
-    print("-" * 60)
     print(f"{'Akaike Info Criterion (AIC)':<35} | {aic:<20.2f}")
     print(f"{'Bayesian Info Criterion (BIC)':<35} | {bic:<20.2f}")
     print(f"{'Condition Number':<35} | {cond_num:<20.2f}")
-    print("-" * 60)
     print(f"{'Durbin-Watson Statistic':<35} | {dw_stat:<20.4f}")
-    print("-" * 60)
     print(f"{'Omnibus K^2 (Normality)':<35} | {omnibus_stat:<20.4f}")
     print(f"{'Prob (Omnibus)':<35} | {omnibus_pval:<20.4e}")
     print(f"{'Jarque-Bera (JB)':<35} | {jb_stat:<20.4f}")
     print(f"{'Prob (JB)':<35} | {jb_pval:<20.4e}")
     print(f"{'Skewness':<35} | {jb_skew:<20.4f}")
     print(f"{'Kurtosis':<35} | {jb_kurt:<20.4f}")
-    print("-" * 60)
     print(f"{'Breusch-Pagan (Heteroskedasticity)':<35} | {bp_stat:<20.4f}")
     print(f"{'Prob (Breusch-Pagan)':<35} | {bp_pval:<20.4e}")
-    print("=" * 60)
 
-    print("--- ROBUST COEFFICIENTS (HC1) FOR REPORTING ---")
+    print("HC1 Coeffcients FOR REPORTING")
     try:
         print(model_robust.summary2().tables[1])
     except Exception:
         print(res_df.to_string(float_format="%.4f"))
 
-    print("--- VIF FOR CONTINUOUS REGRESSORS (Excluding State FEs) ---")
+    print("VIF FOR CONTINUOUS REGRESSORS (Excluding State FEs) - note VIF>5")
     vif_vars = ['EVM_Exposure_Cont', 'Agency_Centered', 'EVM_Post_Agency', 'Urban_Pct_ihs', 
                 'Turnout_96', 'Lit_Pct', 'SC_Pct', 'ST_Pct_ihs']
     X_vif = wide[vif_vars].copy()
@@ -528,15 +518,15 @@ def main():
     vif_data["VIF"] = [variance_inflation_factor(X_vif.values, i) for i in range(X_vif.shape[1])]
     print(vif_data[vif_data["Variable"] != "const"].to_string(index=False))
 
-    print("--- RE-ESTIMATING WITH STATE-CLUSTERED STANDARD ERRORS ---")
+    print("RE-ESTIMATING WITH STATE-CLUSTERED STANDARD ERRORS")
     model_clustered = smf.ols(final_formula, data=wide).fit(
         cov_type='cluster', cov_kwds={'groups': wide['state_clean']}
     )
-    print(f"Clustered EVM_Exposure_Cont:       {model_clustered.params['EVM_Exposure_Cont']:.4f} (p={model_clustered.pvalues['EVM_Exposure_Cont']:.4f})")
-    print(f"Clustered EVM_Post_Agency:    {model_clustered.params['EVM_Post_Agency']:.4f} (p={model_clustered.pvalues['EVM_Post_Agency']:.4f})")
+    print(f"Clustered EVM_Exposure_Cont:{model_clustered.params['EVM_Exposure_Cont']:.4f} (p={model_clustered.pvalues['EVM_Exposure_Cont']:.4f})")
+    print(f"Clustered EVM_Post_Agency:{model_clustered.params['EVM_Post_Agency']:.4f} (p={model_clustered.pvalues['EVM_Post_Agency']:.4f})")
 
     print("--- GENERATING VIF DIAGNOSTICS PLOT ---")
-    vif_plot_df = vif_data[vif_data["Variable"] != "const"].copy()
+    vif_plot_df = vif_data[vif_data["Variable"]!= "const"].copy()
     fig, ax = plt.subplots(figsize=(8, 6))
     colors = ['#d9534f' if v > 10 else '#f0ad4e' if v > 5 else '#5cb85c' for v in vif_plot_df['VIF']]
 
@@ -551,7 +541,7 @@ def main():
     fig.savefig(os.path.join(BASE_DIR, "VIF_Diagnostics_Plot.png"), dpi=300)
     plt.show()
 
-    print("--- GENERATING COOK'S DISTANCE PLOT ---")
+    print("GENERATING COOK'S DISTANCE PLOT")
     ols_for_influence = smf.ols(final_formula, data=wide).fit()
     influence_obj = influence.OLSInfluence(ols_for_influence)
     cooks_d, _ = influence_obj.cooks_distance
@@ -564,11 +554,11 @@ def main():
     ax.set_title("Influence Diagnostics: Checking for High-Leverage Outliers")
     ax.legend()
     plt.tight_layout()
-    fig.savefig(os.path.join(BASE_DIR, "Cooks_Distance_Plot.png"), dpi=300)
+    fig.savefig(os.path.join(BASE_DIR,"Cooks_Distance_Plot.png"), dpi=300)
     print("Plot saved as 'Cooks_Distance_Plot.png'.")
     plt.show()
 
-    print("--- GENERATING MARGINAL EFFECTS PLOT ---")
+    print("GENERATING MARGINAL EFFECTS PLOT")
     agency_range = np.linspace(wide['Fem_Enterprise_Pct'].min(), wide['Fem_Enterprise_Pct'].quantile(0.95), 100)
     ihs_range = np.arcsinh(agency_range)
     centered_range = ihs_range - agency_mean
@@ -591,50 +581,8 @@ def main():
     print("Plot saved as 'Marginal_Effects_Plot.png'!")
     plt.show()
 
-    print("--- ROBUSTNESS: PROPENSITY SCORE WEIGHTING (IPW) ---")
-    wide['EVM_Any'] = (wide['EVM_Exposure_Cont'] > 0).astype(int)
-    wide['IPW_Interaction'] = wide['EVM_Any'] * wide['Agency_Centered']
-
-    ipw_formula = (
-        "Turnout_99 ~ EVM_Any + Agency_Centered + IPW_Interaction + Urban_Pct_ihs + "
-        "Turnout_96 + Lit_Pct + SC_Pct + ST_Pct_ihs"
-    )
-
-    print("--- Method 1: Statsmodels Logit ---")
-    ps_formula = "EVM_Any ~ Lit_Pct + Urban_Pct_ihs + ST_Pct_ihs + SC_Pct + C(state_clean)"
-    try:
-        ps_model = Logit.from_formula(ps_formula, data=wide).fit(disp=0)
-        wide['pscore'] = ps_model.predict(wide).clip(lower=0.05, upper=0.95)
-        wide['ipw_weight'] = (wide['EVM_Any'] / wide['pscore']) + ((1 - wide['EVM_Any']) / (1 - wide['pscore']))
-        
-        model_ipw = smf.wls(ipw_formula, data=wide, weights=wide['ipw_weight']).fit(cov_type='HC1')
-        print(f"IPW Main Effect:     {model_ipw.params['EVM_Any']:.4f} (p={model_ipw.pvalues['EVM_Any']:.4f})")
-        print(f"IPW Interaction:     {model_ipw.params['IPW_Interaction']:.4f} (p={model_ipw.pvalues['IPW_Interaction']:.4f})")
-    except Exception as e:
-        print(f"Statsmodels IPW failed (likely separation): {e}")
-
-    print("--- Method 2: Sklearn Logistic Regression ---")
-    features = ['Lit_Pct', 'Urban_Pct_ihs', 'ST_Pct_ihs', 'SC_Pct', 'Turnout_96']
-    X_ps = wide[features].copy()
-    y_ps = wide['EVM_Any']
-    scaler = StandardScaler()
-    X_ps_scaled = scaler.fit_transform(X_ps)
-    log_reg = LogisticRegression(max_iter=1000, C=1.0)
-    log_reg.fit(X_ps_scaled, y_ps)
-
-    wide['pscore'] = np.clip(log_reg.predict_proba(X_ps_scaled)[:, 1], 0.05, 0.95)
-    wide['ipw_weight'] = (wide['EVM_Any'] / wide['pscore']) + ((1 - wide['EVM_Any']) / (1 - wide['pscore']))
-
-    try:
-        model_ipw = smf.wls(ipw_formula, data=wide, weights=wide['ipw_weight']).fit(cov_type='HC1')
-        print(f"IPW Main Effect:     {model_ipw.params['EVM_Any']:.4f} (p={model_ipw.pvalues['EVM_Any']:.4f})")
-        print(f"IPW Interaction:     {model_ipw.params['IPW_Interaction']:.4f} (p={model_ipw.pvalues['IPW_Interaction']:.4f})")
-        print("If p < 0.05, selection on observables is fully neutralized.")
-    except Exception as e:
-        print(f"Sklearn IPW failed: {e}")
-
-    print("--- ROBUSTNESS: EXCLUDING COOK'S DISTANCE OUTLIERS ---")
-    threshold = 4 / len(wide)
+    print("ROBUSTNESS: EXCLUDING COOK'S DISTANCE OUTLIERS")
+    threshold = 4/ len(wide)
     outlier_indices = cooks_d[cooks_d > threshold].index
     outlier_info = wide.loc[outlier_indices, ['state_clean', 'EVM_Exposure_Cont', 'Fem_Enterprise_Pct', 'Turnout_99']]
     print("High-Leverage Outliers Identified:")
@@ -642,11 +590,11 @@ def main():
     wide_no_outliers = wide.drop(index=outlier_indices)
     print(f"Re-estimating model with {len(wide_no_outliers)} districts (dropped {len(outlier_indices)} outliers)...")
     model_no_outliers = smf.ols(final_formula, data=wide_no_outliers).fit(cov_type='HC1')
-    print(f"EVM_Exposure_Cont:    {model_no_outliers.params['EVM_Exposure_Cont']:.4f} (p={model_no_outliers.pvalues['EVM_Exposure_Cont']:.4f})")
+    print(f"EVM_Exposure_Cont:{model_no_outliers.params['EVM_Exposure_Cont']:.4f} (p={model_no_outliers.pvalues['EVM_Exposure_Cont']:.4f})")
     print(f"EVM_Post_Agency: {model_no_outliers.params['EVM_Post_Agency']:.4f} (p={model_no_outliers.pvalues['EVM_Post_Agency']:.4f})")
 
-    print("--- ROBUSTNESS: PROPENSITY SCORE WEIGHTING (IPW via sklearn) ---")
-    features = ['Lit_Pct', 'Urban_Pct_ihs', 'ST_Pct_ihs', 'SC_Pct', 'Turnout_96']
+    print("ROBUSTNESS: PROPENSITY SCORE WEIGHTING (IPW via sklearn)")
+    features = ['Lit_Pct', 'Urban_Pct_ihs', 'ST_Pct_ihs', 'SC_Pct','Turnout_96']
     X_ps = wide[features].copy()
     y_ps = wide['EVM_Any']
     scaler = StandardScaler()
@@ -659,8 +607,8 @@ def main():
     wide['IPW_Interaction'] = wide['EVM_Any'] * wide['Agency_Centered']
     try:
         model_ipw = smf.wls(ipw_formula, data=wide, weights=wide['ipw_weight']).fit(cov_type='HC1')
-        print(f"IPW Main Effect (EVM_Any):     {model_ipw.params['EVM_Any']:.4f} (p={model_ipw.pvalues['EVM_Any']:.4f})")
-        print(f"IPW Interaction (EVM*Agency):  {model_ipw.params['IPW_Interaction']:.4f} (p={model_ipw.pvalues['IPW_Interaction']:.4f})")
+        print(f"IPW Main Effect (EVM_Any): {model_ipw.params['EVM_Any']:.4f} (p={model_ipw.pvalues['EVM_Any']:.4f})")
+        print(f"IPW Interaction (EVM*Agency):{model_ipw.params['IPW_Interaction']:.4f} (p={model_ipw.pvalues['IPW_Interaction']:.4f})")
     except Exception as e:
         print(f"WLS estimation failed: {e}")
 
@@ -678,7 +626,7 @@ def main():
     print("Saved 'IPW_Overlap_Plot.png'.")
     plt.show()
 
-    print("--- ROBUSTNESS: IPW WITH TRIMMED WEIGHTS ---")
+    print("ROBUSTNESS: IPW WITH TRIMMED WEIGHT")
     p1 = wide['ipw_weight'].quantile(0.01)
     p99 = wide['ipw_weight'].quantile(0.99)
     wide['ipw_weight_trimmed'] = wide['ipw_weight'].clip(lower=p1, upper=p99)
@@ -686,12 +634,12 @@ def main():
     print(f"Trimmed Weight Range (1%-99%): {p1:.2f} to {p99:.2f}")
     try:
         model_ipw_trimmed = smf.wls(ipw_formula, data=wide, weights=wide['ipw_weight_trimmed']).fit(cov_type='HC1')
-        print(f"Trimmed IPW Main Effect:     {model_ipw_trimmed.params['EVM_Any']:.4f} (p={model_ipw_trimmed.pvalues['EVM_Any']:.4f})")
-        print(f"Trimmed IPW Interaction:     {model_ipw_trimmed.params['IPW_Interaction']:.4f} (p={model_ipw_trimmed.pvalues['IPW_Interaction']:.4f})")
+        print(f"Trimmed IPW Main Effect:{model_ipw_trimmed.params['EVM_Any']:.4f} (p={model_ipw_trimmed.pvalues['EVM_Any']:.4f})")
+        print(f"Trimmed IPW Interaction:  {model_ipw_trimmed.params['IPW_Interaction']:.4f} (p={model_ipw_trimmed.pvalues['IPW_Interaction']:.4f})")
     except Exception as e:
         print(f"Trimmed WLS failed: {e}")
 
-    print("--- DIAGNOSTIC: TREATMENT SPARSITY & OVERLAP ---")
+    print("DIAGNOSTIC: TREATMENT SPARSITY & OVERLAP")
     treated_count = (wide['EVM_Any'] == 1).sum()
     print(f"Total districts with ANY EVM exposure: {treated_count} out of {len(wide)} ({(treated_count/len(wide))*100:.1f}%)")
     print("\nDistribution of Treated Districts by State:")
@@ -718,10 +666,8 @@ def main():
             pretrend_mod = smf.ols(pretrend_formula, data=df_pretrend).fit(cov_type='HC1')
             
             print("\nDependent Variable: Change in Female Turnout (1996 -> 1998)")
-            print("-" * 60)
-            print(f"EVM_Exposure_Cont (Main):      {pretrend_mod.params['EVM_Exposure_Cont']:.4f} (p={pretrend_mod.pvalues['EVM_Exposure_Cont']:.3f})")
-            print(f"EVM*Agency (Interaction):      {pretrend_mod.params['EVM_Post_Agency']:.4f} (p={pretrend_mod.pvalues['EVM_Post_Agency']:.3f})")
-            print("-" * 60)
+            print(f"EVM_Exposure_Cont (Main):{pretrend_mod.params['EVM_Exposure_Cont']:.4f} (p={pretrend_mod.pvalues['EVM_Exposure_Cont']:.3f})")
+            print(f"EVM*Agency (Interaction):{pretrend_mod.params['EVM_Post_Agency']:.4f} (p={pretrend_mod.pvalues['EVM_Post_Agency']:.3f})")
             
             if pretrend_mod.pvalues['EVM_Post_Agency'] > 0.10:
                 print("PASS: Pre-trends are parallel. The conditional parallel trends assumption holds.")
@@ -737,7 +683,7 @@ def main():
         print(f"Districts DROPPED from pre-trend: {wide['Delta_9698'].isna().sum()}")
         print(wide[wide['Delta_9698'].isna()][['state_clean', 'EVM_Exposure_Cont']].value_counts('state_clean'))
 
-        print("--- GENERATING PRE-TREND PARALLEL TRENDS PLOT ---")
+        print("GENERATING PRE-TREND PARALLEL TRENDS PLO")
         try:
             actual_beta = final_model.params['EVM_Post_Agency']
             actual_ci = final_model.conf_int().loc['EVM_Post_Agency']
@@ -769,13 +715,13 @@ def main():
         except NameError:
             print("Pre-trend model not estimated yet. Run the pre-trend phase first.")
 
-    print("MECHANISM HORSE RACE: ECONOMIC AGENCY vs. PATRIARCHY (Z-SCORED)")
+    print("ECONOMIC AGENCY vs. PATRIARCHY (Z-SCORED)")
     fem_col = 'pc91_pca_f_06'   
     male_col = 'pc91_pca_m_06'  
 
     if fem_col in census.columns and male_col in census.columns:
         sex_data = census[['pc91_state_id', 'pc91_district_id', fem_col, male_col]].copy()
-        sex_data['Sex_Ratio'] = (sex_data[fem_col] / sex_data[male_col].replace(0, np.nan)) * 1000
+        sex_data['Sex_Ratio']= (sex_data[fem_col] / sex_data[male_col].replace(0, np.nan)) * 1000
         
         wide = pd.merge(wide, sex_data[['pc91_state_id', 'pc91_district_id', 'Sex_Ratio']], 
                         on=['pc91_state_id', 'pc91_district_id'], how='left')
@@ -800,20 +746,18 @@ def main():
         
         horse_race_model = smf.ols(horse_race_formula, data=wide).fit(cov_type='HC1')
         
-        print("--- Z-SCORED HORSE RACE RESULTS (Dep Var: Turnout_99) ---")
-        print("Note: Coefficients represent the effect of a 1 Standard Deviation increase in the moderator.")
-        print("-" * 70)
-        
+        print("Z-SCORED HORSE RACE RESULTS (Dep Var: Turnout_99)")
+        print("Note: Coefficients represent the effect of a 1 Standard Deviation increase in the moderator.")        
         beta_eco = horse_race_model.params['EVM_Post_Agency_Z']
         p_eco = horse_race_model.pvalues['EVM_Post_Agency_Z']
         
         beta_soc = horse_race_model.params['EVM_Post_Patriarchy_Z']
         p_soc = horse_race_model.pvalues['EVM_Post_Patriarchy_Z']
         
-        print(f"Economic Agency (1 SD increase):   Beta = {beta_eco:.4f}  |  p-value = {p_eco:.4f}")
-        print(f"Cultural Patriarchy (1 SD increase): Beta = {beta_soc:.4f}  |  p-value = {p_soc:.4f}")
+        print(f"Economic Agency (1 SD increase):Beta = {beta_eco:.4f}  | p-value = {p_eco:.4f}")
+        print(f"Cultural Patriarchy (1 SD increase):Beta = {beta_soc:.4f}  | p-value = {p_soc:.4f}")
         
-        print("\n--- MECHANISM INTERPRETATION ---")
+        print("\nMECHANISM INTERPRETATION")
         if p_eco < 0.05 and p_soc > 0.10:
             print("ECONOMIC WINS: EVMs empower women primarily through economic independence/bargaining power, overcoming even deep-rooted demographic patriarchy.")
         elif p_soc < 0.05 and p_eco > 0.10:
@@ -826,7 +770,7 @@ def main():
         corr = wide['Agency_Z'].corr(wide['Patriarchy_Z'])
         print(f"\nCorrelation between Z-scored Agency and Patriarchy: {corr:.3f}")
 
-        print("--- GENERATING MECHANISM HORSE RACE PLOT ---")
+        print("GENERATING MECHANISM HORSE RACE PLOT")
         key_vars_race = ['EVM_Post_Agency_Z', 'EVM_Post_Patriarchy_Z']
         labels_race = ['Economic Agency\n(Female Enterprise)', 'Cultural Patriarchy\n(Child Sex Ratio)']
         
