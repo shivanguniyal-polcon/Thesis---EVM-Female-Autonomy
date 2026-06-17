@@ -1,5 +1,5 @@
 ### Process Summary
-To establish causality, the dataset is reshaped into a long-format panel (1991, 1999, 2004) for Difference-in-Differences (DiD) estimation. The process involves generating a placebo treatment variable for the pre-period (1991-1999) to test for pre-existing trends.
+To establish causality, the dataset is reshaped into a long-format panel (1996, 1998, 1999) for Difference-in-Differences (DiD) estimation. The process involves generating a placebo treatment variable for the pre-period (1991-1999) to test for pre-existing trends.
 
 ### Summary Outcome (Data)
 1. **Numbers**:N=852 (Panel, 2 periods). Pre-Trend Placebo (1996-1998): β=-3.84 (SE=2.49, p=0.122). Post-Trend DiD (1996-1999): β=-6.73 (SE=2.16, p=0.0018). ANCOVA R²=0.831.
