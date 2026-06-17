@@ -1,5 +1,6 @@
 ### Process Summary
 Electoral and 1991 Census data are spatially joined for 426 districts for the 543 PCs. After verifying randomization via covariate balance tests, a multivariate OLS model with state fixed effects isolates the EVM impact, visualized through balance and coefficient plots.
+
 $$Turnout_{is} = \beta_0 + \beta_1 EVM\_Exposure_{is} + \gamma \mathbf{X}_{is} + \alpha_s + \epsilon_{is}$$
 
 * $EVM\_Exposure_{is}$: The continuous proportion of female electors exposed to EVMs in district $i$ in state $s$.
