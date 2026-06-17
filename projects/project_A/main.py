@@ -14,12 +14,10 @@ merged_key = pd.merge(
 )
 
 # 3. Drop all the duplicate villages to create a clean, unique dictionary of Districts
-master_mapping = merged_key.drop_duplicates(
-    subset=['state_name', 'district_name', 'pc91_state_id', 'pc91_district_id']
+master_mapping = merged_key.drop_duplicates(subset=['state_name', 'district_name', 'pc91_state_id', 'pc91_district_id']
 )
 
 # 4. Display the results
-print("--- Master Mapping Created! ---")
 print(master_mapping[['state_name', 'district_name', 'pc91_state_id', 'pc91_district_id']].head(10))
 
 # 5. Save this master key for future use!
