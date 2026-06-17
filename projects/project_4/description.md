@@ -1,15 +1,19 @@
 ### Process Summary
 To establish causality, the dataset is reshaped into a long-format panel (1996, 1998, 1999) for Difference-in-Differences (DiD) estimation. The process involves generating a placebo treatment variable for the pre-period (1996-1999) to test for pre-existing trends.
 
+
 **1. Placebo Pre-Trend Test (1996 to 1998):**
 Tests if differential trends existed *before* the 1999 rollout (the interaction term $\beta_3$ must equal zero for causality to hold).
+
 $$\Delta\text{Turnout}_{is}^{1996\rightarrow1998}=\beta_0+\beta_1\text{EVM\_Exposure}_{is}+\beta_2\text{Agency}_{is}+\beta_3(\text{EVM\_Exposure}_{is}\times\text{Agency}_{is})+\gamma\mathbf{X}_{is}+\alpha_s+\epsilon_{is}$$
 
 **2. Main Difference-in-Differences (1996 to 1999):**
+
 $$\Delta\text{Turnout}_{is}^{1996\rightarrow1999}=\beta_0+\beta_1\text{EVM\_Exposure}_{is}+\beta_2\text{Agency}_{is}+\beta_3(\text{EVM\_Exposure}_{is}\times\text{Agency}_{is})+\gamma\mathbf{X}_{is}+\alpha_s+\epsilon_{is}$$
 
 **3. Cross-Sectional ANCOVA (Robustness):**
 Often statistically more powerful than DiD, this models 1999 Turnout while strictly controlling for the 1996 baseline turnout ($\delta$).
+
 $$\text{Turnout}_{is}^{1999}=\beta_0+\beta_1\text{EVM\_Exposure}_{is}+\beta_2\text{Agency}_{is}+\beta_3(\text{EVM\_Exposure}_{is}\times\text{Agency}_{is})+\delta\text{Turnout}_{is}^{1996}+\gamma\mathbf{X}_{is}+\alpha_s+\epsilon_{is}$$
 
 ### Summary Outcome (Data)
