@@ -1,5 +1,10 @@
 ### Process Summary
 Electoral and 1991 Census data are spatially joined for 426 districts for the 543 PCs. After verifying randomization via covariate balance tests, a multivariate OLS model with state fixed effects isolates the EVM impact, visualized through balance and coefficient plots.
+$$Turnout_{is} = \beta_0 + \beta_1 EVM\_Exposure_{is} + \gamma \mathbf{X}_{is} + \alpha_s + \epsilon_{is}$$
+
+* $EVM\_Exposure_{is}$: The continuous proportion of female electors exposed to EVMs in district $i$ in state $s$.
+* $\mathbf{X}_{is}$: A vector of 1991 demographic controls (Literacy %, SC %, ST %, Urbanization %).
+* $\alpha_s$: State fixed effects to control for time-invariant cultural/administrative differences across states.
 
 ### Summary Outcome (Data)
 1. **Numbers**: N=426 districts. Covariate Balance: Urbanization coefficient $\beta$=+33.80 (p<0.001), Literacy coefficient $\beta$=+18.64 (p<0.001). Model 1 (Raw): $\beta$=-7.10 (p=0.002). Model 2 (Demographics): $\beta$=-6.37 (SE=3.01, p=0.034). Model 3 (State FEs): $\beta$=-3.20 (SE=2.35, p=0.174). R² increases from 0.014 to 0.731.
