@@ -8,7 +8,7 @@ To establish causality, the dataset is reshaped into a long-format panel (1996, 
 
 ### Detailed Sequential Analysis
 
-**Step 1: Placebo Test (1991 Data) (`Step4_Model_PreTrend.csv`)**
+**Step 1: Placebo Test (`Step4_Model_PreTrend.csv`)**
 - **Data**: 
 - Fake Treatment Interaction (1996-1998): β = -3.84 (p = 0.122).
 - Confidence Interval [-8.71, +1.03] includes 0.
