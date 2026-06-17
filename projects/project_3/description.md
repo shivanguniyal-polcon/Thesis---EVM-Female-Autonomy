@@ -2,7 +2,14 @@
 To explore heterogeneity, district-level female economic agency is interacted with the EVM treatment. The model calculates marginal effects at key percentiles, visualized via an interaction plot showing EVM's conditional impact across agency levels.
 
 **Data Transformation (Inverse Hyperbolic Sine & Mean-Centering):**
-$$Agency\_Centered_i = \text{arcsinh}(Fem\_Enterprise\_Pct_i) - \overline{\text{arcsinh}(Fem\_Enterprise\_Pct)}$$
+$Agency\_Centered_i = \text{arcsinh}(Fem\_Enterprise\_Pct_i) - \overline{\text{arcsinh}(Fem\_Enterprise\_Pct)}$
+
+**The Interaction Model:**
+$Turnout_{is} = \beta_0 + \beta_1 EVM\_Exposure_{is} + \beta_2 Agency\_Centered_{is} + \beta_3 (EVM\_Exposure_{is} \times Agency\_Centered_{is}) + \gamma \mathbf{X}_{is} + \alpha_s + \epsilon_{is}$
+
+**Marginal Effect of EVM Exposure:**
+The actual effect of EVMs at any specific level of economic agency is calculated as the first derivative with respect to EVM Exposure:
+$\frac{\partial (\text{Turnout})}{\partial (\text{EVM\_Exposure})} = \beta_1 + \beta_3 \times Agency\_Centered$
 
 ### Summary Outcome (Data)
 1. **Numbers**: N=426 districts. Interaction Term (EVM × Agency): $\beta$=-6.875 (SE=3.13, p=0.028). Marginal Effect at 90th Percentile Agency: -8.47 pp (p=0.004). Marginal Effect at 10th Percentile: +3.46 pp (p=0.388).
