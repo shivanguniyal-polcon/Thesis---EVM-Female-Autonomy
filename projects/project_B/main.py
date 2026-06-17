@@ -18,7 +18,7 @@ with open('/Users/ganeshchandrauniyal/Desktop/Thesis Script/Data/India-State-Dis
 gdf = gpd.GeoDataFrame(features, crs="EPSG:4326")
 
 # 2. Base Text Cleaning
-gdf['district_clean'] = gdf['District'].str.lower().str.strip()
+gdf['district_clean'] =gdf['District'].str.lower().str.strip()
 gdf['state_clean'] = gdf['State'].str.lower().str.strip()
 
 # 3. State-Level Bridge (Historical to Modern)
@@ -30,8 +30,7 @@ state_replacements = {
     "daman and diu": "daman diu",
     "delhi": "nct of delhi",
     "pondicherry": "puducherry"
-}
-gdf['state_clean'] = gdf['state_clean'].replace(state_replacements)
+}gdf['state_clean'] = gdf['state_clean'].replace(state_replacements)
 
 # 4. The COMPLETE District Bridge
 district_replacements = {
@@ -94,9 +93,7 @@ gdf['district_clean'] = gdf['district_clean'].replace(district_replacements)
 # 5. Bridge 1: Merge on District Name 
 # Strictly deduplicating the SHRUG key prevents the 456 one-to-many geometry inflation
 df_master_unique = df_master_key.drop_duplicates(subset=['district_name'])
-
-gdf_with_ids = gdf.merge(
-    df_master_unique,
+gdf_with_ids = gdf.merge( df_master_unique,
     left_on='district_clean',
     right_on='district_name',
     how='left'
@@ -108,15 +105,12 @@ gdf_clean = gdf_with_ids.dropna(subset=['pc91_district_id']).copy()
 
 gdf_clean['pc91_state_id'] = gdf_clean['pc91_state_id'].astype(int)
 gdf_clean['pc91_district_id'] = gdf_clean['pc91_district_id'].astype(int)
-
 df_census['pc91_state_id'] = pd.to_numeric(df_census['pc91_state_id'], errors='coerce').fillna(0).astype(int)
 df_census['pc91_district_id'] = pd.to_numeric(df_census['pc91_district_id'], errors='coerce').fillna(0).astype(int)
 
 final_gdf = gdf_clean.merge(
     df_census,
-    on=['pc91_state_id', 'pc91_district_id'],
-    how='inner'
-)
+    on=['pc91_state_id', 'pc91_district_id'],how='inner')
 
 # 7. Validation
 print(f"Total Polygons matched with Census Data: {len(final_gdf)}")
@@ -131,7 +125,7 @@ final_gdf.to_file('/Users/ganeshchandrauniyal/Desktop/Thesis Script/Pristine_Cen
 all_districts = gdf['district_clean'].unique()
 matched_districts = final_gdf['district_clean'].unique()
 
-missing_districts = [d for d in all_districts if d not in matched_districts]
+missing_districts =[d for d in all_districts if d not in matched_districts]
 
 print(f"Number of missing districts: {len(missing_districts)}")
 print("First 10 missing district names:")
