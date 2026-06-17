@@ -5,16 +5,16 @@ To establish causality, the dataset is reshaped into a long-format panel (1996, 
 **1. Placebo Pre-Trend Test (1996 to 1998):**
 Tests if differential trends existed *before* the 1999 rollout (the interaction term $\beta_3$ must equal zero for causality to hold).
 
-$$\Delta\text{Turnout}_{is}^{1996\rightarrow1998}=\beta_0+\beta_1\text{EVM\_Exposure}_{is}+\beta_2\text{Agency}_{is}+\beta_3(\text{EVM\_Exposure}_{is}\times\text{Agency}_{is})+\gamma\mathbf{X}_{is}+\alpha_s+\epsilon_{is}$$
+$$\Delta\text{Turnout}_{is}^{199{}6\rightarrow199{}8}=\beta_0+\beta_1\text{EVM\_Exposure}_{is}+\beta_2\text{Agency}_{is}+\beta_3(\text{EVM\_Exposure}_{is}\times\text{Agency}_{is})+\gamma\mathbf{X}_{is}+\alpha_s+\epsilon_{is}$$
 
 **2. Main Difference-in-Differences (1996 to 1999):**
 
-$$\Delta\text{Turnout}_{is}^{1996\rightarrow1999}=\beta_0+\beta_1\text{EVM\_Exposure}_{is}+\beta_2\text{Agency}_{is}+\beta_3(\text{EVM\_Exposure}_{is}\times\text{Agency}_{is})+\gamma\mathbf{X}_{is}+\alpha_s+\epsilon_{is}$$
+$$\Delta\text{Turnout}_{is}^{199{}6\rightarrow199{}9}=\beta_0+\beta_1\text{EVM\_Exposure}_{is}+\beta_2\text{Agency}_{is}+\beta_3(\text{EVM\_Exposure}_{is}\times\text{Agency}_{is})+\gamma\mathbf{X}_{is}+\alpha_s+\epsilon_{is}$$
 
 **3. Cross-Sectional ANCOVA (Robustness):**
 Often statistically more powerful than DiD, this models 1999 Turnout while strictly controlling for the 1996 baseline turnout ($\delta$).
 
-$$\text{Turnout}_{is}^{1999}=\beta_0+\beta_1\text{EVM\_Exposure}_{is}+\beta_2\text{Agency}_{is}+\beta_3(\text{EVM\_Exposure}_{is}\times\text{Agency}_{is})+\delta\text{Turnout}_{is}^{1996}+\gamma\mathbf{X}_{is}+\alpha_s+\epsilon_{is}$$
+$$\text{Turnout}_{is}^{199{}9}=\beta_0+\beta_1\text{EVM\_Exposure}_{is}+\beta_2\text{Agency}_{is}+\beta_3(\text{EVM\_Exposure}_{is}\times\text{Agency}_{is})+\delta\text{Turnout}_{is}^{199{}6}+\gamma\mathbf{X}_{is}+\alpha_s+\epsilon_{is}$$
 
 ### Summary Outcome (Data)
 1. **Numbers**:N=852 (Panel, 2 periods). Pre-Trend Placebo (1996-1998): β=-3.84 (SE=2.49, p=0.122). Post-Trend DiD (1996-1999): β=-6.73 (SE=2.16, p=0.0018). ANCOVA R²=0.831.
