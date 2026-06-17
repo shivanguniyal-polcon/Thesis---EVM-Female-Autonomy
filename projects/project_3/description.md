@@ -9,7 +9,7 @@ $$\text{Turnout}_{is}=\beta_0+\beta_1\text{EVM\_Exposure}_{is}+\beta_2\text{Agen
 
 **Marginal Effect of EVM Exposure:**
 The actual effect of EVMs at any specific level of economic agency is calculated as the first derivative with respect to EVM Exposure:
-$$\f
+$$\frac{\partial(\text{Turnout})}{\partial(\text{EVM\_Exposure})}=\beta_1+\beta_3\times\text{Agency\_Centered}$$
 
 ### Summary Outcome (Data)
 1. **Numbers**: N=426 districts. Interaction Term (EVM × Agency): $\beta$=-6.875 (SE=3.13, p=0.028). Marginal Effect at 90th Percentile Agency: -8.47 pp (p=0.004). Marginal Effect at 10th Percentile: +3.46 pp (p=0.388).
