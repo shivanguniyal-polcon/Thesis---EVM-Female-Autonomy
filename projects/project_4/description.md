@@ -1,6 +1,17 @@
 ### Process Summary
 To establish causality, the dataset is reshaped into a long-format panel (1996, 1998, 1999) for Difference-in-Differences (DiD) estimation. The process involves generating a placebo treatment variable for the pre-period (1996-1999) to test for pre-existing trends.
 
+**1. Placebo Pre-Trend Test (1996 to 1998):**
+Tests if differential trends existed *before* the 1999 rollout (the interaction term $\beta_3$ must equal zero for causality to hold).
+$$\Delta Turnout_{is}^{1996 \rightarrow 1998} = \beta_0 + \beta_1 EVM\_Exposure_{is} + \beta_2 Agency_{is} + \beta_3 (EVM\_Exposure_{is} \times Agency_{is}) + \gamma \mathbf{X}_{is} + \alpha_s + \epsilon_{is}$$
+
+**2. Main Difference-in-Differences (1996 to 1999):**
+$$\Delta Turnout_{is}^{1996 \rightarrow 1999} = \beta_0 + \beta_1 EVM\_Exposure_{is} + \beta_2 Agency_{is} + \beta_3 (EVM\_Exposure_{is} \times Agency_{is}) + \gamma \mathbf{X}_{is} + \alpha_s + \epsilon_{is}$$
+
+**3. Cross-Sectional ANCOVA (Robustness):**
+Often statistically more powerful than DiD, this models 1999 Turnout while strictly controlling for the 1996 baseline turnout ($\delta$).
+$$Turnout_{is}^{1999} = \beta_0 + \beta_1 EVM\_Exposure_{is} + \beta_2 Agency_{is} + \beta_3 (EVM\_Exposure_{is} \times Agency_{is}) + \delta Turnout_{is}^{1996} + \gamma \mathbf{X}_{is} + \alpha_s + \epsilon_{is}$$
+
 ### Summary Outcome (Data)
 1. **Numbers**:N=852 (Panel, 2 periods). Pre-Trend Placebo (1996-1998): β=-3.84 (SE=2.49, p=0.122). Post-Trend DiD (1996-1999): β=-6.73 (SE=2.16, p=0.0018). ANCOVA R²=0.831.
 2. **What it Proves**: Parallel Trends assumption stands. The interaction effect was statistically indistinguishable from zero before treatment (validating the counterfactual) and spiked negatively only after rollout. This rules out pre-existing divergent trends.
