@@ -14,8 +14,8 @@ The introduction of Electronic Voting Machines (EVMs) in India’s 1999 Lok Sabh
 - **The Causal Spike:** The negative divergence only occurred strictly in the 1996-1999 treatment window, yielding a highly significant Difference-in-Differences interaction effect ($\beta$=-6.73, p=0.0018). The counterfactual holds: without EVMs, these high-agency women would have continued to vote at their historical rates.
 
 ## 4. There may be more than one factor at play
-- **Independent Constraints:** A multivariate "Horse Race" model tested whether economic agency was merely a proxy for deeper cultural issues. The results proved that both factors operate independently.
-- **The Verdict:** Female Economic Agency ($\beta$=-3.64, p=0.052) and the Cultural Patriarchy Index ($\beta$=-2.92, p=0.011) both exert simultaneous, negative pressure on female turnout when new voting technology is introduced. Women facing high time poverty (economic agency) in rigid traditional environments (patriarchy) are the most vulnerable to technological disenfranchisement.
+- **Independent Constraints:** Economy and culture were both tested to assess their influence on female voter turnout. The results proved that both factors operate independently.
+- **The Verdict:** Female Economic Agency ($\beta$=-3.64, p=0.052) and the Patriarchy ($\beta$=-2.92, p=0.011) both exert simultaneous, negative pressure on female turnout when new voting technology is introduced. Women facing high time poverty (economic agency) in rigid traditional environments (patriarchy) are the most vulnerable to technological disenfranchisement.
 
 ## 5. Stability of outcome indicates stability of methodology
 - **Structural Stability:** The findings are not mathematical artifacts. The models mathematically isolate the variation using Frisch-Waugh-Lovell (FWL) orthogonal residualization ($\beta$=-7.26, p=0.0049).
