@@ -7,7 +7,7 @@ $$Z_i=\frac{X_i-\mu}{\sigma}$$
 
 **The Dual Interaction Model:**
 
-$$\text{Turnout}_{is}^{199{}9}=\beta_0+\beta_1\text{EVM\_Exposure}_{is}+\beta_2\text{Agency\_Z}_{is}+\beta_3\text{Patriarchy\_Z}_{is}+\beta_4(\text{EVM\_Exposure}_{is}\times\text{Agency\_Z}_{is})+\beta_5(\text{EVM\_Exposure}_{is}\times\text{Patriarchy\_Z}_{is})+\delta\text{Turnout}_{is}^{199{}6}+\gamma\mathbf{X}_{is}+\alpha_s+\epsilon_{is}$$
+$$\text{Turnout}_{is}^{\text{post}}=\beta_0+\beta_1\text{EVM\_Exposure}_{is}+\beta_2\text{Agency\_Z}_{is}+\beta_3\text{Patriarchy\_Z}_{is}+\beta_4(\text{EVM\_Exposure}_{is}\times\text{Agency\_Z}_{is})+\beta_5(\text{EVM\_Exposure}_{is}\times\text{Patriarchy\_Z}_{is})+\delta\text{Turnout}_{is}^{\text{pre}}+\gamma\mathbf{X}_{is}+\alpha_s+\epsilon_{is}$$
 
 * $\beta_4$: Effect of a 1 Standard Deviation increase in Economic Agency on the EVM Penalty.
 * $\beta_5$: Effect of a 1 Standard Deviation increase in Cultural Patriarchy on the EVM Penalty.
