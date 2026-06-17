@@ -1,5 +1,5 @@
 ## Executive Summary
-The introduction of Electronic Voting Machines (EVMs) in India’s 1999 Lok Sabha elections did not uniformly disenfranchise women. Instead, the transition from paper ballots to EVMs acted as a localized technological barrier, specifically suppressing turnout among women at the intersection of high economic responsibility and entrenched cultural patriarchy. The evidence rigorously isolates this "Dual Burden" effect, proving it is causal, statistically robust, and entirely independent of geographic or demographic selection bias.
+The introduction of Electronic Voting Machines (EVMs) in India’s 1999 Lok Sabha elections did not uniformly effect female voter turnout. Instead, the transition from paper ballots to EVMs acted as a localized technological shock, specifically reducing turnout among women at the intersection of high economic responsibility and entrenched cultural patriarchy. The evidence rigorously isolates this dual burden, proving it is causal, statistically robust, and entirely independent of geographic or demographic selection bias.
 
 ## 1. Initial Obervations and Selection Bias
 - **The Initial Signal:** Raw cross-sectional data initially suggested a massive universal penalty, with EVM-treated constituencies showing a 6.86 percentage point drop in female turnout compared to paper ballot areas.
