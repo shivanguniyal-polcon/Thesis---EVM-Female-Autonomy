@@ -1,6 +1,18 @@
 ## Process Summary
 The final robustness phase tests model stability using Leave-One-Out (LOO) analysis, Frisch-Waugh-Lovell (FWL) residualization, and a "Horse Race" model comparing cultural patriarchy with economic agency. Visual outputs—including forest plots and residual matrices—validate the "Dual Burden" mechanisms across these specifications.
 
+**Z-Score Standardization:**
+
+$$Z_i=\frac{X_i-\mu}{\sigma}$$
+
+**The Dual Interaction Model:**
+
+$$\text{Turnout}_{is}^{1999}=\beta_0+\beta_1\text{EVM\_Exposure}_{is}+\beta_2\text{Agency\_Z}_{is}+\beta_3\text{Patriarchy\_Z}_{is}+\beta_4(\text{EVM\_Exposure}_{is}\times\text{Agency\_Z}_{is})+\beta_5(\text{EVM\_Exposure}_{is}\times\text{Patriarchy\_Z}_{is})+\delta\text{Turnout}_{is}^{1996}+\gamma\mathbf{X}_{is}+\alpha_s+\epsilon_{is}$$
+
+
+* $\beta_4$: Effect of a 1 Standard Deviation increase in Economic Agency on the EVM Penalty.
+* $\beta_5$: Effect of a 1 Standard Deviation increase in Cultural Patriarchy on the EVM Penalty.
+
 ### Summary Outcome (Data)
 1. **Numbers**:Final ANCOVA HC1: β = -7.26 (SE = 2.21, p = 0.0010). FWL Residualized: β = -7.26 (p = 0.0049). Influence Diagnostics: 18 extreme outlier districts (max Cook's D = 15.85) were identified and dropped to ensure stability. Horse Race: Agency β = -3.64 (p = 0.052), Patriarchy β = -2.92 (p = 0.011). Mechanism Verdict: "Inconclusive/Dual".
 2. **What it Proves**: The finding is not driven by outliers, specific model specifications, or single geographic anomalies. Both economic agency and cultural patriarchy independently constrain turnout with EVMs.
