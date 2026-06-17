@@ -3,7 +3,7 @@ To establish causality, the dataset is reshaped into a long-format panel (1996, 
 
 ### Summary Outcome (Data)
 1. **Numbers**:N=852 (Panel, 2 periods). Pre-Trend Placebo (1996-1998): β=-3.84 (SE=2.49, p=0.122). Post-Trend DiD (1996-1999): β=-6.73 (SE=2.16, p=0.0018). ANCOVA R²=0.831.
-2. **What it Proves**: Causality via Parallel Trends. The interaction effect was statistically indistinguishable from zero before treatment (validating the counterfactual) and spiked negatively only after rollout. This rules out pre-existing divergent trends.
+2. **What it Proves**: Parallel Trends assumption stands. The interaction effect was statistically indistinguishable from zero before treatment (validating the counterfactual) and spiked negatively only after rollout. This rules out pre-existing divergent trends.
 3. **What Still Needs Proving**: Robustness to outliers and alternative functional forms (addressed in Project 5).
 
 ### Detailed Sequential Analysis
