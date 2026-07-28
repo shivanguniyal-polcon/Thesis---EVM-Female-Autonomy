@@ -57,7 +57,7 @@ st.markdown("""
         user-select: text !important;
     }
 </style>
-""", unsafe_allow_html=True)
+""", unsafe_allow_html=False)
 
 # --- Helper Function for Extracting Core Code ---
 def extract_core_code(file_path):
